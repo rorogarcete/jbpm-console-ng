@@ -99,14 +99,6 @@ public class InboxPersonalViewImpl extends Composite implements InboxPersonalPre
 
     @Inject
     @DataField
-    public DataGrid<TaskSummary> myTaskListGrid;
-
-    @Inject
-    @DataField
-    public SimplePager pager;
-
-    @Inject
-    @DataField
     public FlowPanel listContainer;
 
     @Inject
@@ -132,15 +124,22 @@ public class InboxPersonalViewImpl extends Composite implements InboxPersonalPre
     @Inject
     @DataField
     public Label filtersLabel;
-
-    private Set<TaskSummary> selectedTasks;
-
+    
     @Inject
     private Event<NotificationEvent> notification;
 
     @Inject
+    @DataField
+    public DataGrid<TaskSummary> myTaskListGrid;
+
+    @Inject
+    @DataField
+    public SimplePager pager;
+    
+    @Inject
     private Event<TaskSelectionEvent> taskSelection;
 
+    private Set<TaskSummary> selectedTasks;
     private ListHandler<TaskSummary> sortHandler;
     private MultiSelectionModel<TaskSummary> selectionModel;
 

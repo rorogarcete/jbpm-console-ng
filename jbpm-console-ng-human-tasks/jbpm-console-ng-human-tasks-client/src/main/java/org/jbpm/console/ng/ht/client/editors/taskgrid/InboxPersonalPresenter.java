@@ -105,16 +105,16 @@ public class InboxPersonalPresenter {
         for (Role r : roles) {
             groups.add(r.getName().trim());
         }
-        taskServices.call(new RemoteCallback<List<TaskSummary>>() {
-            @Override
-            public void callback(List<TaskSummary> tasks) {
-                dataProvider.getList().clear();
-                dataProvider.getList().addAll(tasks);
-                dataProvider.refresh();
-                view.getSelectionModel().clear();
-
-            }
-        }).getTasksAssignedPersonalAndGroupsTasks(identity.getName(), groups, "en-UK");
+//        taskServices.call(new RemoteCallback<List<TaskSummary>>() {
+//            @Override
+//            public void callback(List<TaskSummary> tasks) {
+//                dataProvider.getList().clear();
+//                dataProvider.getList().addAll(tasks);
+//                dataProvider.refresh();
+//                view.getSelectionModel().clear();
+//
+//            }
+//        }).getTasksAssignedPersonalAndGroupsTasks(identity.getName(), groups, "en-UK");
     }
 
     public void refreshAllTasks() {
@@ -166,7 +166,7 @@ public class InboxPersonalPresenter {
                 view.getSelectionModel().clear();
 
             }
-        }).getTasksAssignedByGroups(groups, "en-UK");
+        }).getTasksAssignedByGroups(identity.getName(), groups, "en-UK");
     }
 
     public void startTasks(final Set<TaskSummary> selectedTasks, final String userId) {

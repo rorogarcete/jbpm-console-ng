@@ -31,24 +31,19 @@ public interface TaskServiceEntryPoint {
 
     List<TaskSummary> getTasksAssignedAsBusinessAdministrator(String userId, String language);
 
-    List<TaskSummary> getTasksAssignedAsExcludedOwner(String userId, String language);
-
     List<TaskSummary> getTasksAssignedAsPotentialOwner(String userId, String language);
+    
+    List<TaskSummary> getTasksAssignedByGroup(String userId, String groupId, String language);
 
-    List<TaskSummary> getTasksAssignedAsPotentialOwner(String userId, List<String> groupIds, String language);
-
-    List<TaskSummary> getTasksAssignedAsPotentialOwner(String userId, List<String> groupIds, String language, int firstResult,
-            int maxResult);
-
-    List<TaskSummary> getTasksAssignedAsRecipient(String userId, String language);
-
-    List<TaskSummary> getTasksAssignedAsTaskInitiator(String userId, String language);
-
-    List<TaskSummary> getTasksAssignedAsTaskStakeholder(String userId, String language);
-
-    List<TaskSummary> getTasksAssignedByGroup(String groupId, String language);
-
-    List<TaskSummary> getTasksAssignedByGroups(List<String> groupsId, String language);
+    List<TaskSummary> getTasksAssignedByGroups(String userId, List<String> groupIds, String language);
+    
+    List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDate(String userId, List<String> status, Date from, 
+            String language);
+    
+    List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId, List<String> status, Date from, 
+            String language);
+    
+    
 
     /**
      * Gets the mapping '{@link Day} -> list of owned tasks' from start day to end day (including).
@@ -119,8 +114,8 @@ public interface TaskServiceEntryPoint {
      * 
      * @return list of tasks per day for specified days (dates)
      */
-    Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDatePersonalAndGroupsTasksByDays(String userId,
-            List<String> groupIds, Date from, Date to, String language);
+    Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByDays(String userId,
+                                                         Date from, Date to, String language);
 
     /**
      * Gets the mapping '{@link Day} -> list of assigned personal and groups tasks' starting from specified day and for
@@ -136,8 +131,8 @@ public interface TaskServiceEntryPoint {
      * 
      * @return list of tasks per day for specified days (dates)
      */
-    Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDatePersonalAndGroupsTasksByDays(String userId,
-            List<String> groupIds, Date from, int nrOfDaysTotal, String language);
+    Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByDays(String userId,
+                                                        Date from, int nrOfDaysTotal, String language);
 
     /**
      * Gets the mapping '{@link Day} -> list of assigned groups tasks' from start day to end day (including).
@@ -149,7 +144,7 @@ public interface TaskServiceEntryPoint {
      * 
      * @return list of tasks per day for specified days (dates)
      */
-    Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByGroupsByDays(List<String> groupIds, Date from, Date to,
+    Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByGroupsByDays(String userId, List<String> groupIds, Date from, Date to,
             String language);
 
     /**
@@ -163,16 +158,15 @@ public interface TaskServiceEntryPoint {
      * 
      * @return list of tasks per day for specified days (dates)
      */
-    Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByGroupsByDays(List<String> groupIds, Date from,
+    Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByGroupsByDays(String userId, List<String> groupIds, Date from,
             int nrOfDaysTotal, String language);
+    
+    List<TaskSummary> getTasksOwnedByExpirationDateOptional(String userId, List<String> strStatuses, Date from,
+            String language);
 
     List<TaskSummary> getTasksOwned(String userId, String language);
 
     List<TaskSummary> getTasksOwnedByStatus(String userId, List<String> status, String language);
-
-    List<TaskSummary> getSubTasksAssignedAsPotentialOwner(long parentId, String userId, String language);
-
-    List<TaskSummary> getSubTasksByParent(long parentId);
 
     long addTask(String taskString, Map<String, Object> inputs, Map<String, Object> templateInputs);
 
@@ -229,10 +223,6 @@ public interface TaskServiceEntryPoint {
     int getCompletedTaskByUserId(String userId);
 
     int getPendingTaskByUserId(String userId);
-
-    List<TaskSummary> getTasksAssignedPersonalAndGroupTasks(String userId, String groupId, String language);
-
-    List<TaskSummary> getTasksAssignedPersonalAndGroupsTasks(String userId, List<String> groupIds, String language);
 
     IdentitySummary getOrganizationalEntityById(String entityId);
 

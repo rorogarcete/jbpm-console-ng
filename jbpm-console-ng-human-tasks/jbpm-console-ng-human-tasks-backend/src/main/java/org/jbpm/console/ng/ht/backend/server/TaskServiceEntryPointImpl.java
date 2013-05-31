@@ -41,6 +41,7 @@ import org.jbpm.services.task.utils.ContentMarshallerHelper;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.kie.api.task.TaskService;
 import org.kie.api.task.model.Content;
 import org.kie.api.task.model.Group;
 import org.kie.api.task.model.OrganizationalEntity;
@@ -66,46 +67,15 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
     }
 
     @Override
-    public List<TaskSummary> getTasksAssignedAsExcludedOwner(String userId, String language) {
-        return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedAsExcludedOwner(userId, language));
-    }
-
-    @Override
     public List<TaskSummary> getTasksAssignedAsPotentialOwner(String userId, String language) {
         return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedAsPotentialOwner(userId, language));
     }
-
-    @Override
-    public List<TaskSummary> getTasksAssignedAsPotentialOwner(String userId, List<String> groupIds, String language) {
-        return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedAsPotentialOwner(userId, groupIds, language));
-    }
-
-    @Override
-    public List<TaskSummary> getTasksAssignedAsPotentialOwner(String userId, List<String> groupIds, String language,
-            int firstResult, int maxResult) {
-        return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedAsPotentialOwner(userId, groupIds, language,
-                firstResult, maxResult));
-    }
-
-    @Override
-    public List<TaskSummary> getTasksAssignedAsRecipient(String userId, String language) {
-        return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedAsRecipient(userId, language));
-    }
-
-    @Override
-    public List<TaskSummary> getTasksAssignedAsTaskInitiator(String userId, String language) {
-        return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedAsTaskInitiator(userId, language));
-    }
-
-    @Override
-    public List<TaskSummary> getTasksAssignedAsTaskStakeholder(String userId, String language) {
-        return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedAsTaskStakeholder(userId, language));
-    }
-
+   
     @Override
     public List<TaskSummary> getTasksOwned(String userId, String language) {
         return TaskSummaryHelper.adaptCollection(taskService.getTasksOwned(userId, language));
     }
+    
 
     @Override
     public List<TaskSummary> getTasksOwnedByStatus(String userId, List<String> status, String language) {
@@ -115,91 +85,59 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
         }
         return TaskSummaryHelper.adaptCollection(taskService.getTasksOwnedByStatus(userId, statuses, language));
     }
-
     @Override
-    public List<TaskSummary> getSubTasksAssignedAsPotentialOwner(long parentId, String userId, String language) {
-        return TaskSummaryHelper.adaptCollection(taskService.getSubTasksAssignedAsPotentialOwner(parentId, userId, language));
-    }
-
-    @Override
-    public List<TaskSummary> getTasksAssignedByGroup(String groupId, String language) {
-        return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedByGroup(groupId, language));
-    }
-
-    @Override
-    public List<TaskSummary> getTasksAssignedByGroups(List<String> groupIds, String language) {
-
-        return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedByGroups(groupIds, language));
-    }
-
-    @Override
-    public List<TaskSummary> getTasksAssignedPersonalAndGroupTasks(String userId, String groupId, String language) {
-        List<TaskSummary> groupTasks = TaskSummaryHelper
-                .adaptCollection(taskService.getTasksAssignedByGroup(groupId, language));
-        List<TaskSummary> personalTasks = TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedAsPotentialOwner(
-                userId, language));
-        groupTasks.addAll(personalTasks);
-        return groupTasks;
-    }
-
-    @Override
-    public List<TaskSummary> getTasksAssignedPersonalAndGroupsTasks(String userId, List<String> groupIds, String language) {
+    public List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId, List<String> status, Date from, 
+            String language){ //@TODO: MUST ADD LANGUAGE FILTER
         List<Status> statuses = new ArrayList<Status>();
-        statuses.add(Status.Ready);
-        statuses.add(Status.InProgress);
-        statuses.add(Status.Reserved);
-        statuses.add(Status.Created);
-        List<TaskSummary> groupTasks = TaskSummaryHelper.adaptCollection(
-                taskService.getTasksAssignedAsPotentialOwnerByStatusByGroup(userId, groupIds, statuses, language));
-
-        return groupTasks;
-    }
-
-    @Override
-    public Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDatePersonalAndGroupsTasksByDays(String userId,
-            List<String> groupIds, Date from, Date to, String language) {
-        Map<Day, List<TaskSummary>> tasksAssignedByGroupsByDay = getTasksAssignedFromDateToDateByGroupsByDays(groupIds, from,
-                to, language);
-        Map<Day, List<TaskSummary>> tasksOwnedByDay = getTasksOwnedFromDateToDateByDays(userId, from, to, language);
-        for (Day day : tasksOwnedByDay.keySet()) {
-            tasksOwnedByDay.get(day).addAll(tasksAssignedByGroupsByDay.get(day));
+        for (String s : status) {
+                statuses.add(Status.valueOf(s));
         }
-        return tasksOwnedByDay;
+        return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedAsPotentialOwnerByExpirationDateOptional(
+                userId, statuses, from));
+    }
+    
+    @Override
+    public List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDate(String userId, List<String> status, Date from, 
+            String language){ //@TODO: MUST ADD LANGUAGE FILTER
+        List<Status> statuses = new ArrayList<Status>();
+        for (String s : status) {
+                statuses.add(Status.valueOf(s));
+        }
+        return TaskSummaryHelper.adaptCollection(taskService.getTasksAssignedAsPotentialOwnerByExpirationDate(
+                userId, statuses, from));
+    }
+    
+    
+    @Override
+    public List<TaskSummary> getTasksOwnedByExpirationDateOptional(String userId, List<String> status, Date from, 
+            String language){ //@TODO: MUST ADD LANGUAGE FILTER
+        List<Status> statuses = new ArrayList<Status>();
+        for (String s : status) {
+                statuses.add(Status.valueOf(s));
+        }
+        return TaskSummaryHelper.adaptCollection(taskService.getTasksOwnedByExpirationDateOptional(
+                userId, statuses, from));
+    }
+
+    public List<String> getPotentialOwnersForTaskId(Long taskId) {
+        return taskService.getPotentialOwnersForTaskId(taskId);
+    }
+    
+    
+    /** Day adaptors */
+    
+    @Override
+    public Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByDays(String userId,
+                                                         Date from, Date to, String language) {
+        return getTasksOwnedFromDateToDateByDays(userId, from, to, language);
     }
 
     @Override
-    public Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDatePersonalAndGroupsTasksByDays(String userId,
-            List<String> groupIds, Date from, int nrOfDaysTotal, String language) {
+    public Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByDays(String userId,
+                                                     Date from, int nrOfDaysTotal, String language) {
         long totalDays = (nrOfDaysTotal - 1) * (long)DateTimeConstants.MILLIS_PER_DAY;
-        return getTasksAssignedFromDateToDatePersonalAndGroupsTasksByDays(userId, groupIds, from, new Date(from.getTime()
+        return getTasksAssignedFromDateToDateByDays(userId, from, new Date(from.getTime()
                 + totalDays), language);
-    }
-
-    @Override
-    public Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByGroupsByDays(List<String> groupIds, Date from, Date to,
-            String language) {
-        Map<Day, List<TaskSummary>> tasksByDay = new LinkedHashMap<Day, List<TaskSummary>>();
-        List<TaskSummary> firstDayTasks = TaskSummaryHelper.adaptCollection(taskService
-                .getTasksAssignedByGroupsByExpirationDateOptional(groupIds, language, from));
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE dd");
-        tasksByDay.put(new Day(from, dayFormat.format(from)), firstDayTasks);
-        int nrOfDays = Days.daysBetween(new LocalDate(from), new LocalDate(to)).getDays();
-        for (int i = 1; i <= nrOfDays; i++) {
-            long plusDays = i * (long)DateTimeConstants.MILLIS_PER_DAY;
-            Date currentDay = new Date(from.getTime() + plusDays);
-            List<TaskSummary> dayTasks = TaskSummaryHelper.adaptCollection(taskService
-                    .getTasksAssignedByGroupsByExpirationDate(groupIds, language, currentDay));
-            tasksByDay.put(new Day(currentDay, dayFormat.format(currentDay)), dayTasks);
-        }
-        return tasksByDay;
-
-    }
-
-    @Override
-    public Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByGroupsByDays(List<String> groupIds, Date from,
-            int nrOfDaysTotal, String language) {
-        long plusDays = (nrOfDaysTotal - 1) * (long)DateTimeConstants.MILLIS_PER_DAY;
-        return getTasksAssignedFromDateToDateByGroupsByDays(groupIds, from, new Date(from.getTime() + plusDays), language);
     }
 
     @Override
@@ -224,7 +162,7 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
         }
         return tasksByDay;
     }
-
+    
     @Override
     public Map<Day, List<TaskSummary>> getTasksOwnedFromDateToDateByDays(String userId, List<String> strStatuses, Date from,
             int nrOfDaysTotal, String language) {
@@ -247,11 +185,90 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
         long plusDays = (nrOfDaysTotal - 1) * (long)DateTimeConstants.MILLIS_PER_DAY;
         return getTasksOwnedFromDateToDateByDays(userId, from, new Date(from.getTime() + plusDays), language);
     }
+    
+   
+    
+    /** Group Operations */
+    @Override
+    public List<TaskSummary> getTasksAssignedByGroup(String userId, String groupId, String language) {
+        List<org.kie.api.task.model.TaskSummary> tasksAssignedAsPotentialOwner = taskService.getTasksAssignedAsPotentialOwner(userId, language);
+        List<org.kie.api.task.model.TaskSummary> taskForGroup = new ArrayList<org.kie.api.task.model.TaskSummary>();
+        for(org.kie.api.task.model.TaskSummary ts : tasksAssignedAsPotentialOwner){
+            if(ts.getPotentialOwners().contains(groupId)){
+                taskForGroup.add(ts);
+            }
+        }
+        return TaskSummaryHelper.adaptCollection(taskForGroup);
+    }
 
     @Override
-    public List<TaskSummary> getSubTasksByParent(long parentId) {
-        return TaskSummaryHelper.adaptCollection(taskService.getSubTasksByParent(parentId));
+    public List<TaskSummary> getTasksAssignedByGroups(String userId, List<String> groupIds, String language) {
+        List<TaskSummary> groupTasks = new ArrayList<TaskSummary>();
+        for(String groupId : groupIds){
+            groupTasks.addAll(getTasksAssignedByGroup(userId, groupId, language));
+        }
+        return groupTasks;
     }
+    
+    @Override
+    public Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByGroupsByDays(String userId, List<String> groupIds, Date from,
+            int nrOfDaysTotal, String language) {
+        long plusDays = (nrOfDaysTotal - 1) * (long)DateTimeConstants.MILLIS_PER_DAY;
+        return getTasksAssignedFromDateToDateByGroupsByDays(userId, groupIds, from, new Date(from.getTime() + plusDays), language);
+    }
+    
+    @Override
+    public Map<Day, List<TaskSummary>> getTasksAssignedFromDateToDateByGroupsByDays(String userId, List<String> groupIds, Date from, Date to,
+            String language) {
+        
+        Map<Day, List<TaskSummary>> tasksByDay = new LinkedHashMap<Day, List<TaskSummary>>();
+        List<TaskSummary> firstDayGroupTasks = new ArrayList<TaskSummary>();
+        List<Status> statuses = new ArrayList<Status>();
+        statuses.add(Status.Ready);
+        for(String groupId : groupIds){
+            List<org.kie.api.task.model.TaskSummary> firstDayTasks = taskService
+                                                .getTasksAssignedAsPotentialOwnerByExpirationDateOptional(userId, statuses, from);
+            for(org.kie.api.task.model.TaskSummary ts : firstDayTasks){
+                ts.getPotentialOwners().addAll(getPotentialOwnersForTaskId(ts.getId()));
+            }
+            for(org.kie.api.task.model.TaskSummary ts : firstDayTasks){
+                if(ts.getPotentialOwners().contains(groupId)){
+                    firstDayGroupTasks.add(TaskSummaryHelper.adapt(ts));
+                }
+            }
+        }
+        
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE dd");
+        tasksByDay.put(new Day(from, dayFormat.format(from)), firstDayGroupTasks);
+        int nrOfDays = Days.daysBetween(new LocalDate(from), new LocalDate(to)).getDays();
+        for (int i = 1; i <= nrOfDays; i++) {
+            
+            long plusDays = i * (long)DateTimeConstants.MILLIS_PER_DAY;
+            Date currentDay = new Date(from.getTime() + plusDays);
+            for(String groupId : groupIds){
+                List<TaskSummary> currentDayGroupTasks = new ArrayList<TaskSummary>();
+                List<org.kie.api.task.model.TaskSummary> dayTasks = taskService
+                                                .getTasksAssignedAsPotentialOwnerByExpirationDate(userId, statuses, from);
+                for(org.kie.api.task.model.TaskSummary ts : dayTasks){
+                    ts.getPotentialOwners().addAll(getPotentialOwnersForTaskId(ts.getId()));
+                }
+                for(org.kie.api.task.model.TaskSummary ts : dayTasks){
+                    if(ts.getPotentialOwners().contains(groupId)){
+                        currentDayGroupTasks.add(TaskSummaryHelper.adapt(ts));
+                    }
+                }
+
+                tasksByDay.put(new Day(currentDay, dayFormat.format(currentDay)), currentDayGroupTasks);
+            
+            }
+            
+            
+        }
+        return tasksByDay;
+
+    }
+
+    
 
     @Override
     public long addTask(String taskString, Map<String, Object> inputs, Map<String, Object> templateVars) {
