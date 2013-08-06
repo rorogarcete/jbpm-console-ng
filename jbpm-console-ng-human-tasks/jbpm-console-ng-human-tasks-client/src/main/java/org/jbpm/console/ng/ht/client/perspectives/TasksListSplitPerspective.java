@@ -25,9 +25,13 @@ import org.uberfire.lifecycle.OnStartup;
 
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
+import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
+import org.uberfire.workbench.model.PanelDefinition;
 import org.uberfire.workbench.model.PanelType;
 import org.uberfire.workbench.model.PerspectiveDefinition;
+import org.uberfire.workbench.model.Position;
+import org.uberfire.workbench.model.impl.PanelDefinitionImpl;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 
@@ -44,17 +48,34 @@ public class TasksListSplitPerspective {
     @Inject
     private Event<TaskSearchEvent> searchEvents;
     
+    private String selectedTaskId = "";
+    
     @Perspective
     public PerspectiveDefinition getPerspective() {
-        final PerspectiveDefinition p = new PerspectiveDefinitionImpl( PanelType.ROOT_STATIC );
+        
+        
+        final PerspectiveDefinition p = new PerspectiveDefinitionImpl(PanelType.ROOT_LIST);
         p.setName( "Tasks" );
         p.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "Tasks List" ) ) );
+        
+        final PanelDefinition east = new PanelDefinitionImpl(PanelType.MULTI_LIST);
+        east.setWidth( 500 );
+        east.setMinWidth( 400 );
+        
+        DefaultPlaceRequest defaultPlaceRequest = new DefaultPlaceRequest( "Task Details Multi" );
+        defaultPlaceRequest.addParameter( "taskId", selectedTaskId );
+        
+        east.addPart( new PartDefinitionImpl( defaultPlaceRequest ) );
+        p.getRoot().insertChild( Position.EAST, east );
+        
+        
         p.setTransient( true );
         return p;
     }
     
     @OnStartup
-    public void init() {
+    public void onStartup(final PlaceRequest place) {
+        this.selectedTaskId = place.getParameter( "taskId", "" );
         contextualSearch.setSearchBehavior(new SearchBehavior() {
             @Override
             public void execute(String searchFilter) {

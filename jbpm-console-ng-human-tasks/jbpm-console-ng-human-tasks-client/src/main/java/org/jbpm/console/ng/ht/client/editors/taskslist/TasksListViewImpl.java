@@ -432,7 +432,7 @@ public class TasksListViewImpl extends Composite implements TasksListPresenter.T
                     int columnCount = myTaskListGrid.getColumnCount();
                     if(column != columnCount - 1){
                         TaskSummary task = event.getValue();
-                        PlaceRequest placeRequestImpl = new DefaultPlaceRequest("Task Details Popup");
+                        PlaceRequest placeRequestImpl = new DefaultPlaceRequest("Tasks With Details");
                         placeRequestImpl.addParameter("taskId", Long.toString(task.getId()));
                         placeManager.goTo(placeRequestImpl);
                     }

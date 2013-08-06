@@ -200,9 +200,6 @@ public class ProcessDefinitionListPresenter {
     
     private void makeMenuBar() {
         menus = MenuFactory
-//                .newTopLevelMenu( constants.Options())
-//                .withItems( null )
-//                .endMenu()
                 .newTopLevelMenu( constants.Refresh() )
                 .respondsWith( new Command() {
                     @Override
@@ -217,16 +214,6 @@ public class ProcessDefinitionListPresenter {
 
     }
     
-//    private List<MenuItem> getOptions(){
-//        
-//        
-//        MenuFactory.newSimpleItem( description ).respondsWith( new Command() {
-//                    @Override
-//                    public void execute() {
-//                        newResourcePresenter.show( activeHandler );
-//                    }
-//                } 
-//    
-//    }
+
      
 }

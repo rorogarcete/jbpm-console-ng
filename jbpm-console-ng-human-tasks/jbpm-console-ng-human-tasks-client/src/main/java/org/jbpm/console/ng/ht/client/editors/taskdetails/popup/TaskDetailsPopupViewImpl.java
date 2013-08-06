@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jbpm.console.ng.ht.client.editors.taskdetails;
+package org.jbpm.console.ng.ht.client.editors.taskdetails.popup;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;

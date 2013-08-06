@@ -72,20 +72,17 @@
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-ui</artifactId>
-      <version>${errai.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-data-binding</artifactId>
-      <version>${errai.version}</version>
     </dependency>
 
     <!-- Dashbuilder API -->
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-console-ng-dashboard-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
 

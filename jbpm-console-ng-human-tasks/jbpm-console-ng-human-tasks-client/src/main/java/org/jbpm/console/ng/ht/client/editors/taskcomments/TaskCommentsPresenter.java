@@ -44,7 +44,7 @@ import org.uberfire.lifecycle.OnOpen;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
-import org.uberfire.client.annotations.WorkbenchPopup;
+import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.PlaceRequest;
@@ -53,10 +53,10 @@ import org.uberfire.security.Identity;
 import org.uberfire.workbench.events.BeforeClosePlaceEvent;
 
 @Dependent
-@WorkbenchPopup(identifier = "Task Comments Popup")
-public class TaskCommentsPopupPresenter {
+@WorkbenchScreen(identifier = "Task Comments")
+public class TaskCommentsPresenter {
 
-    public interface TaskCommentsPopupView extends UberView<TaskCommentsPopupPresenter> {
+    public interface TaskCommentsView extends UberView<TaskCommentsPresenter> {
 
         Label getTaskIdText();
 
@@ -77,7 +77,7 @@ public class TaskCommentsPopupPresenter {
     private PlaceManager placeManager;
 
     @Inject
-    TaskCommentsPopupView view;
+    TaskCommentsView view;
 
     @Inject
     Identity identity;
@@ -104,7 +104,7 @@ public class TaskCommentsPopupPresenter {
     }
 
     @WorkbenchPartView
-    public UberView<TaskCommentsPopupPresenter> getView() {
+    public UberView<TaskCommentsPresenter> getView() {
         return view;
     }
 

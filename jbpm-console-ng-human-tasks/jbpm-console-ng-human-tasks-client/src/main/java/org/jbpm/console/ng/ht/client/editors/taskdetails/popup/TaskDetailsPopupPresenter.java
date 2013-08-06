@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jbpm.console.ng.ht.client.editors.taskdetails;
+package org.jbpm.console.ng.ht.client.editors.taskdetails.popup;
 
 import java.util.ArrayList;
 import java.util.Date;
