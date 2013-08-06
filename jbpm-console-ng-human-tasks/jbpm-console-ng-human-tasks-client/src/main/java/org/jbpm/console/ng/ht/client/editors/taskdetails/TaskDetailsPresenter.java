@@ -239,6 +239,7 @@ public class TaskDetailsPresenter {
     @OnOpen
     public void onOpen() {
         final long taskId = Long.parseLong( place.getParameter( "taskId", "0" ).toString() );
+        System.out.println("onOpen TaskDetailsPresenter - Selected TaskId: "+taskId);
         view.getTaskIdText().setText( String.valueOf( taskId ) );
         view.getNavBarUL().clear();
         NavLink detailsLink = new NavLink( constants.Details() );
