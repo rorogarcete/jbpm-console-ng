@@ -50,6 +50,8 @@ public class TasksListSplitPerspective {
     
     private String selectedTaskId = "";
     
+    private String selectedTaskName = "";
+    
     @Perspective
     public PerspectiveDefinition getPerspective() {
         
@@ -64,6 +66,7 @@ public class TasksListSplitPerspective {
         
         DefaultPlaceRequest defaultPlaceRequest = new DefaultPlaceRequest( "Task Details Multi" );
         defaultPlaceRequest.addParameter( "taskId", selectedTaskId );
+        defaultPlaceRequest.addParameter( "taskName", selectedTaskName );
         
         east.addPart( new PartDefinitionImpl( defaultPlaceRequest ) );
         p.getRoot().insertChild( Position.EAST, east );
@@ -75,7 +78,8 @@ public class TasksListSplitPerspective {
     
     @OnStartup
     public void onStartup(final PlaceRequest place) {
-        this.selectedTaskId = place.getParameter( "taskId", "" );
+        this.selectedTaskId = place.getParameter( "taskId", "0" );
+        this.selectedTaskName = place.getParameter( "taskName", "" );
         contextualSearch.setSearchBehavior(new SearchBehavior() {
             @Override
             public void execute(String searchFilter) {

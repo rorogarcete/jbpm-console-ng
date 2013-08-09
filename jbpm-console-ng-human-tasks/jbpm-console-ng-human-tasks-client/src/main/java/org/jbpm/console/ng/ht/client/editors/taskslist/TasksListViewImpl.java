@@ -434,6 +434,7 @@ public class TasksListViewImpl extends Composite implements TasksListPresenter.T
                         TaskSummary task = event.getValue();
                         PlaceRequest placeRequestImpl = new DefaultPlaceRequest("Tasks With Details");
                         placeRequestImpl.addParameter("taskId", Long.toString(task.getId()));
+                        placeRequestImpl.addParameter("taskName",task.getName());
                         placeManager.goTo(placeRequestImpl);
                     }
                  }

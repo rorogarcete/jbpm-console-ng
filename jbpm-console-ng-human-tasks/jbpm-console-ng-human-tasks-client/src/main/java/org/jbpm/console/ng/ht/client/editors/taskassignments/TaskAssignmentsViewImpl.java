@@ -44,14 +44,6 @@ public class TaskAssignmentsViewImpl extends Composite implements TaskAssignment
 
     @Inject
     @DataField
-    public Label taskIdText;
-
-    @Inject
-    @DataField
-    public Label taskNameText;
-
-    @Inject
-    @DataField
     public FlowPanel usersGroupsControlsPanel;
 
    
@@ -62,9 +54,7 @@ public class TaskAssignmentsViewImpl extends Composite implements TaskAssignment
     @Inject
     private PlaceManager placeManager;
 
-    @Inject
-    @DataField
-    public UnorderedList navBarUL;
+ 
 
     @Inject
     private Event<NotificationEvent> notification;
@@ -87,15 +77,6 @@ public class TaskAssignmentsViewImpl extends Composite implements TaskAssignment
     }
 
 
-    @Override
-    public Label getTaskIdText() {
-        return taskIdText;
-    }
-
-    @Override
-    public Label getTaskNameText() {
-        return taskNameText;
-    }
 
 
     @Override
@@ -103,10 +84,5 @@ public class TaskAssignmentsViewImpl extends Composite implements TaskAssignment
         notification.fire( new NotificationEvent( text ) );
     }
 
-   
-    @Override
-    public UnorderedList getNavBarUL() {
-        return navBarUL;
-    }
 
 }

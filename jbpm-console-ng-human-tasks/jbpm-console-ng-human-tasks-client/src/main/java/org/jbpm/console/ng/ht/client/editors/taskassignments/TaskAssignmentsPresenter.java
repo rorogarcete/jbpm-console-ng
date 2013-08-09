@@ -22,14 +22,9 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.NavLink;
-import com.github.gwtbootstrap.client.ui.base.UnorderedList;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 
 import java.util.Map;
 import org.jboss.errai.bus.client.api.RemoteCallback;
@@ -46,7 +41,6 @@ import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.security.Identity;
 import org.uberfire.workbench.events.BeforeClosePlaceEvent;
 
@@ -60,13 +54,9 @@ public class TaskAssignmentsPresenter {
 
         void displayNotification( String text );
 
-        Label getTaskIdText();
-
-        Label getTaskNameText();
-        
         FlowPanel getUsersGroupsControlsPanel();
         
-        UnorderedList getNavBarUL();
+        
     }
 
     @Inject
@@ -88,6 +78,10 @@ public class TaskAssignmentsPresenter {
     private Event<BeforeClosePlaceEvent> closePlaceEvent;
 
     private PlaceRequest place;
+    
+    private long currentTaskId = 0;
+    
+    
 
     @OnStartup
     public void onStartup( final PlaceRequest place ) {
@@ -108,18 +102,16 @@ public class TaskAssignmentsPresenter {
 
     
 
-    public void refreshTaskPotentialOwners( final long taskId ) {
+    public void refreshTaskPotentialOwners( ) {
         List<Long> taskIds = new ArrayList<Long>(1);
-        taskIds.add(taskId);
-        view.displayNotification("task ID before: "+taskId);
+        taskIds.add(currentTaskId);
         taskServices.call( new RemoteCallback<Map<Long, List<String>>>() {
             @Override
             public void callback( Map<Long, List<String>> ids ) {
-                view.displayNotification("task IDs after: "+ids);
                 if(ids.isEmpty()){
                     view.getUsersGroupsControlsPanel().add(new HTMLPanel("no potential owners"));
                 }else{
-                    view.getUsersGroupsControlsPanel().add(new HTMLPanel(""+ids.get(taskId).toString()));
+                    view.getUsersGroupsControlsPanel().add(new HTMLPanel(""+ids.get(currentTaskId).toString()));
                 }
             }
         } ).getPotentialOwnersForTaskIds(taskIds);
@@ -131,63 +123,9 @@ public class TaskAssignmentsPresenter {
     @OnOpen
     public void onOpen() {
         
-        final long taskId = Long.parseLong( place.getParameter( "taskId", "0" ).toString() );
-        System.out.println("onOpen TaskAssignmentsPresenter - Selected TaskId: "+taskId);
-        taskServices.call( new RemoteCallback<TaskSummary>() {
-
-            @Override
-            public void callback( TaskSummary details ) {
-                view.getTaskIdText().setText( String.valueOf( details.getId() ) );
-                view.getTaskNameText().setText( details.getName() );
-            }
-        } ).getTaskDetails( taskId );
-        
-        view.getTaskIdText().setText( String.valueOf( taskId ) );
-        view.getNavBarUL().clear();
-        NavLink assignmentsLink = new NavLink( constants.Assignments());
-        assignmentsLink.setStyleName( "active" );
-
-        NavLink workLink = new NavLink( constants.Work() );
-        workLink.addClickHandler( new ClickHandler() {
-
-            @Override
-            public void onClick( ClickEvent event ) {
-                close();
-                PlaceRequest placeRequestImpl = new DefaultPlaceRequest( "Form Display" );
-                placeRequestImpl.addParameter( "taskId", String.valueOf( taskId ) );
-                placeManager.goTo( placeRequestImpl );
-            }
-        } );
-        
-        NavLink detailsLink = new NavLink( constants.Details() );
-        detailsLink.addClickHandler( new ClickHandler() {
-
-            @Override
-            public void onClick( ClickEvent event ) {
-                close();
-                PlaceRequest placeRequestImpl = new DefaultPlaceRequest( "Task Details Popup" );
-                placeRequestImpl.addParameter( "taskId", String.valueOf( taskId ) );
-                placeManager.goTo( placeRequestImpl );
-            }
-        } );
-        
-        NavLink commentsLink = new NavLink( constants.Comments() );
-        commentsLink.addClickHandler( new ClickHandler() {
-
-            @Override
-            public void onClick( ClickEvent event ) {
-                close();
-                PlaceRequest placeRequestImpl = new DefaultPlaceRequest( "Task Comments Popup" );
-                placeRequestImpl.addParameter( "taskId", String.valueOf( taskId ) );
-                placeManager.goTo( placeRequestImpl );
-            }
-        } );
-
-        view.getNavBarUL().add( workLink );
-        view.getNavBarUL().add( detailsLink );
-        view.getNavBarUL().add( assignmentsLink );
-        view.getNavBarUL().add( commentsLink );
-        refreshTaskPotentialOwners( Long.parseLong( view.getTaskIdText().getText() ) );
+        this.currentTaskId = Long.parseLong( place.getParameter( "taskId", "0" ).toString() );
+  
+        refreshTaskPotentialOwners(  );
     }
 
     public void close() {

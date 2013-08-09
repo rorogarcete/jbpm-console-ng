@@ -16,11 +16,11 @@
 
 package org.jbpm.console.ng.ht.client.editors.taskdetailsmulti;
 
+import com.github.gwtbootstrap.client.ui.Heading;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -35,13 +35,11 @@ public class TaskDetailsMultiViewImpl extends Composite implements TaskDetailsMu
 
     private TaskDetailsMultiPresenter presenter;
 
-    @Inject
+    
     @DataField
-    public Label taskIdText;
+    public Heading taskIdAndName = new Heading(4);
 
-    @Inject
-    @DataField
-    public Label taskNameText;
+   
 
     
     @DataField
@@ -65,16 +63,14 @@ public class TaskDetailsMultiViewImpl extends Composite implements TaskDetailsMu
         notification.fire( new NotificationEvent( text ) );
     }
 
-    public Label getTaskIdText() {
-        return taskIdText;
-    }
-
-    public Label getTaskNameText() {
-        return taskNameText;
-    }
+    
 
     public HTMLPanel getContent() {
         return content;
+    }
+
+    public Heading getTaskIdAndName() {
+        return taskIdAndName;
     }
 
     

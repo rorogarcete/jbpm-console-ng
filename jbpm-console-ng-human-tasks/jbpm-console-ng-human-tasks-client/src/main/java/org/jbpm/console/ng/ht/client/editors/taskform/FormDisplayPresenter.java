@@ -16,6 +16,7 @@
 
 package org.jbpm.console.ng.ht.client.editors.taskform;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -107,7 +108,11 @@ public class FormDisplayPresenter {
 
     private String formCtx;
     
-    private String currentTitle;
+    private long currentTaskId = 0;
+    
+    private String currentProcessId;
+    
+    private String currentDomainId;
     
     @Inject
     private Event<NotificationEvent> notification;
@@ -116,25 +121,9 @@ public class FormDisplayPresenter {
 
         void displayNotification(String text);
 
-        long getTaskId();
-
-        void setTaskId(long taskId);
-
-        String getProcessId();
-
-        void setProcessId(String processId);
-
-        void setDomainId(String domainId);
-
-        String getDomainId();
-
-        Label getNameText();
-
-        Label getTaskIdText();
+        
 
         FlowPanel getOptionsDiv();
-
-        UnorderedList getNavBarUL();
 
         void loadContext(String ctxUID);
 
@@ -171,56 +160,15 @@ public class FormDisplayPresenter {
     
     
 
-    public void renderTaskForm(final long taskId) {
-        view.getNavBarUL().clear();
-
-        NavLink workLink = new NavLink(constants.Work());
-        workLink.setStyleName("active");
-
-        NavLink detailsLink = new NavLink(constants.Details());
-        detailsLink.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                if (view.isFormModeler()) view.submitChangeTab(ACTION_TASK_DETAILS);
-                else changeTab(ACTION_TASK_DETAILS);
-            }
-        });
-
-        NavLink commentsLink = new NavLink(constants.Comments());
-        commentsLink.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                if (view.isFormModeler()) view.submitChangeTab(ACTION_TASK_COMMENTS);
-                else changeTab(ACTION_TASK_COMMENTS);
-            }
-        });
+    public void renderTaskForm() {
         
-        NavLink assignmentsLink = new NavLink( constants.Assignments());
-        assignmentsLink.addClickHandler( new ClickHandler() {
-
-            @Override
-            public void onClick( ClickEvent event ) {
-                close();
-                PlaceRequest placeRequestImpl = new DefaultPlaceRequest( "Task Assignments Popup" );
-                placeRequestImpl.addParameter( "taskId", String.valueOf( taskId ) );
-                placeManager.goTo( placeRequestImpl );
-            }
-        } );
-
-
-        view.getNavBarUL().add(workLink);
-        view.getNavBarUL().add(detailsLink);
-        view.getNavBarUL().add(assignmentsLink);
-        view.getNavBarUL().add(commentsLink);
 
         formServices.call( new RemoteCallback<String>() {
             @Override
             public void callback( String form ) {
                 initTaskForm(form);
             }
-        } ).getFormDisplayTask(taskId);
+        } ).getFormDisplayTask(currentTaskId);
         
         
     }
@@ -238,21 +186,17 @@ public class FormDisplayPresenter {
             public void callback( final TaskSummary task ) {
                 view.getOptionsDiv().clear();
                 FlowPanel wrapperFlowPanel = new FlowPanel();
-                wrapperFlowPanel.setStyleName( "wrapper" );
+                wrapperFlowPanel.setStyleName( "wrapper form-actions" );
                 view.getOptionsDiv().add( wrapperFlowPanel );
-                view.getNameText().setText( task.getName() );
-                view.getTaskIdText().setText( String.valueOf( task.getId() ) );
                 if ( task.getStatus().equals( "Reserved" ) ) {
-                    FocusPanel startFlowPanel = new FocusPanel();
-                    startFlowPanel.setStyleName( "option-button start" );
-                    startFlowPanel.setTitle( "Start Task" );
+                    
                     ClickHandler click;
                     if (modelerForm)
                         click = new ClickHandler() {
                             @Override
                             public void onClick( ClickEvent event ) {
-                                if (view.isFormModeler()) startFormModelerTask(view.getTaskId(), identity.getName());
-                                else startTask(view.getTaskId(), identity.getName());
+                                if (view.isFormModeler()) startFormModelerTask(currentTaskId, identity.getName());
+                                else startTask(currentTaskId, identity.getName());
                             };
                         };
                     else
@@ -262,13 +206,13 @@ public class FormDisplayPresenter {
                                 $wnd.startTask($wnd.getFormValues($doc.getElementById("form-data")));
                             }-*/;
                         };
-                    startFlowPanel.addClickHandler(click);
-                    wrapperFlowPanel.add( startFlowPanel );
+                    Button startButton = new Button();
+                    startButton.setText(constants.Start());
+                    startButton.addClickHandler(click);
+                    wrapperFlowPanel.add( startButton );
                     view.getOptionsDiv().add( wrapperFlowPanel );
                 } else if ( task.getStatus().equals( "InProgress" ) ) {
-                    FocusPanel saveTaskFlowPanel = new FocusPanel();
-                    saveTaskFlowPanel.setStyleName( "option-button save" );
-                    saveTaskFlowPanel.setTitle( "Save Task" );
+                    
                     ClickHandler save, complete;
                     if (modelerForm) {
                         save = new ClickHandler() {
@@ -297,21 +241,28 @@ public class FormDisplayPresenter {
                             }-*/;
                         };
                     }
-                    saveTaskFlowPanel.addClickHandler(save);
-                    wrapperFlowPanel.add( saveTaskFlowPanel );
-                    FocusPanel completeTaskFlowPanel = new FocusPanel();
-                    completeTaskFlowPanel.setStyleName( "option-button complete" );
-                    completeTaskFlowPanel.setTitle( "Complete Task" );
-                    completeTaskFlowPanel.addClickHandler(complete);
-                    wrapperFlowPanel.add( completeTaskFlowPanel );
+                    
+                    Button saveButton = new Button();
+                    saveButton.setText(constants.Save());
+                    saveButton.addClickHandler(save);
+                    
+                    
+                    wrapperFlowPanel.add( saveButton );
+                    
+                    
+                    Button completeButton = new Button();
+                    completeButton.setText(constants.Complete());
+                    completeButton.addClickHandler(complete);
+                    
+                    wrapperFlowPanel.add( completeButton );
                     view.getOptionsDiv().add( wrapperFlowPanel );
                 }
             }
-        } ).getTaskDetails(view.getTaskId());
+        } ).getTaskDetails(currentTaskId);
     }
 
-    public void renderProcessForm(final String deploymentId, final String idProcess) {
-        view.getNavBarUL().clear();
+    public void renderProcessForm() {
+        
         formServices.call( new RemoteCallback<String>() {
             @Override
             public void callback( String form ) {
@@ -323,13 +274,9 @@ public class FormDisplayPresenter {
                 dataServices.call( new RemoteCallback<ProcessSummary>() {
                     @Override
                     public void callback( ProcessSummary summary ) {
-                        view.getTaskIdText().setText( "" );
-                        view.getNameText().setText( summary.getName() );
                         FocusPanel wrapperFlowPanel = new FocusPanel();
-                        wrapperFlowPanel.setStyleName( "wrapper" );
-                        FocusPanel startFlowPanel = new FocusPanel();
-                        startFlowPanel.setStyleName( "option-button start" );
-                        startFlowPanel.setTitle( "Start Process" );
+                        wrapperFlowPanel.setStyleName( "wrapper form-actions" );
+                       
                         ClickHandler start;
                         if (modelerForm)
                             start =  new ClickHandler() {
@@ -345,14 +292,17 @@ public class FormDisplayPresenter {
                                     $wnd.startProcess($wnd.getFormValues($doc.getElementById("form-data")));
                                 }-*/;
                             };
-                        startFlowPanel.addClickHandler(start);
-                        wrapperFlowPanel.add( startFlowPanel );
+                        Button startButton = new Button();
+                        startButton.setText(constants.Start());
+                        startButton.addClickHandler(start);
+                    
+                        wrapperFlowPanel.add( startButton );
                         view.getOptionsDiv().add( wrapperFlowPanel );
                     }
-                } ).getProcessDesc(idProcess);
+                } ).getProcessDesc(currentProcessId);
             }
-        }).getFormDisplayProcess(deploymentId, idProcess);
-        this.currentTitle = idProcess;
+        }).getFormDisplayProcess(currentDomainId, currentProcessId);
+        
     }
 
     public void onFormSubmitted(@Observes FormSubmittedEvent event) {
@@ -394,14 +344,14 @@ public class FormDisplayPresenter {
 
     }
 
-    public void saveTaskState(final Long taskId, final Map<String, String> values) {
+    public void saveTaskState(final Map<String, String> values) {
         taskServices.call(new RemoteCallback<Long>() {
             @Override
             public void callback(Long contentId) {
-                view.displayNotification("Task Id: " + taskId + " State was Saved! ContentId : " + contentId);
-                renderTaskForm(taskId);
+                view.displayNotification("Task Id: " + currentTaskId + " State was Saved! ContentId : " + contentId);
+                renderTaskForm();
             }
-        }).saveContent(taskId, values);
+        }).saveContent(currentTaskId, values);
     }
 
     public void saveTaskState(String values) {
@@ -410,7 +360,7 @@ public class FormDisplayPresenter {
             @Override
             public void callback(Long contentId) {
                 view.displayNotification("Task Id: " + params.get("taskId") + " State was Saved! ContentId : " + contentId);
-                renderTaskForm(Long.parseLong(params.get("taskId").toString()));
+                renderTaskForm();
             }
         }).saveContent(Long.parseLong(params.get("taskId").toString()), params);
 
@@ -430,7 +380,7 @@ public class FormDisplayPresenter {
             @Override
             public void callback(Void nothing) {
                 view.displayNotification("Task Id: " + taskId + " was started!");
-                renderTaskForm(taskId);
+                renderTaskForm();
             }
         }).start(taskId, identity);
     }
@@ -441,7 +391,7 @@ public class FormDisplayPresenter {
             @Override
             public void callback( Void nothing ) {
                 view.displayNotification( "Task Id: " + params.get( "taskId" ) + " was started!" );
-                renderTaskForm( Long.parseLong(params.get( "taskId" ).toString()));
+                renderTaskForm();
             }
         } ).start( Long.parseLong( params.get( "taskId" ).toString() ), identity.getName() );
 
@@ -451,10 +401,10 @@ public class FormDisplayPresenter {
         renderContextServices.call(new RemoteCallback<Long>() {
             @Override
             public void callback(Long contentId) {
-                view.displayNotification("Task Id: " + view.getTaskId() + " State was Saved! ContentId : " + contentId);
-                renderTaskForm(Long.valueOf(view.getTaskId()));
+                view.displayNotification("Task Id: " + currentTaskId + " State was Saved! ContentId : " + contentId);
+                renderTaskForm();
             }
-        }).saveTaskStateFromRenderContext(formCtx, Long.valueOf(view.getTaskId()));
+        }).saveTaskStateFromRenderContext(formCtx, currentTaskId);
     }
 
     protected void changeActionTab() {
@@ -463,16 +413,16 @@ public class FormDisplayPresenter {
             public void callback(Long contentId) {
                 close();
                 PlaceRequest placeRequestImpl = new DefaultPlaceRequest(view.getAction());
-                placeRequestImpl.addParameter("taskId", String.valueOf(view.getTaskId()));
+                placeRequestImpl.addParameter("taskId", String.valueOf(currentTaskId));
                 placeManager.goTo(placeRequestImpl);
             }
-        }).saveTaskStateFromRenderContext(formCtx, Long.valueOf(view.getTaskId()), true);
+        }).saveTaskStateFromRenderContext(formCtx, currentTaskId, true);
     }
 
     protected void changeTab(String tabId) {
         close();
         PlaceRequest placeRequestImpl = new DefaultPlaceRequest(tabId);
-        placeRequestImpl.addParameter("taskId", String.valueOf(view.getTaskId()));
+        placeRequestImpl.addParameter("taskId", String.valueOf(currentTaskId));
         placeManager.goTo(placeRequestImpl);
     }
 
@@ -480,10 +430,10 @@ public class FormDisplayPresenter {
         renderContextServices.call(new RemoteCallback<Void>() {
             @Override
             public void callback(Void nothin) {
-                view.displayNotification("Form for Task Id: " + view.getTaskId() + " was completed!");
+                view.displayNotification("Form for Task Id: " + currentTaskId + " was completed!");
                 close();
             }
-        }).completeTaskFromContext(formCtx, Long.valueOf(view.getTaskId()), identity.getName());
+        }).completeTaskFromContext(formCtx, currentTaskId, identity.getName());
     }
 
     protected void startProcess() {
@@ -495,11 +445,11 @@ public class FormDisplayPresenter {
                 close();
                 PlaceRequest placeRequestImpl = new DefaultPlaceRequest("Process Instance Details");
                 placeRequestImpl.addParameter("processInstanceId", processInstanceId.toString());
-                placeRequestImpl.addParameter("processDefId", view.getProcessId());
-                placeRequestImpl.addParameter("domainId", view.getDomainId());
+                placeRequestImpl.addParameter("processDefId", currentProcessId);
+                placeRequestImpl.addParameter("domainId", currentDomainId);
                 placeManager.goTo(placeRequestImpl);
             }
-        }).startProcessFromRenderContext(formCtx, view.getDomainId(), view.getProcessId());
+        }).startProcessFromRenderContext(formCtx, currentDomainId, currentProcessId);
     }
 
     public void startProcess(String values) {
@@ -514,10 +464,10 @@ public class FormDisplayPresenter {
                 PlaceRequest placeRequestImpl = new DefaultPlaceRequest("Process Instance Details");
                 placeRequestImpl.addParameter("processInstanceId", processInstanceId.toString());
                 placeRequestImpl.addParameter("processDefId", params.get("processId").toString());
-                placeRequestImpl.addParameter("domainId", view.getDomainId());
+                placeRequestImpl.addParameter("domainId", currentDomainId);
                 placeManager.goTo(placeRequestImpl);
             }
-        }).startProcess(view.getDomainId(), params.get("processId").toString(), params);
+        }).startProcess(currentDomainId, params.get("processId").toString(), params);
 
     }
 
@@ -574,17 +524,15 @@ public class FormDisplayPresenter {
 
     @OnOpen
     public void onOpen() {
-        long taskId = Long.parseLong(place.getParameter("taskId", "-1").toString());
-        System.out.println("onOpen Form Display - Selected TaskId: "+taskId);
-        String processId = place.getParameter("processId", "none").toString();
-        String domainId = place.getParameter("domainId", "none").toString();
-        if (taskId != -1) {
-            view.setTaskId(taskId);
-            renderTaskForm(taskId);
-        } else if (!processId.equals("none")) {
-            view.setProcessId(processId);
-            view.setDomainId(domainId);
-            renderProcessForm(domainId, processId);
+        currentTaskId = Long.parseLong(place.getParameter("taskId", "-1").toString());
+        currentProcessId = place.getParameter("processId", "none").toString();
+        currentDomainId = place.getParameter("domainId", "none").toString();
+        if (currentTaskId != -1) {
+            
+            renderTaskForm();
+        } else if (!currentProcessId.equals("none")) {
+           
+            renderProcessForm();
         }
     }
 

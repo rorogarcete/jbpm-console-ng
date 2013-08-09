@@ -66,10 +66,6 @@ public class TaskDetailsPresenter {
 
         void displayNotification( String text );
 
-        Label getTaskIdText();
-
-        Label getTaskNameText();
-
         TextArea getTaskDescriptionTextArea();
 
         ListBox getTaskPriorityListBox();
@@ -93,7 +89,6 @@ public class TaskDetailsPresenter {
 
         Button getpIDetailsButton();
 
-        UnorderedList getNavBarUL();
     }
 
     @Inject
@@ -118,6 +113,10 @@ public class TaskDetailsPresenter {
     private Event<UserTaskEvent> userTaskChanges;
 
     private PlaceRequest place;
+    
+    private long currentTaskId = 0;
+    
+    private String currentTaskName = "";
 
     @OnStartup
     public void onStartup( final PlaceRequest place ) {
@@ -148,28 +147,27 @@ public class TaskDetailsPresenter {
 
     }
 
-    public void updateTask( final long taskId,
-                            final String taskName,
+    public void updateTask( 
                             final String taskDescription,
                             final String userId,
                             // final String subTaskStrategy,
                             final Date dueDate,
                             final int priority ) {
 
-        if ( taskId > 0 ) {
+        if ( currentTaskId > 0 ) {
             List<String> descriptions = new ArrayList<String>();
             descriptions.add( taskDescription );
 
             List<String> names = new ArrayList<String>();
-            names.add( taskName );
+            names.add( currentTaskName );
 
             taskServices.call( new RemoteCallback<Void>() {
                 @Override
                 public void callback( Void nothing ) {
-                    view.displayNotification( "Task Details Updated for Task id = " + taskId + ")" );
+                    view.displayNotification( "Task Details Updated for Task id = " + currentTaskId + ")" );
                     userTaskChanges.fire( new UserTaskEvent( identity.getName() ) );
                 }
-            } ).updateSimpleTaskDetails( taskId, names, Integer.valueOf( priority ), descriptions,
+            } ).updateSimpleTaskDetails( currentTaskId, names, Integer.valueOf( priority ), descriptions,
                                          // subTaskStrategy,
                                          dueDate );
 
@@ -177,7 +175,7 @@ public class TaskDetailsPresenter {
 
     }
 
-    public void refreshTask( long taskId ) {
+    public void refreshTask( ) {
 
         taskServices.call( new RemoteCallback<TaskSummary>() {
             @Override
@@ -191,8 +189,6 @@ public class TaskDetailsPresenter {
                     view.getProcessInstanceIdText().setEnabled( false );
                 }
 
-                view.getTaskIdText().setText( String.valueOf( details.getId() ) );
-                view.getTaskNameText().setText( details.getName() );
                 view.getTaskDescriptionTextArea().setText( details.getDescription() );
                 view.getDueDate().setValue( details.getExpirationTime() );
                 view.getUserText().setText( details.getActualOwner() );
@@ -228,64 +224,20 @@ public class TaskDetailsPresenter {
                 }
 
             }
-        } ).getTaskDetails( taskId );
+        } ).getTaskDetails( currentTaskId );
 
     }
 
     public void onTaskSelected( @Observes TaskSelectionEvent taskSelection ) {
-        refreshTask( taskSelection.getTaskId() );
+        this.currentTaskId = taskSelection.getTaskId();
+        refreshTask( );
     }
 
     @OnOpen
     public void onOpen() {
-        final long taskId = Long.parseLong( place.getParameter( "taskId", "0" ).toString() );
-        System.out.println("onOpen TaskDetailsPresenter - Selected TaskId: "+taskId);
-        view.getTaskIdText().setText( String.valueOf( taskId ) );
-        view.getNavBarUL().clear();
-        NavLink detailsLink = new NavLink( constants.Details() );
-        detailsLink.setStyleName( "active" );
-
-        NavLink workLink = new NavLink( constants.Work() );
-
-        workLink.addClickHandler( new ClickHandler() {
-
-            @Override
-            public void onClick( ClickEvent event ) {
-                close();
-                PlaceRequest placeRequestImpl = new DefaultPlaceRequest("Form Display");
-                placeRequestImpl.addParameter("taskId", String.valueOf(taskId));
-                placeManager.goTo(placeRequestImpl);
-            }
-        } );
-        NavLink commentsLink = new NavLink( constants.Comments() );
-        commentsLink.addClickHandler( new ClickHandler() {
-
-            @Override
-            public void onClick( ClickEvent event ) {
-                close();
-                PlaceRequest placeRequestImpl = new DefaultPlaceRequest( "Task Comments Popup" );
-                placeRequestImpl.addParameter( "taskId", String.valueOf( taskId ) );
-                placeManager.goTo( placeRequestImpl );
-            }
-        } );
-        
-        NavLink assignmentsLink = new NavLink( constants.Assignments());
-        assignmentsLink.addClickHandler( new ClickHandler() {
-
-            @Override
-            public void onClick( ClickEvent event ) {
-                close();
-                PlaceRequest placeRequestImpl = new DefaultPlaceRequest( "Task Assignments Popup" );
-                placeRequestImpl.addParameter( "taskId", String.valueOf( taskId ) );
-                placeManager.goTo( placeRequestImpl );
-            }
-        } );
-
-        view.getNavBarUL().add( workLink );
-        view.getNavBarUL().add( detailsLink );
-        view.getNavBarUL().add( assignmentsLink );
-        view.getNavBarUL().add( commentsLink );
-        refreshTask( Long.parseLong( view.getTaskIdText().getText() ) );
+        this.currentTaskId = Long.parseLong( place.getParameter( "taskId", "0" ).toString() );
+        this.currentTaskName =  place.getParameter( "taskName", "" ) ;
+        refreshTask( );
     }
 
     public void close() {

@@ -17,6 +17,7 @@
 package org.jbpm.console.ng.ht.client.editors.taskcomments;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.ControlLabel;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -53,11 +54,7 @@ public class TaskCommentsViewImpl extends Composite implements TaskCommentsPrese
 
     @Inject
     @DataField
-    public Label taskIdText;
-
-    @Inject
-    @DataField
-    public Label taskNameText;
+    public ControlLabel commentsAccordionLabel;
 
     @Inject
     @DataField
@@ -71,9 +68,7 @@ public class TaskCommentsViewImpl extends Composite implements TaskCommentsPrese
     @DataField
     public Button addCommentButton;
 
-    @Inject
-    @DataField
-    public UnorderedList navBarUL;
+   
 
     @Inject
     @DataField
@@ -89,21 +84,6 @@ public class TaskCommentsViewImpl extends Composite implements TaskCommentsPrese
 
     private ListHandler<CommentSummary> sortHandler;
 
-
-    @Override
-    public Label getTaskIdText() {
-        return taskIdText;
-    }
-
-    @Override
-    public Label getTaskNameText() {
-        return taskNameText;
-    }
-
-    @Override
-    public UnorderedList getNavBarUL() {
-        return navBarUL;
-    }
 
     @Override
     public TextArea getNewTaskCommentTextArea() {
@@ -132,6 +112,8 @@ public class TaskCommentsViewImpl extends Composite implements TaskCommentsPrese
         listContainer.add(pager);
         commentsListGrid.setHeight("100px");
         
+        commentsAccordionLabel.add(new HTMLPanel( constants.Add_Comment()) );
+        
         commentsListGrid.setEmptyTableWidget(new HTMLPanel(constants.No_Comments_For_This_Task()));
         // Attach a column sort handler to the ListDataProvider to sort the list.
         sortHandler = new ListHandler<CommentSummary>(presenter.getDataProvider().getList());
@@ -149,7 +131,7 @@ public class TaskCommentsViewImpl extends Composite implements TaskCommentsPrese
 
     @EventHandler("addCommentButton")
     public void addCommentButton(ClickEvent e) {
-        presenter.addTaskComment(Long.parseLong(taskIdText.getText()), newTaskCommentTextArea.getText(), new Date());
+        presenter.addTaskComment(newTaskCommentTextArea.getText(), new Date());
     }
 
     private void initTableColumns() {

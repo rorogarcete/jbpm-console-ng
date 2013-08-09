@@ -52,23 +52,8 @@ public class FormDisplayViewImpl extends Composite implements FormDisplayPresent
 
     @Inject
     @DataField
-    public Label nameText;
-
-    @Inject
-    @DataField
-    public Label taskIdText;
-
-    @Inject
-    @DataField
     public FlowPanel optionsDiv;
 
-    @Inject
-    @DataField
-    public UnorderedList navBarUL;
-
-    private long taskId;
-    private String domainId;
-    private String processId;
     private String action;
     private boolean formModeler;
 
@@ -89,55 +74,11 @@ public class FormDisplayViewImpl extends Composite implements FormDisplayPresent
     }
 
     @Override
-    public long getTaskId() {
-        return taskId;
-    }
-
-    @Override
-    public void setTaskId(long taskId) {
-        this.taskId = taskId;
-    }
-
-    @Override
-    public String getProcessId() {
-        return processId;
-    }
-
-    @Override
-    public void setProcessId(String processId) {
-        this.processId = processId;
-    }
-
-    @Override
-    public Label getNameText() {
-        return nameText;
-    }
-
-    @Override
-    public Label getTaskIdText() {
-        return taskIdText;
-    }
-
-    @Override
     public FlowPanel getOptionsDiv() {
         return optionsDiv;
     }
 
-    @Override
-    public UnorderedList getNavBarUL() {
-        return navBarUL;
-    }
-
-    @Override
-    public String getDomainId() {
-        return domainId;
-    }
-
-    @Override
-    public void setDomainId(String domainId) {
-        this.domainId = domainId;
-    }
-
+   
     @Override
     public void loadContext(String ctxUID) {
         if (ctxUID != null) {

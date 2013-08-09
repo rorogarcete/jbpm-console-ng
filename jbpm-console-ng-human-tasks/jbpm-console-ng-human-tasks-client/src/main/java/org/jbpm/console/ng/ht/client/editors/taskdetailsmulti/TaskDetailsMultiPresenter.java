@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.ht.client.editors.taskdetailsmulti;
 
+import com.github.gwtbootstrap.client.ui.Heading;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
@@ -54,15 +55,16 @@ public class TaskDetailsMultiPresenter {
     private ActivityManager activityManager;
     @Inject
     private PlaceManager placeManager;
+    
     private long selectedTaskId = 0;
+    
+    private String selectedTaskName = "";
 
     public interface TaskDetailsMultiView extends UberView<TaskDetailsMultiPresenter> {
 
         void displayNotification(String text);
 
-        Label getTaskIdText();
-
-        Label getTaskNameText();
+        Heading getTaskIdAndName();
 
         HTMLPanel getContent();
     }
@@ -96,7 +98,10 @@ public class TaskDetailsMultiPresenter {
     @OnOpen
     public void onOpen() {
         selectedTaskId = Long.parseLong(place.getParameter("taskId", "0").toString());
-        view.getTaskIdText().setText(String.valueOf(selectedTaskId));
+        selectedTaskName = place.getParameter("taskName", "");
+        
+        view.getTaskIdAndName().setText(String.valueOf(selectedTaskId) + " - "+selectedTaskName);
+        
         view.getContent().clear();
         
         String placeToGo = "Task Details";
@@ -104,6 +109,7 @@ public class TaskDetailsMultiPresenter {
         DefaultPlaceRequest defaultPlaceRequest = new DefaultPlaceRequest(placeToGo);
         //Set Parameters here: 
         defaultPlaceRequest.addParameter("taskId", String.valueOf(selectedTaskId));
+        defaultPlaceRequest.addParameter("taskName", selectedTaskName);
 
         Set<Activity> activities = activityManager.getActivities(defaultPlaceRequest);
         AbstractWorkbenchScreenActivity activity = ((AbstractWorkbenchScreenActivity) activities.iterator().next());
@@ -137,6 +143,7 @@ public class TaskDetailsMultiPresenter {
                 //Set Parameters here: 
 
                 defaultPlaceRequest.addParameter("taskId", String.valueOf(selectedTaskId));
+                defaultPlaceRequest.addParameter("taskName", selectedTaskName);
                 AbstractWorkbenchScreenActivity activity = null;
                 if(activitiesMap.get(placeToGo) == null){
                     Set<Activity> activities = activityManager.getActivities(defaultPlaceRequest);
@@ -165,6 +172,7 @@ public class TaskDetailsMultiPresenter {
                 DefaultPlaceRequest defaultPlaceRequest = new DefaultPlaceRequest(placeToGo);
                 //Set Parameters here: 
                 defaultPlaceRequest.addParameter("taskId", String.valueOf(selectedTaskId));
+                defaultPlaceRequest.addParameter("taskName", selectedTaskName);
 
                 AbstractWorkbenchScreenActivity activity = null;
                 if(activitiesMap.get(placeToGo) == null){
@@ -193,6 +201,7 @@ public class TaskDetailsMultiPresenter {
                 DefaultPlaceRequest defaultPlaceRequest = new DefaultPlaceRequest(placeToGo);
                 //Set Parameters here: 
                 defaultPlaceRequest.addParameter("taskId", String.valueOf(selectedTaskId));
+                defaultPlaceRequest.addParameter("taskName", selectedTaskName);
 
                 AbstractWorkbenchScreenActivity activity = null;
                 if(activitiesMap.get(placeToGo) == null){
@@ -221,6 +230,7 @@ public class TaskDetailsMultiPresenter {
                 DefaultPlaceRequest defaultPlaceRequest = new DefaultPlaceRequest(placeToGo);
                 //Set Parameters here: 
                 defaultPlaceRequest.addParameter("taskId", String.valueOf(selectedTaskId));
+                defaultPlaceRequest.addParameter("taskName", selectedTaskName);
 
                 AbstractWorkbenchScreenActivity activity = null;
                 if(activitiesMap.get(placeToGo) == null){
