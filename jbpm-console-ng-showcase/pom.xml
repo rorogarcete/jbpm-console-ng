@@ -428,7 +428,16 @@
       <groupId>org.guvnor</groupId>
       <artifactId>guvnor-project-builder</artifactId>
     </dependency>
-
+	<dependency>
+        <groupId>org.guvnor</groupId>
+        <artifactId>guvnor-usage-data-client</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.guvnor</groupId>
+        <artifactId>guvnor-usage-data-backend</artifactId>
+        <version>${project.version}</version>
+    </dependency>
     <!-- Kie Workbench -->
     <dependency>
       <groupId>org.kie.workbench.screens</groupId>
@@ -595,6 +604,8 @@
             <compileSourcesArtifact>org.guvnor:guvnor-workingset-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.guvnor:guvnor-services-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.guvnor:guvnor-project-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.jbpm:jbpm-console-ng-usage-data-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.jbpm:jbpm-console-ng-usage-data-client</compileSourcesArtifact>
 
             <!-- Common dependencies -->
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-project-editor-api</compileSourcesArtifact>

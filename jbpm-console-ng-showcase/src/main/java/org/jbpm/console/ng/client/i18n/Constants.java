@@ -70,6 +70,10 @@ public interface Constants extends Messages {
     String Users();
 
     String Jobs();
+    
+    String Usage_Data();
+    
+    String Usage_Data_Collector();
 
 
 }
