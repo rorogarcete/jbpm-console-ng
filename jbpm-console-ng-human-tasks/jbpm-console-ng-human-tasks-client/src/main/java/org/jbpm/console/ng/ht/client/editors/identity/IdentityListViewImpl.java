@@ -26,7 +26,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.jbpm.console.ng.ht.client.editors.identity.IdentityListPresenter.IdentityType;
-import org.jbpm.console.ng.ht.client.util.ResizableHeader;
+import org.jbpm.console.ng.gc.client.util.ResizableHeader;
 import org.jbpm.console.ng.ht.model.Group;
 import org.jbpm.console.ng.ht.model.IdentitySummary;
 import org.jbpm.console.ng.ht.model.TypeRole;

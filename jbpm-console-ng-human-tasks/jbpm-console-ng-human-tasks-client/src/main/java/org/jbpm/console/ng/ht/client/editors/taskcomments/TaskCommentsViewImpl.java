@@ -55,7 +55,7 @@ import java.util.List;
 import javax.enterprise.event.Event;
 import org.jbpm.console.ng.ht.client.i18n.Constants;
 import org.jbpm.console.ng.ht.client.resources.HumanTasksImages;
-import org.jbpm.console.ng.ht.client.util.ResizableHeader;
+import org.jbpm.console.ng.gc.client.util.ResizableHeader;
 import org.jbpm.console.ng.pr.model.ProcessInstanceSummary;
 import org.uberfire.workbench.events.NotificationEvent;
 

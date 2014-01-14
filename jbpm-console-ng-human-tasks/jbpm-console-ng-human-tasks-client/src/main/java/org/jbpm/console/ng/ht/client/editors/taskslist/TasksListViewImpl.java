@@ -27,10 +27,10 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.jbpm.console.ng.ht.client.util.DataGridUtils;
-import org.jbpm.console.ng.ht.client.util.DataGridUtils.ActionsDataGrid;
+import org.jbpm.console.ng.gc.client.util.DataGridUtils;
+import org.jbpm.console.ng.gc.client.util.DataGridUtils.ActionsDataGrid;
 import org.jbpm.console.ng.ht.client.util.LiCalendarPicker;
-import org.jbpm.console.ng.ht.client.util.ResizableHeader;
+import org.jbpm.console.ng.gc.client.util.ResizableHeader;
 import org.jbpm.console.ng.ht.client.util.TaskUtils.TaskType;
 import org.jbpm.console.ng.ht.client.util.TaskUtils.TaskView;
 import org.jbpm.console.ng.ht.model.CalendarListContainer;

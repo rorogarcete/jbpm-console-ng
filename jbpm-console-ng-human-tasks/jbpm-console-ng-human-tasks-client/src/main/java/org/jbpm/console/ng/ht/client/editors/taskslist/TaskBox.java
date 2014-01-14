@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.enterprise.event.Event;
 
-import org.jbpm.console.ng.ht.client.util.DataGridUtils;
+import org.jbpm.console.ng.gc.client.util.DataGridUtils;
 import org.jbpm.console.ng.ht.model.events.TaskCalendarEvent;
 import org.jbpm.console.ng.ht.model.events.TaskSelectionEvent;
 import org.uberfire.client.mvp.PlaceManager;

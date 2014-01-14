@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jbpm.console.ng.ht.client.util;
+package org.jbpm.console.ng.gc.client.util;
 
 import org.jbpm.console.ng.ht.model.TaskSummary;
 
@@ -35,10 +35,7 @@ public class DataGridUtils {
     public static int pageSize = 10;
 
     public static enum StatusTaskDataGrid {
-        COMPLETED("Completed"), 
-        INPROGRESS("InProgress"), 
-        RESERVED("Reserved"), 
-        READY("Ready");
+        COMPLETED("Completed"), INPROGRESS("InProgress"), RESERVED("Reserved"), READY("Ready");
 
         private String description;
 
@@ -53,11 +50,7 @@ public class DataGridUtils {
     }
 
     public static enum ActionsDataGrid {
-        CLAIM("Claim"), 
-        RELEASE("Release"), 
-        START("Start"), 
-        COMPLETE("Complete"), 
-        DETAILS("Details");
+        CLAIM("Claim"), RELEASE("Release"), START("Start"), COMPLETE("Complete"), DETAILS("Details");
 
         private String description;
 
@@ -72,13 +65,7 @@ public class DataGridUtils {
     }
 
     public enum ColumnsTask {
-        ID(true, 0), 
-        TASK(false, 1), 
-        PRIORITY(true, 2), 
-        STATUS(true, 3), 
-        CREATED_ON(true, 4), 
-        DUE_ON(true, 5), 
-        ACTIONS(false, 6);
+        ID(true, 0), TASK(false, 1), PRIORITY(true, 2), STATUS(true, 3), CREATED_ON(true, 4), DUE_ON(true, 5), ACTIONS(false, 6);
 
         ColumnsTask(boolean responsive, int column) {
             this.responsive = responsive;
@@ -97,14 +84,14 @@ public class DataGridUtils {
         }
 
     }
-    
+
     public static void paintRowSelected(DataGrid<TaskSummary> myTaskListGrid, Long idTask) {
         for (int i = 0; i < getCurrentRowCount(myTaskListGrid); i++) {
             for (int j = 0; j < myTaskListGrid.getColumnCount(); j++) {
                 if (!Long.valueOf(myTaskListGrid.getRowElement(i).getCells().getItem(0).getInnerText()).equals(idTask)) {
                     myTaskListGrid.getRowElement(i).getCells().getItem(j).getStyle().clearBackgroundColor();
                 } else {
-                	paint(myTaskListGrid, i, j, BG_ROW_SELECTED);
+                    paint(myTaskListGrid, i, j, BG_ROW_SELECTED);
                 }
             }
         }
@@ -128,20 +115,20 @@ public class DataGridUtils {
                     && !myTaskListGrid.getRowElement(i).getCells().getItem(0).getStyle().getBackgroundColor()
                             .equals(BG_ROW_SELECTED)) {
                 for (int j = 0; j < myTaskListGrid.getColumnCount(); j++) {
-                	paint(myTaskListGrid, i, j, BG_ROW_COMPLETED);
+                    paint(myTaskListGrid, i, j, BG_ROW_COMPLETED);
                 }
             }
-            if(DataGridUtils.currentIdSelected != null){
+            if (DataGridUtils.currentIdSelected != null) {
                 paintRowById(myTaskListGrid, DataGridUtils.currentIdSelected);
             }
         }
-        
+
     }
-    
-    public static void paint(DataGrid<TaskSummary> myTaskListGrid, int row, int column, String color){
+
+    public static void paint(DataGrid<TaskSummary> myTaskListGrid, int row, int column, String color) {
         myTaskListGrid.getRowElement(row).getCells().getItem(column).getStyle().setBackgroundColor(color);
     }
-    
+
     public static void paintRowById(DataGrid<TaskSummary> myTaskListGrid, Long idTask) {
         for (int i = 0; i < getCurrentRowCount(myTaskListGrid); i++) {
             for (int j = 0; j < myTaskListGrid.getColumnCount(); j++) {
@@ -188,8 +175,7 @@ public class DataGridUtils {
         return rowCount;
     }
 
-    public static void setTooltip(DataGrid<TaskSummary> myTaskListGrid, long idCurrentRow, int column,
-            String description) {
+    public static void setTooltip(DataGrid<TaskSummary> myTaskListGrid, long idCurrentRow, int column, String description) {
         for (int i = 0; i < getCurrentRowCount(myTaskListGrid); i++) {
             if (myTaskListGrid.getRowElement(i).getCells().getItem(1).getInnerText().equals(String.valueOf(idCurrentRow))) {
                 myTaskListGrid.getRowElement(i).getCells().getItem(column).setTitle(description);
