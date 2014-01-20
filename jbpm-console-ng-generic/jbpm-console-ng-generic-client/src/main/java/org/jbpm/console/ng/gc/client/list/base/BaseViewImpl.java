@@ -16,21 +16,23 @@
 
 package org.jbpm.console.ng.gc.client.list.base;
 
-import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jbpm.console.ng.gc.client.util.DataGridUtils;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import com.github.gwtbootstrap.client.ui.DataGrid;
 import com.github.gwtbootstrap.client.ui.SimplePager;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.view.client.ListDataProvider;
 
-@Dependent
 public abstract class BaseViewImpl<T, P> extends ActionsCellTaskList implements GridViewContainer, ButtonsPanelContainer,
         PagerContainer, RequiresResize {
 
@@ -54,6 +56,40 @@ public abstract class BaseViewImpl<T, P> extends ActionsCellTaskList implements 
 
     @Inject
     protected PlaceManager placeManager;
+    
+    protected void initializeComponents(P presenter, ListDataProvider<T> dataProvider){
+        this.presenter = presenter;
+        this.initializeGridView(dataProvider);
+        this.initializeLeftButtons();
+        this.initializeRightButtons();
+    }
+    
+    protected void initializeGridView(ListDataProvider<T> dataProvider){
+        viewContainer.clear();
+
+        myListGrid = new DataGrid<T>();
+        myListGrid.setStyleName(GRID_STYLE);
+
+        pager.setDisplay(myListGrid);
+        pager.setPageSize(DataGridUtils.pageSize);
+
+        viewContainer.add(myListGrid);
+        myListGrid.setEmptyTableWidget(new HTMLPanel(constants.No_Tasks_Found()));
+
+        sortHandler = new ColumnSortEvent.ListHandler<T>(dataProvider.getList());
+
+        myListGrid.getColumnSortList().setLimit(1);
+
+        this.setSelectionModel();
+        this.setGridEvents();
+        this.initGridColumns();
+
+        myListGrid.addColumnSortHandler(sortHandler);
+
+        dataProvider.addDataDisplay(myListGrid);
+
+        this.refreshItems();
+    }
 
     protected void displayNotification(String text) {
         notification.fire(new NotificationEvent(text));

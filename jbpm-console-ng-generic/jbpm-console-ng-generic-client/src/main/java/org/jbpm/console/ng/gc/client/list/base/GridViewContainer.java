@@ -16,11 +16,11 @@
 
 package org.jbpm.console.ng.gc.client.list.base;
 
+
 public interface GridViewContainer {
 
     static final String GRID_STYLE = "table table-bordered table-striped table-hover";
 
-    void initializeGridView();
 
     void setSelectionModel();
 
