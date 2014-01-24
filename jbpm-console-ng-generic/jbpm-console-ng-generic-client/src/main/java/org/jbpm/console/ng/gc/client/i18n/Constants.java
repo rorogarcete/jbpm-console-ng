@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 JBoss Inc
+ * Copyright 2013 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -172,4 +172,6 @@ public interface Constants extends Messages {
     String Provide_User_Or_Group();
     
     String No_Items_Found();
+    
+    String New_Item();
 }

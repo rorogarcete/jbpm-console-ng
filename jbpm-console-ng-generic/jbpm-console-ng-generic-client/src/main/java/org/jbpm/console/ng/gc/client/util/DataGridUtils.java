@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,8 +15,6 @@
  */
 
 package org.jbpm.console.ng.gc.client.util;
-
-import org.jbpm.console.ng.ht.model.TaskSummary;
 
 import com.github.gwtbootstrap.client.ui.DataGrid;
 import com.github.gwtbootstrap.client.ui.constants.ResponsiveStyle;
@@ -40,6 +38,21 @@ public class DataGridUtils {
         private String description;
 
         StatusTaskDataGrid(String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+    }
+
+    public static enum ActionsCRUD {
+        CREATE("Create"), READ("Read"), UPDATE("Update"), DELETE("Delete");
+
+        private String description;
+
+        ActionsCRUD(String description) {
             this.description = description;
         }
 
@@ -85,88 +98,88 @@ public class DataGridUtils {
 
     }
 
-    public static void paintRowSelected(DataGrid<TaskSummary> myTaskListGrid, Long idTask) {
-        for (int i = 0; i < getCurrentRowCount(myTaskListGrid); i++) {
-            for (int j = 0; j < myTaskListGrid.getColumnCount(); j++) {
-                if (!Long.valueOf(myTaskListGrid.getRowElement(i).getCells().getItem(0).getInnerText()).equals(idTask)) {
-                    myTaskListGrid.getRowElement(i).getCells().getItem(j).getStyle().clearBackgroundColor();
+    public static void paintRowSelected(DataGrid<?> myListGrid, Long id) {
+        for (int i = 0; i < getCurrentRowCount(myListGrid); i++) {
+            for (int j = 0; j < myListGrid.getColumnCount(); j++) {
+                if (!Long.valueOf(myListGrid.getRowElement(i).getCells().getItem(0).getInnerText()).equals(id)) {
+                    myListGrid.getRowElement(i).getCells().getItem(j).getStyle().clearBackgroundColor();
                 } else {
-                    paint(myTaskListGrid, i, j, BG_ROW_SELECTED);
+                    paint(myListGrid, i, j, BG_ROW_SELECTED);
                 }
             }
         }
     }
 
-    public static Long getIdRowSelected(DataGrid<TaskSummary> myTaskListGrid) {
-        Long idTaskSelected = null;
-        for (int i = 0; i < getCurrentRowCount(myTaskListGrid); i++) {
-            if (myTaskListGrid.getRowElement(i).getCells().getItem(0).getStyle().getBackgroundColor().equals(BG_ROW_SELECTED)) {
-                idTaskSelected = Long.valueOf(myTaskListGrid.getRowElement(i).getCells().getItem(0).getInnerText());
+    public static Long getIdRowSelected(DataGrid<?> myListGrid) {
+        Long idSelected = null;
+        for (int i = 0; i < getCurrentRowCount(myListGrid); i++) {
+            if (myListGrid.getRowElement(i).getCells().getItem(0).getStyle().getBackgroundColor().equals(BG_ROW_SELECTED)) {
+                idSelected = Long.valueOf(myListGrid.getRowElement(i).getCells().getItem(0).getInnerText());
                 break;
             }
         }
-        return idTaskSelected;
+        return idSelected;
     }
 
-    public static void paintRowsCompleted(DataGrid<TaskSummary> myTaskListGrid) {
-        for (int i = 0; i < getCurrentRowCount(myTaskListGrid); i++) {
-            if (myTaskListGrid.getRowElement(i).getCells().getItem(ColumnsTask.STATUS.getColumn()).getInnerText()
+    public static void paintRowsCompleted(DataGrid<?> myListGrid) {
+        for (int i = 0; i < getCurrentRowCount(myListGrid); i++) {
+            if (myListGrid.getRowElement(i).getCells().getItem(ColumnsTask.STATUS.getColumn()).getInnerText()
                     .equals(StatusTaskDataGrid.COMPLETED.getDescription())
-                    && !myTaskListGrid.getRowElement(i).getCells().getItem(0).getStyle().getBackgroundColor()
+                    && !myListGrid.getRowElement(i).getCells().getItem(0).getStyle().getBackgroundColor()
                             .equals(BG_ROW_SELECTED)) {
-                for (int j = 0; j < myTaskListGrid.getColumnCount(); j++) {
-                    paint(myTaskListGrid, i, j, BG_ROW_COMPLETED);
+                for (int j = 0; j < myListGrid.getColumnCount(); j++) {
+                    paint(myListGrid, i, j, BG_ROW_COMPLETED);
                 }
             }
             if (DataGridUtils.currentIdSelected != null) {
-                paintRowById(myTaskListGrid, DataGridUtils.currentIdSelected);
+                paintRowById(myListGrid, DataGridUtils.currentIdSelected);
             }
         }
 
     }
 
-    public static void paint(DataGrid<TaskSummary> myTaskListGrid, int row, int column, String color) {
-        myTaskListGrid.getRowElement(row).getCells().getItem(column).getStyle().setBackgroundColor(color);
+    public static void paint(DataGrid<?> myListGrid, int row, int column, String color) {
+        myListGrid.getRowElement(row).getCells().getItem(column).getStyle().setBackgroundColor(color);
     }
 
-    public static void paintRowById(DataGrid<TaskSummary> myTaskListGrid, Long idTask) {
-        for (int i = 0; i < getCurrentRowCount(myTaskListGrid); i++) {
-            for (int j = 0; j < myTaskListGrid.getColumnCount(); j++) {
-                if (Long.valueOf(myTaskListGrid.getRowElement(i).getCells().getItem(0).getInnerText()).equals(idTask)) {
-                    paint(myTaskListGrid, i, j, BG_ROW_SELECTED);
+    public static void paintRowById(DataGrid<?> myListGrid, Long id) {
+        for (int i = 0; i < getCurrentRowCount(myListGrid); i++) {
+            for (int j = 0; j < myListGrid.getColumnCount(); j++) {
+                if (Long.valueOf(myListGrid.getRowElement(i).getCells().getItem(0).getInnerText()).equals(id)) {
+                    paint(myListGrid, i, j, BG_ROW_SELECTED);
                 }
             }
         }
     }
 
-    public static void paintCalendarFromGrid(DataGrid<TaskSummary> myTaskListGrid) {
+    public static void paintCalendarFromGrid(DataGrid<?> myListGrid) {
         if (idTaskCalendar == null) {
-            idTaskCalendar = DataGridUtils.getIdRowSelected(myTaskListGrid);
+            idTaskCalendar = DataGridUtils.getIdRowSelected(myListGrid);
         }
     }
 
-    public static void PaintGridFromCalendar(DataGrid<TaskSummary> myTaskListGrid) {
+    public static void PaintGridFromCalendar(DataGrid<?> myListGrid) {
         if (idTaskCalendar != null) {
             currentIdSelected = DataGridUtils.idTaskCalendar;
         }
     }
 
-    public static void setHideOnAllColumns(DataGrid<TaskSummary> myTaskListGrid) {
+    public static void setHideOnAllColumns(DataGrid<?> myListGrid) {
         for (ColumnsTask col : ColumnsTask.values()) {
             if (col.isResponsive()) {
-                myTaskListGrid.getColumn(col.getColumn()).setCellStyleNames(ResponsiveStyle.HIDDEN_PHONE.get());
-                myTaskListGrid.getHeader(col.getColumn()).setHeaderStyleNames(ResponsiveStyle.HIDDEN_PHONE.get());
-                myTaskListGrid.addColumnStyleName(col.getColumn(), ResponsiveStyle.HIDDEN_PHONE.get());
+                myListGrid.getColumn(col.getColumn()).setCellStyleNames(ResponsiveStyle.HIDDEN_PHONE.get());
+                myListGrid.getHeader(col.getColumn()).setHeaderStyleNames(ResponsiveStyle.HIDDEN_PHONE.get());
+                myListGrid.addColumnStyleName(col.getColumn(), ResponsiveStyle.HIDDEN_PHONE.get());
             }
         }
     }
 
-    private static int getCurrentRowCount(DataGrid<TaskSummary> myTaskListGrid) {
+    private static int getCurrentRowCount(DataGrid<?> myListGrid) {
         int rowCount = 0;
         for (int i = 0; i < DataGridUtils.pageSize; i++) {
             try {
                 rowCount = i + 1;
-                myTaskListGrid.getRowElement(i);
+                myListGrid.getRowElement(i);
             } catch (Exception e) {
                 rowCount = i;
                 break;
@@ -175,10 +188,10 @@ public class DataGridUtils {
         return rowCount;
     }
 
-    public static void setTooltip(DataGrid<TaskSummary> myTaskListGrid, long idCurrentRow, int column, String description) {
-        for (int i = 0; i < getCurrentRowCount(myTaskListGrid); i++) {
-            if (myTaskListGrid.getRowElement(i).getCells().getItem(1).getInnerText().equals(String.valueOf(idCurrentRow))) {
-                myTaskListGrid.getRowElement(i).getCells().getItem(column).setTitle(description);
+    public static void setTooltip(DataGrid<?> myListGrid, long idCurrentRow, int column, String description) {
+        for (int i = 0; i < getCurrentRowCount(myListGrid); i++) {
+            if (myListGrid.getRowElement(i).getCells().getItem(1).getInnerText().equals(String.valueOf(idCurrentRow))) {
+                myListGrid.getRowElement(i).getCells().getItem(column).setTitle(description);
                 break;
             }
         }

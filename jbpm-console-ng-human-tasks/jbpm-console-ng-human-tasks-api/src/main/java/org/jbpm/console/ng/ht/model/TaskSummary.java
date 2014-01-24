@@ -21,9 +21,11 @@ import java.util.List;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class TaskSummary implements Serializable {
+public class TaskSummary extends GenericSummary implements Serializable {
 
-    private long id;
+    
+    private static final long serialVersionUID = 8625201071614619192L;
+    
     private String name;
     private String subject;
     private String description;
@@ -72,14 +74,6 @@ public class TaskSummary implements Serializable {
     }
 
     public TaskSummary() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public long getProcessInstanceId() {

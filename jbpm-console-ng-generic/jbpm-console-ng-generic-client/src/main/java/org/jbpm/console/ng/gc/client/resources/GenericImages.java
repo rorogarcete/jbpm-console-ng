@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 JBoss Inc
+ * Copyright 2013 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public interface GenericImages extends ClientBundle {
 
     @Source("org/jbpm/console/ng/ht/public/images/icons/abort-grid-icon.png")
     public ImageResource abortGridIcon();
-    
+
     @Source("org/jbpm/console/ng/ht/public/images/icons/complete-grid-icon.png")
     public ImageResource completeGridIcon();
 
@@ -68,5 +68,11 @@ public interface GenericImages extends ClientBundle {
 
     @Source("org/jbpm/console/ng/ht/public/images/icons/suboptionsactive-cal-icon.png")
     public ImageResource subOptionsActiveCalIcon();
+
+    @Source("org/jbpm/console/ng/ht/public/images/icons/delete.png")
+    public ImageResource deleteGridIcon();
+
+    @Source("org/jbpm/console/ng/ht/public/images/icons/edit-grid-icon.png")
+    public ImageResource editGridIcon();
 
 }
