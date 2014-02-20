@@ -21,6 +21,7 @@ public class TaskServiceEntryPointLocalTest extends TaskServiceEntryPointBaseTes
                 // core jbpm
                 .addPackage("org.jbpm.shared.services.api")
                 .addPackage("org.jbpm.shared.services.impl")
+                
                 .addPackage("org.jbpm.services.task")
                 .addPackage("org.jbpm.services.task.annotations")
                 .addPackage("org.jbpm.services.task.api")
@@ -39,6 +40,7 @@ public class TaskServiceEntryPointLocalTest extends TaskServiceEntryPointBaseTes
                 .addPackage("org.jbpm.services.task.util")
                 .addPackage("org.jbpm.services.task.deadlines")
                 .addPackage("org.jbpm.services.task.audit")
+                .addPackage("org.jbpm.services.task.audit.service")
                 // deadlines
                 .addPackage("org.jbpm.services.task.deadlines.notifications.impl")
                 .addPackage("org.jbpm.services.task.subtask")

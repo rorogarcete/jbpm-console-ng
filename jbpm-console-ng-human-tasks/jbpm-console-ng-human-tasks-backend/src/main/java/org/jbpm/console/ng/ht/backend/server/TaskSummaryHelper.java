@@ -18,8 +18,10 @@ package org.jbpm.console.ng.ht.backend.server;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jbpm.console.ng.ht.model.TaskSummary;
+import org.jbpm.services.task.audit.impl.model.AuditTask;
+import org.jbpm.services.task.audit.impl.model.GroupAuditTask;
+import org.jbpm.services.task.audit.impl.model.UserAuditTask;
 import org.kie.internal.task.api.model.InternalTaskSummary;
 
 public class TaskSummaryHelper {
@@ -69,5 +71,38 @@ public class TaskSummaryHelper {
                     (int) ((InternalTaskSummary) taskSum).getParentId(), taskSum.getPotentialOwners());
     
     }
+    
+    public static List<TaskSummary> adaptUserAuditCollection(List<UserAuditTask> userTaskAudits) {
+        List<TaskSummary> taskSummaries = new ArrayList<TaskSummary>(userTaskAudits.size());
+        for (UserAuditTask taskAudit : userTaskAudits) {
+            taskSummaries.add(adaptUserAudit(taskAudit));
+        }
+        return taskSummaries;
+    }
 
+    public static TaskSummary adaptUserAudit(UserAuditTask taskAudit) {
+//        List<String> potOwners = new ArrayList<String>(1);
+//        if(taskAudit instanceof GroupAuditTask){
+//            potOwners.add(((GroupAuditTask)taskAudit).getPotentialOwners());
+//        }
+                
+        return new TaskSummary(taskAudit.getTaskId(), 
+                        taskAudit.getProcessInstanceId(), 
+                        taskAudit.getName(),
+                        "",
+                        taskAudit.getDescription(),
+                        taskAudit.getStatus(),
+                        taskAudit.getPriority(),
+                        true, 
+                        taskAudit.getActualOwner(), 
+                        taskAudit.getCreatedBy(),
+                        taskAudit.getCreatedOn(),
+                        taskAudit.getActivationTime(),
+                        taskAudit.getDueDate(),
+                        taskAudit.getProcessId(),
+                        taskAudit.getProcessSessionId(),
+                        "",
+                        (int)taskAudit.getParentId(), 
+                        null);
+    }
 }

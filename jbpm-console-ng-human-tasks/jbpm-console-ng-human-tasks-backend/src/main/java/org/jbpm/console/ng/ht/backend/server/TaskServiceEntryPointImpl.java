@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -37,7 +38,8 @@ import org.jbpm.services.task.impl.factories.TaskFactory;
 import org.jbpm.services.task.impl.model.CommentImpl;
 import org.jbpm.services.task.impl.model.UserImpl;
 import org.jbpm.services.task.utils.ContentMarshallerHelper;
-import org.jbpm.services.task.audit.GetAuditEventsCommand;
+import org.jbpm.services.task.audit.commands.GetAuditEventsCommand;
+import org.jbpm.services.task.audit.service.TaskAuditService;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.kie.api.task.model.Content;
@@ -57,22 +59,33 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
 
     @Inject
     private InternalTaskService taskService;
+    
+    @Inject
+    private TaskAuditService taskAudit;
+
+    @PostConstruct
+    public void init(){
+        taskAudit.setTaskService(taskService);
+    }
 
     @Override
     public List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId,
             List<String> status, Date from, String language) { //@TODO: MUST ADD LANGUAGE FILTER
-        List<Status> statuses = new ArrayList<Status>();
-        for (String s : status) {
-            statuses.add(Status.valueOf(s));
-        }
+//        List<Status> statuses = new ArrayList<Status>();
+//        for (String s : status) {
+//            statuses.add(Status.valueOf(s));
+//        }
         List<TaskSummary> taskSummaries = null;
         if (from != null) {
-            taskSummaries = TaskSummaryHelper.adaptCollection(
-                    taskService.getTasksAssignedAsPotentialOwnerByExpirationDateOptional(
-                            userId, statuses, from));
+//            taskSummaries = TaskSummaryHelper.adaptCollection(
+//                    taskService.getTasksAssignedAsPotentialOwnerByExpirationDateOptional(
+//                            userId, statuses, from));
+            
+            taskSummaries = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from));
         } else {
-            taskSummaries = TaskSummaryHelper.adaptCollection(
-                    taskService.getTasksAssignedAsPotentialOwnerByStatus(userId, statuses, "en-UK"));
+//            taskSummaries = TaskSummaryHelper.adaptCollection(
+//                    taskService.getTasksAssignedAsPotentialOwnerByStatus(userId, statuses, "en-UK"));
+            taskSummaries = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status));
         }
         setPotentionalOwners(taskSummaries);
         return taskSummaries;
@@ -95,13 +108,15 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
     @Override
     public List<TaskSummary> getTasksOwnedByExpirationDateOptional(String userId, List<String> status, Date from,
             String language) { //@TODO: MUST ADD LANGUAGE FILTER
-        List<Status> statuses = new ArrayList<Status>();
-        for (String s : status) {
-            statuses.add(Status.valueOf(s));
-        }
-        List<TaskSummary> taskSummaries = TaskSummaryHelper.adaptCollection(
-                taskService.getTasksOwnedByStatus(
-                        userId, statuses, "en-UK"));
+//        List<Status> statuses = new ArrayList<Status>();
+//        for (String s : status) {
+//            statuses.add(Status.valueOf(s));
+//        }
+//        List<TaskSummary> taskSummaries = TaskSummaryHelper.adaptCollection(
+//                taskService.getTasksOwnedByStatus(
+//                        userId, statuses, "en-UK"));
+        List<TaskSummary> taskSummaries = TaskSummaryHelper.adaptUserAuditCollection(
+                taskAudit.getAllUserAuditTasksByStatus(userId, status));
         setPotentionalOwners(taskSummaries);
         return taskSummaries;
     }

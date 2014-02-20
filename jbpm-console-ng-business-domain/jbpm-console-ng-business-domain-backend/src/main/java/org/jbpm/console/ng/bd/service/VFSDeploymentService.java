@@ -13,7 +13,6 @@ import org.jbpm.kie.services.api.IdentityProvider;
 import org.jbpm.kie.services.api.bpmn2.BPMN2DataService;
 import org.jbpm.kie.services.impl.AbstractDeploymentService;
 import org.jbpm.kie.services.impl.DeployedUnitImpl;
-import org.jbpm.kie.services.impl.audit.ServicesAwareAuditEventBuilder;
 import org.jbpm.kie.services.impl.model.ProcessAssetDesc;
 import org.jbpm.process.audit.AbstractAuditLogger;
 import org.jbpm.runtime.manager.impl.RuntimeEnvironmentBuilder;
@@ -54,7 +53,7 @@ public class VFSDeploymentService extends AbstractDeploymentService {
         RuntimeEnvironmentBuilder builder = RuntimeEnvironmentBuilder.getDefault()
                 .entityManagerFactory(getEmf());
         
-        AbstractAuditLogger auditLogger = setupAuditLogger(identityProvider, vfsUnit.getIdentifier());
+        AbstractAuditLogger auditLogger = getAuditLogger();
         
         if (beanManager != null) {
             builder.registerableItemsFactory(InjectableRegisterableItemsFactory.getFactory(beanManager, auditLogger));

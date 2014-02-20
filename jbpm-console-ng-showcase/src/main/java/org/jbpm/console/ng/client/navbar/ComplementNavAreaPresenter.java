@@ -16,13 +16,12 @@
 
 package org.jbpm.console.ng.client.navbar;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import javax.enterprise.context.ApplicationScoped;
 import org.uberfire.client.workbench.Header;
-
 
 @ApplicationScoped
 public class ComplementNavAreaPresenter implements Header {
