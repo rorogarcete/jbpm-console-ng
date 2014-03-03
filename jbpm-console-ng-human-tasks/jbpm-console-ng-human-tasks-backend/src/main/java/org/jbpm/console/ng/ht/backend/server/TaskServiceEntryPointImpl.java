@@ -69,23 +69,30 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
     }
 
     @Override
-    public List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId,
+    public List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId, String groupsIds,
             List<String> status, Date from, String language) { //@TODO: MUST ADD LANGUAGE FILTER
-//        List<Status> statuses = new ArrayList<Status>();
-//        for (String s : status) {
-//            statuses.add(Status.valueOf(s));
-//        }
+
         List<TaskSummary> taskSummaries = null;
         if (from != null) {
-//            taskSummaries = TaskSummaryHelper.adaptCollection(
-//                    taskService.getTasksAssignedAsPotentialOwnerByExpirationDateOptional(
-//                            userId, statuses, from));
-            
-            taskSummaries = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from));
+
+            if(status.size() == 1 && status.contains("Ready")){
+                taskSummaries = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatusByDueDateOptional(groupsIds, status, from));
+            } else if(status.size() > 1 && status.contains("Ready")){
+                taskSummaries = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatusByDueDateOptional(groupsIds, status, from));
+                taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from)));
+            }else{
+                taskSummaries = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from));
+            }
         } else {
-//            taskSummaries = TaskSummaryHelper.adaptCollection(
-//                    taskService.getTasksAssignedAsPotentialOwnerByStatus(userId, statuses, "en-UK"));
-            taskSummaries = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status));
+            if(status.size() == 1 && status.contains("Ready")){
+                taskSummaries = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupsIds, status));
+            }else if(status.size() > 1 && status.contains("Ready")){
+                taskSummaries = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupsIds, status));
+                taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status)));
+            } else {
+
+                taskSummaries = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status));
+            }
         }
         setPotentionalOwners(taskSummaries);
         return taskSummaries;

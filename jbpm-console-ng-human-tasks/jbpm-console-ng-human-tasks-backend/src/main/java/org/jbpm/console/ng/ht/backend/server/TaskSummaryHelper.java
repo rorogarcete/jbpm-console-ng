@@ -17,6 +17,7 @@
 package org.jbpm.console.ng.ht.backend.server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.services.task.audit.impl.model.AuditTask;
@@ -81,10 +82,6 @@ public class TaskSummaryHelper {
     }
 
     public static TaskSummary adaptUserAudit(UserAuditTask taskAudit) {
-//        List<String> potOwners = new ArrayList<String>(1);
-//        if(taskAudit instanceof GroupAuditTask){
-//            potOwners.add(((GroupAuditTask)taskAudit).getPotentialOwners());
-//        }
                 
         return new TaskSummary(taskAudit.getTaskId(), 
                         taskAudit.getProcessInstanceId(), 
@@ -104,5 +101,34 @@ public class TaskSummaryHelper {
                         "",
                         (int)taskAudit.getParentId(), 
                         null);
+    }
+    
+    public static List<TaskSummary> adaptGroupAuditCollection(List<GroupAuditTask> groupTaskAudits) {
+        List<TaskSummary> taskSummaries = new ArrayList<TaskSummary>(groupTaskAudits.size());
+        for (GroupAuditTask taskAudit : groupTaskAudits) {
+            taskSummaries.add(adaptGroupAudit(taskAudit));
+        }
+        return taskSummaries;
+    }
+     public static TaskSummary adaptGroupAudit(GroupAuditTask taskAudit) {
+        List<String> potentialOwners = Arrays.asList(taskAudit.getPotentialOwners().split(","));
+        return new TaskSummary(taskAudit.getTaskId(), 
+                        taskAudit.getProcessInstanceId(), 
+                        taskAudit.getName(),
+                        "",
+                        taskAudit.getDescription(),
+                        taskAudit.getStatus(),
+                        taskAudit.getPriority(),
+                        true, 
+                        "", 
+                        taskAudit.getCreatedBy(),
+                        taskAudit.getCreatedOn(),
+                        taskAudit.getActivationTime(),
+                        taskAudit.getDueDate(),
+                        taskAudit.getProcessId(),
+                        taskAudit.getProcessSessionId(),
+                        "",
+                        (int)taskAudit.getParentId(), 
+                        potentialOwners);
     }
 }

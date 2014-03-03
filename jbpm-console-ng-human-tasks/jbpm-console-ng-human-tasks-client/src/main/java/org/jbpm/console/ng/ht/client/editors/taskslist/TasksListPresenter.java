@@ -70,6 +70,7 @@ import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.security.Identity;
+import org.uberfire.security.Role;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
@@ -388,6 +389,10 @@ public class TasksListPresenter {
     }
 
     private void refreshGrid(TaskType type){
+        String groupsIds = "";
+        for(Role r : identity.getRoles()){
+            groupsIds+= r.getName() + ",";
+        }
         taskServices.call(new RemoteCallback<List<TaskSummary>>() {
             @Override
             public void callback(List<TaskSummary> tasks) {
@@ -401,7 +406,7 @@ public class TasksListPresenter {
               ErrorPopup.showMessage("Unexpected error encountered : " + throwable.getMessage());
               return true;
           }
-      }).getTasksAssignedAsPotentialOwnerByExpirationDateOptional(identity.getName(), TaskUtils.getStatusByType(type),
+      }).getTasksAssignedAsPotentialOwnerByExpirationDateOptional(identity.getName(), groupsIds, TaskUtils.getStatusByType(type),
                 null, LANGUAGE);
     }
 
