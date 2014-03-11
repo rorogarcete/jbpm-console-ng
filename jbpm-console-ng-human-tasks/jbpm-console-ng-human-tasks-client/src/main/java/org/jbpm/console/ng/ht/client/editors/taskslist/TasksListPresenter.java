@@ -389,9 +389,11 @@ public class TasksListPresenter {
     }
 
     private void refreshGrid(TaskType type){
-        String groupsIds = "";
+        List<String> groupsIds = new ArrayList<String>();
         for(Role r : identity.getRoles()){
-            groupsIds+= r.getName() + ",";
+            if(!r.getName().equals("IS_REMEMBER_ME")){
+                groupsIds.add(r.getName().trim());
+            }
         }
         taskServices.call(new RemoteCallback<List<TaskSummary>>() {
             @Override

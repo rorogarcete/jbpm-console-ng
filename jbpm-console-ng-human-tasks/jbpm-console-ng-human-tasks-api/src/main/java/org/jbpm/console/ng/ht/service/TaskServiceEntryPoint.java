@@ -17,9 +17,9 @@
 package org.jbpm.console.ng.ht.service;
 
 import java.util.Date;
-
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.jboss.errai.bus.server.annotations.Remote;
 import org.jbpm.console.ng.ht.model.CommentSummary;
 import org.jbpm.console.ng.ht.model.Day;
@@ -29,7 +29,7 @@ import org.jbpm.console.ng.ht.model.TaskSummary;
 @Remote
 public interface TaskServiceEntryPoint {
 
-    List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId, String groupsIds, List<String> status, Date from, 
+    List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId, List<String> groupsIds, List<String> status, Date from, 
             String language);
     
     Map<Day, List<TaskSummary>> getTasksAssignedAsPotentialOwnerFromDateToDateByDays(String userId, List<String> strStatuses,

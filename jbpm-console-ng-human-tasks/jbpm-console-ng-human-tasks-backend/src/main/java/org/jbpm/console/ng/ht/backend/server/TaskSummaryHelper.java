@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.jbpm.console.ng.ht.model.TaskSummary;
-import org.jbpm.services.task.audit.impl.model.AuditTask;
-import org.jbpm.services.task.audit.impl.model.GroupAuditTask;
-import org.jbpm.services.task.audit.impl.model.UserAuditTask;
+import org.jbpm.services.task.audit.impl.model.api.GroupAuditTask;
+import org.jbpm.services.task.audit.impl.model.api.HistoryAuditTask;
+import org.jbpm.services.task.audit.impl.model.api.UserAuditTask;
 import org.kie.internal.task.api.model.InternalTaskSummary;
 
 public class TaskSummaryHelper {
@@ -92,6 +92,36 @@ public class TaskSummaryHelper {
                         taskAudit.getPriority(),
                         true, 
                         taskAudit.getActualOwner(), 
+                        taskAudit.getCreatedBy(),
+                        taskAudit.getCreatedOn(),
+                        taskAudit.getActivationTime(),
+                        taskAudit.getDueDate(),
+                        taskAudit.getProcessId(),
+                        taskAudit.getProcessSessionId(),
+                        "",
+                        (int)taskAudit.getParentId(), 
+                        null);
+    }
+    
+    public static List<TaskSummary> adaptHistoryAuditCollection(List<HistoryAuditTask> historyTaskAudits) {
+        List<TaskSummary> taskSummaries = new ArrayList<TaskSummary>(historyTaskAudits.size());
+        for (HistoryAuditTask taskAudit : historyTaskAudits) {
+            taskSummaries.add(adaptHistoryAudit(taskAudit));
+        }
+        return taskSummaries;
+    }
+
+    public static TaskSummary adaptHistoryAudit(HistoryAuditTask taskAudit) {
+                
+        return new TaskSummary(taskAudit.getTaskId(), 
+                        taskAudit.getProcessInstanceId(), 
+                        taskAudit.getName(),
+                        "",
+                        taskAudit.getDescription(),
+                        taskAudit.getStatus(),
+                        taskAudit.getPriority(),
+                        true, 
+                        "", 
                         taskAudit.getCreatedBy(),
                         taskAudit.getCreatedOn(),
                         taskAudit.getActivationTime(),

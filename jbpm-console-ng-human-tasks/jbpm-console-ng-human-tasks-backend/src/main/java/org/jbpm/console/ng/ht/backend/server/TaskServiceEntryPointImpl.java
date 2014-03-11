@@ -19,9 +19,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -69,33 +71,44 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
     }
 
     @Override
-    public List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId, String groupsIds,
+    public List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId, List<String> groupsIds,
             List<String> status, Date from, String language) { //@TODO: MUST ADD LANGUAGE FILTER
 
-        List<TaskSummary> taskSummaries = null;
+        Set<TaskSummary> taskSummaries = new HashSet<TaskSummary>();
         if (from != null) {
 
             if(status.size() == 1 && status.contains("Ready")){
-                taskSummaries = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatusByDueDateOptional(groupsIds, status, from));
+                for(String groupId : groupsIds){
+                    taskSummaries.addAll(TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatusByDueDateOptional(groupId, status, from)));
+                }
+                
             } else if(status.size() > 1 && status.contains("Ready")){
-                taskSummaries = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatusByDueDateOptional(groupsIds, status, from));
+                for(String groupId : groupsIds){
+                    taskSummaries.addAll( TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatusByDueDateOptional(groupId, status, from)));
+                }
                 taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from)));
             }else{
-                taskSummaries = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from));
+                taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from)));
             }
         } else {
             if(status.size() == 1 && status.contains("Ready")){
-                taskSummaries = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupsIds, status));
+                for(String groupId : groupsIds){
+                    taskSummaries.addAll(TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupId, status)));
+                }
             }else if(status.size() > 1 && status.contains("Ready")){
-                taskSummaries = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupsIds, status));
+                for(String groupId : groupsIds){
+                    taskSummaries.addAll(TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupId, status)));
+                }
                 taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status)));
             } else {
 
-                taskSummaries = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status));
+                taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status)));
             }
         }
-        setPotentionalOwners(taskSummaries);
-        return taskSummaries;
+        ArrayList<TaskSummary> taskSummariesList = new ArrayList<TaskSummary>(taskSummaries);
+        setPotentionalOwners(taskSummariesList);
+        
+        return taskSummariesList;
     }
 
     private void setPotentionalOwners(List<TaskSummary> taskSummaries) {

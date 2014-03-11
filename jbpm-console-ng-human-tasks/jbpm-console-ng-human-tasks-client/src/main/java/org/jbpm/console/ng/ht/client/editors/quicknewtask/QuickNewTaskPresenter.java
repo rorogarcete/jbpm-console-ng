@@ -174,7 +174,8 @@ public class QuickNewTaskPresenter {
                        return true;
                    }
                } ).addTask( str, null, templateVars );
-        }  if (users != null && !users.isEmpty() && users.contains(identity.getName())) {
+        } else if (users != null && !users.isEmpty() && users.contains(identity.getName()) 
+                                                 && groups != null && groups.isEmpty()) {
             //System.out.println(" THIRD OPTION -> Users that includes me add / start!!");
             taskServices.call( new RemoteCallback<Long>() {
                 @Override
@@ -206,6 +207,20 @@ public class QuickNewTaskPresenter {
            } ).addTask(str, null, templateVars );
         }else if(groups != null && !groups.isEmpty() && !containsGroup(groups, identity.getRoles())){
             //System.out.println(" FIFTH OPTION -> groups were I'm not in -> just adding!!");
+            taskServices.call( new RemoteCallback<Long>() {
+                @Override
+                public void callback( Long taskId ) {
+                    refreshNewTask(taskId, taskName, "Task Created (id = " + taskId + ")");
+                }
+            }, new ErrorCallback<Message>() {
+                   @Override
+                   public boolean error( Message message, Throwable throwable ) {
+                       ErrorPopup.showMessage("Unexpected error encountered : " + throwable.getMessage());
+                       return true;
+                   }
+               } ).addTask(str, null, templateVars );
+        } else if(groups != null && !groups.isEmpty() && containsGroup(groups, identity.getRoles())){
+            //System.out.println(" SIXTH OPTION  -> just adding!!");
             taskServices.call( new RemoteCallback<Long>() {
                 @Override
                 public void callback( Long taskId ) {
