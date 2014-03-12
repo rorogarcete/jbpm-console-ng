@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
 public class TaskUtils {
 
     public static enum TaskType {
-        PERSONAL, ACTIVE, GROUP, ALL
+        PERSONAL, ACTIVE, GROUP, ALL, HISTORY
     }
 
     public static enum TaskView {
@@ -56,6 +56,9 @@ public class TaskUtils {
             break;
         case PERSONAL:
             status = ImmutableList.of("Ready", "InProgress", "Created", "Reserved");
+            break;
+        case HISTORY: 
+            status = ImmutableList.of("Failed", "Error", "Exited", "Obsolete", "Completed");
             break;
         default:
             throw new IllegalStateException("Unrecognized view type '" + type + "'!");

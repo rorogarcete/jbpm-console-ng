@@ -100,6 +100,8 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
                     taskSummaries.addAll(TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupId, status)));
                 }
                 taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status)));
+            } else if(status.size() == 5 && status.contains("Completed")){
+                taskSummaries.addAll(TaskSummaryHelper.adaptHistoryAuditCollection(taskAudit.getAllHistoryAuditTasksByUser(userId)));
             } else {
 
                 taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status)));

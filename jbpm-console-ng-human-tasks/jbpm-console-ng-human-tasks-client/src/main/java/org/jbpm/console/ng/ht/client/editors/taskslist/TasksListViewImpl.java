@@ -108,6 +108,10 @@ public class TasksListViewImpl extends ActionsCellTaskList implements TasksListP
     @Inject
     @DataField
     public Button showAllTasksButton;
+    
+    @Inject
+    @DataField
+    public Button showHistoryTasksButton;
 
     @Inject
     @DataField
@@ -233,6 +237,7 @@ public class TasksListViewImpl extends ActionsCellTaskList implements TasksListP
         this.setFilters(showGroupTasksButton, constants.Group(), TaskType.GROUP);
         this.setFilters(showActiveTasksButton, constants.Active(), TaskType.ACTIVE);
         this.setFilters(showAllTasksButton, constants.All(), TaskType.ALL);
+        this.setFilters(showHistoryTasksButton, constants.History(), TaskType.HISTORY);
     }
 
     private void setFilters(Button button, String description, final TaskType taskType) {
