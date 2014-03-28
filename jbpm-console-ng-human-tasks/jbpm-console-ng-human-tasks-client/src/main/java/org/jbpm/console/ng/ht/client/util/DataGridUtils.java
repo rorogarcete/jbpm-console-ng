@@ -33,6 +33,8 @@ public class DataGridUtils {
     public static Long idTaskCalendar = null;
 
     public static int pageSize = 10;
+    
+    public static int clientSidePages = 3;
 
     public static enum StatusTaskDataGrid {
         COMPLETED("Completed"), 

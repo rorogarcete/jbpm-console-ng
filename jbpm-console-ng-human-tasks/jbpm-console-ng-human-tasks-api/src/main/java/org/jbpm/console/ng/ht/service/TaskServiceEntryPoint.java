@@ -29,7 +29,7 @@ import org.jbpm.console.ng.ht.model.TaskSummary;
 public interface TaskServiceEntryPoint {
 
     List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId, List<String> groupsIds, List<String> status, Date from, 
-            String language);
+            String language,int start, int offset);
     
     Map<Day, List<TaskSummary>> getTasksAssignedAsPotentialOwnerFromDateToDateByDays(String userId, List<String> strStatuses,
                                                         Date from, int nrOfDaysTotal, String language);

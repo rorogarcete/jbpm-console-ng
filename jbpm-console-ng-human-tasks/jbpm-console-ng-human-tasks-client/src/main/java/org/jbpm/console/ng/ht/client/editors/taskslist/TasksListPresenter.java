@@ -109,6 +109,9 @@ public class TasksListPresenter {
         void setActiveButton(TaskType taskType);
 
         void changeCurrentDate(Date date);
+        
+        JBPMSimplePager getPager();
+        
     }
 
     private Constants constants = GWT.create(Constants.class);
@@ -164,7 +167,10 @@ public class TasksListPresenter {
 
     @OnFocus
     public void onFocus() {
-        refreshTasks(view.getCurrentDate(), view.getCurrentView(), view.getCurrentTaskType());
+        refreshTasks(view.getCurrentDate(), view.getCurrentView(), 
+                view.getCurrentTaskType(),
+                (view.getPager().getCurrentPage() * DataGridUtils.pageSize), 
+                (DataGridUtils.pageSize * DataGridUtils.clientSidePages), true);
     }
 
     @OnStartup
@@ -189,11 +195,11 @@ public class TasksListPresenter {
         return allTaskSummaries;
     }
 
-    public void filterTasks(String text) {
+    public void filterTasks(String text,boolean clearResults) {
         ColumnSortList.ColumnSortInfo sortInfo = view.getTaskListGrid().getColumnSortList().size() > 0 ? view.getTaskListGrid()
                 .getColumnSortList().get(0) : null;
         if (allTaskSummaries != null) {
-            this.filterGrid(sortInfo, text);
+            this.filterGrid(sortInfo, text, clearResults);
         }
         if (currentDayTasks != null) {
             this.filterCalendar(DataGridUtils.idTaskCalendar, text);
@@ -202,8 +208,9 @@ public class TasksListPresenter {
         view.getTaskListGrid().setFocus(true);
     }
 
-    private void filterGrid(ColumnSortList.ColumnSortInfo sortInfo, String text) {
+    private void filterGrid(ColumnSortList.ColumnSortInfo sortInfo, String text, boolean clearResults) {
         List<TaskSummary> filteredTasksSimple = Lists.newArrayList();
+       
         if (!text.equals("")) {
             for (TaskSummary ts : allTaskSummaries) {
                 if (ts.getName().toLowerCase().contains(text.toLowerCase())) {
@@ -213,7 +220,10 @@ public class TasksListPresenter {
         } else {
             filteredTasksSimple = allTaskSummaries;
         }
-        dataProvider.getList().clear();
+        
+        if(clearResults){
+            dataProvider.getList().clear();
+        }
         dataProvider.getList().addAll(filteredTasksSimple);
         if (sortInfo != null && sortInfo.isAscending()) {
             view.getTaskListGrid().getColumnSortList().clear();
@@ -343,13 +353,13 @@ public class TasksListPresenter {
      * Refresh tasks based on specified date, view (day/week/month) and task
      * type.
      */
-    public void refreshTasks(Date date, TaskView taskView, TaskType taskType) {
+    public void refreshTasks(Date date, TaskView taskView, TaskType taskType, int start, int offset, boolean clearResults) {
         switch (taskType) {
         case PERSONAL:
             refreshPersonalTasks(date, taskView);
             break;
         default:
-            refreshTasksByType(date, taskView, taskType);
+            refreshTasksByType(date, taskView, taskType, start, offset,clearResults);
             break;
         }
     }
@@ -379,16 +389,16 @@ public class TasksListPresenter {
         return dateRange;
     }
 
-    public void refreshTasksByType(Date date, TaskView taskView, TaskType type) {
+    public void refreshTasksByType(Date date, TaskView taskView, TaskType type, int start, int offset, boolean clearResults) {
         if (taskView.equals(TaskView.GRID)) {
-            this.refreshGrid(type);
+            this.refreshGrid(type, start, offset,clearResults);
         } else {
             this.refreshCalendar(type, date, taskView);
         }
 
     }
 
-    private void refreshGrid(TaskType type){
+    private void refreshGrid(TaskType type, int start, int offset,final boolean clearResults){
         List<String> groupsIds = new ArrayList<String>();
         for(Role r : identity.getRoles()){
             if(!r.getName().equals("IS_REMEMBER_ME")){
@@ -399,7 +409,7 @@ public class TasksListPresenter {
             @Override
             public void callback(List<TaskSummary> tasks) {
                 allTaskSummaries = tasks;
-                filterTasks(view.getCurrentFilter());
+                filterTasks(view.getCurrentFilter(),clearResults);
                 view.getTaskListGrid().setFocus(true);
             }
         }, new ErrorCallback<Message>() {
@@ -409,7 +419,7 @@ public class TasksListPresenter {
               return true;
           }
       }).getTasksAssignedAsPotentialOwnerByExpirationDateOptional(identity.getName(), groupsIds, TaskUtils.getStatusByType(type),
-                null, LANGUAGE);
+                null, LANGUAGE, start, offset);
     }
 
     private void refreshCalendar(TaskType type, Date date, TaskView taskView){
@@ -421,7 +431,7 @@ public class TasksListPresenter {
             @Override
             public void callback(Map<Day, List<TaskSummary>> tasks) {
                 currentDayTasks = tasks;
-                filterTasks(view.getCurrentFilter());
+                filterTasks(view.getCurrentFilter(), true);
             }
         }, new ErrorCallback<Message>() {
               @Override
@@ -439,7 +449,7 @@ public class TasksListPresenter {
                 @Override
                 public void callback(List<TaskSummary> tasks) {
                     allTaskSummaries = tasks;
-                    filterTasks(view.getCurrentFilter());
+                    filterTasks(view.getCurrentFilter(), true);
 
                 }
             }, new ErrorCallback<Message>() {
@@ -460,7 +470,7 @@ public class TasksListPresenter {
                 @Override
                 public void callback(Map<Day, List<TaskSummary>> tasks) {
                     currentDayTasks = tasks;
-                    filterTasks(view.getCurrentFilter());
+                    filterTasks(view.getCurrentFilter(), true);
                     view.getTaskListGrid().setFocus(true);
                 }
             }, new ErrorCallback<Message>() {
@@ -492,7 +502,8 @@ public class TasksListPresenter {
         }).endMenu().newTopLevelMenu(constants.Refresh()).respondsWith(new Command() {
             @Override
             public void execute() {
-                refreshTasks(view.getCurrentDate(), view.getCurrentView(), view.getCurrentTaskType());
+                refreshTasks(view.getCurrentDate(), view.getCurrentView(), view.getCurrentTaskType(),
+                        (view.getPager().getCurrentPage() * DataGridUtils.pageSize), (DataGridUtils.pageSize * DataGridUtils.clientSidePages), true);
                 view.setCurrentFilter("");
                 view.displayNotification(constants.Tasks_Refreshed());
                 clearSearchEvent.fire(new ClearSearchEvent());
@@ -547,7 +558,10 @@ public class TasksListPresenter {
 
     public void onSearchEvent(@Observes final TaskSearchEvent searchEvent) {
         view.setCurrentFilter(searchEvent.getFilter());
-        refreshTasks(view.getCurrentDate(), view.getCurrentView(), view.getCurrentTaskType());
+        refreshTasks(view.getCurrentDate(), view.getCurrentView(), 
+                view.getCurrentTaskType(),
+                (view.getPager().getCurrentPage() * DataGridUtils.pageSize), 
+                (DataGridUtils.pageSize * DataGridUtils.clientSidePages), true );
     }
 
     public void editPanelEvent( @Observes EditPanelEvent editPanelEvent ){

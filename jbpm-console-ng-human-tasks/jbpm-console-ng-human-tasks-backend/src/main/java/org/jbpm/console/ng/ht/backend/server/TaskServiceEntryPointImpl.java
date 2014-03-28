@@ -55,6 +55,7 @@ import org.kie.internal.task.api.model.InternalComment;
 import org.kie.internal.task.api.model.InternalTask;
 import org.kie.internal.task.api.model.SubTasksStrategy;
 
+
 @Service
 @ApplicationScoped
 public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
@@ -72,41 +73,54 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
 
     @Override
     public List<TaskSummary> getTasksAssignedAsPotentialOwnerByExpirationDateOptional(String userId, List<String> groupsIds,
-            List<String> status, Date from, String language) { //@TODO: MUST ADD LANGUAGE FILTER
-
+            List<String> status, Date from, String language, int start, int offset) { //@TODO: MUST ADD LANGUAGE FILTER
+        
         Set<TaskSummary> taskSummaries = new HashSet<TaskSummary>();
         if (from != null) {
 
             if(status.size() == 1 && status.contains("Ready")){
                 for(String groupId : groupsIds){
-                    taskSummaries.addAll(TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatusByDueDateOptional(groupId, status, from)));
+                    List<TaskSummary> adaptGroupAuditCollection = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatusByDueDateOptional(groupId, status, from,start,offset));
+                    taskSummaries.addAll(adaptGroupAuditCollection);
                 }
                 
             } else if(status.size() > 1 && status.contains("Ready")){
                 for(String groupId : groupsIds){
-                    taskSummaries.addAll( TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatusByDueDateOptional(groupId, status, from)));
+                    List<TaskSummary> adaptGroupAuditCollection = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatusByDueDateOptional(groupId, status, from,start,offset));
+                    
+                    taskSummaries.addAll(adaptGroupAuditCollection );
                 }
-                taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from)));
+                List<TaskSummary> adaptUserAuditCollection = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from,start,offset));
+                taskSummaries.addAll(adaptUserAuditCollection);
             }else{
-                taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from)));
+                List<TaskSummary> adaptUserAuditCollection = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatusByDueDateOptional(userId, status, from,start,offset));
+                
+                taskSummaries.addAll(adaptUserAuditCollection);
             }
         } else {
             if(status.size() == 1 && status.contains("Ready")){
                 for(String groupId : groupsIds){
-                    taskSummaries.addAll(TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupId, status)));
+                    List<TaskSummary> adaptGroupAuditCollection = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupId, status,start,offset));
+                    taskSummaries.addAll(adaptGroupAuditCollection);
                 }
             }else if(status.size() > 1 && status.contains("Ready")){
                 for(String groupId : groupsIds){
-                    taskSummaries.addAll(TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupId, status)));
+                    List<TaskSummary> adaptGroupAuditCollection = TaskSummaryHelper.adaptGroupAuditCollection(taskAudit.getAllGroupAuditTasksByStatus(groupId, status,start,offset));
+                    taskSummaries.addAll(adaptGroupAuditCollection);
                 }
-                taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status)));
+                List<TaskSummary> adaptUserAuditCollection = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status,start,offset));
+                taskSummaries.addAll(adaptUserAuditCollection);
             } else if(status.size() == 5 && status.contains("Completed")){
-                taskSummaries.addAll(TaskSummaryHelper.adaptHistoryAuditCollection(taskAudit.getAllHistoryAuditTasksByUser(userId)));
+                List<TaskSummary> adaptHistoryAuditCollection = TaskSummaryHelper.adaptHistoryAuditCollection(taskAudit.getAllHistoryAuditTasksByUser(userId,start,offset));
+                
+                taskSummaries.addAll(adaptHistoryAuditCollection);
             } else {
-
-                taskSummaries.addAll(TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status)));
+                List<TaskSummary> adaptUserAuditCollection = TaskSummaryHelper.adaptUserAuditCollection(taskAudit.getAllUserAuditTasksByStatus(userId, status,start,offset));
+                
+                taskSummaries.addAll(adaptUserAuditCollection);
             }
         }
+        
         ArrayList<TaskSummary> taskSummariesList = new ArrayList<TaskSummary>(taskSummaries);
         setPotentionalOwners(taskSummariesList);
         
@@ -138,7 +152,7 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
 //                taskService.getTasksOwnedByStatus(
 //                        userId, statuses, "en-UK"));
         List<TaskSummary> taskSummaries = TaskSummaryHelper.adaptUserAuditCollection(
-                taskAudit.getAllUserAuditTasksByStatus(userId, status));
+                taskAudit.getAllUserAuditTasksByStatus(userId, status,0,0));
         setPotentionalOwners(taskSummaries);
         return taskSummaries;
     }
@@ -565,7 +579,7 @@ public class TaskServiceEntryPointImpl implements TaskServiceEntryPoint {
     }
 
     public List<TaskEventSummary> getAllTaskEvents(long taskId) {
-        return TaskEventSummaryHelper.adaptCollection(taskService.execute(new GetAuditEventsCommand(taskId)));
+        return TaskEventSummaryHelper.adaptCollection(taskService.execute(new GetAuditEventsCommand(taskId,0,0)));
     }
 
     @Override

@@ -78,7 +78,7 @@ public class TasksListViewImpl extends ActionsCellTaskList implements TasksListP
         CalendarListContainer {
     
     public TasksListViewImpl() {
-        pager = new SimplePager(SimplePager.TextLocation.CENTER, false, true);
+        pager = new JBPMSimplePager(JBPMSimplePager.TextLocation.CENTER, false, false);
         pager.sinkEvents(1);
         pager.addHandler(new ClickHandler(){
             @Override
@@ -134,7 +134,7 @@ public class TasksListViewImpl extends ActionsCellTaskList implements TasksListP
     public LayoutPanel tasksViewContainer;
 
     @DataField
-    public SimplePager pager;
+    public JBPMSimplePager pager;
 
     @Inject
     private TaskListMultiDayBox taskListMultiDayBox;
@@ -193,6 +193,7 @@ public class TasksListViewImpl extends ActionsCellTaskList implements TasksListP
         
         pager.setDisplay(myTaskListGrid);
         pager.setPageSize(DataGridUtils.pageSize);
+        pager.setPresenter(presenter);
         
         tasksViewContainer.add(myTaskListGrid);
         myTaskListGrid.setEmptyTableWidget(new HTMLPanel(constants.No_Tasks_Found()));
@@ -593,7 +594,9 @@ public class TasksListViewImpl extends ActionsCellTaskList implements TasksListP
 
     @Override
     public void refreshTasks() {
-        presenter.refreshTasks(currentDate, currentView, currentTaskType);
+        presenter.refreshTasks(currentDate, currentView, currentTaskType,
+                (getPager().getCurrentPage() * DataGridUtils.pageSize), 
+                (DataGridUtils.pageSize * DataGridUtils.clientSidePages), true);
     }
 
     public DataGrid<TaskSummary> getTaskListGrid() {
@@ -653,6 +656,10 @@ public class TasksListViewImpl extends ActionsCellTaskList implements TasksListP
     public void onTaskRefreshedEvent(@Observes TaskRefreshedEvent event) {
         currentAction = null;
         refreshTasks();
+    }
+
+    public JBPMSimplePager getPager() {
+        return pager;
     }
 
 }
