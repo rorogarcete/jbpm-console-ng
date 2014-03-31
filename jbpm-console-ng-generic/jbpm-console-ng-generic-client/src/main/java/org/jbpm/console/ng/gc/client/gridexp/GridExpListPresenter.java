@@ -62,6 +62,7 @@ public class GridExpListPresenter {
     @Inject
     private GridExpListView view;
 
+    @Inject
     private DataService dataServices;
 
     private ListDataProvider<ProcessSummary> dataProvider = new ListDataProvider<ProcessSummary>();

@@ -34,4 +34,6 @@
   <inherits name="com.github.gwtbootstrap.datetimepicker.Datetimepicker" />
   <inherits name="com.github.gwtbootstrap.datepicker.Datepicker" />
 
+  <source path="client.gridexp"/>
+
 </module>
