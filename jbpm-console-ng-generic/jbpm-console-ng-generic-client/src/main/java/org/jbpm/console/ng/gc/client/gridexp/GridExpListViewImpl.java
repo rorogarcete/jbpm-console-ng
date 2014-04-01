@@ -88,7 +88,6 @@ public class GridExpListViewImpl extends Composite
     @Inject
     private Event<NotificationEvent> notification;
 
-    @Inject
     private ListHandler<ProcessSummary> sortHandler;
 
     public GridExpListViewImpl() {
