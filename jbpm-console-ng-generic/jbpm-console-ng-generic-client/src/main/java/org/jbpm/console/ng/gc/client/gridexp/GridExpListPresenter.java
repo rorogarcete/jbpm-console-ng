@@ -19,14 +19,13 @@ package org.jbpm.console.ng.gc.client.gridexp;
 import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.DataGrid;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
-import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.RemoteCallback;
+import org.jbpm.console.ng.gc.client.experimental.pagination.DataMockSummary;
+import org.jbpm.console.ng.gc.client.i18n.Constants;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -39,18 +38,12 @@ import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
 @Dependent
-@WorkbenchScreen(identifier = "GridExp")
+@WorkbenchScreen(identifier = "Grid Experimental")
 public class GridExpListPresenter {
 
     public interface GridExpListView extends UberView<GridExpListPresenter> {
 
         void displayNotification( String text );
-
-        String getCurrentFilter();
-
-        void setCurrentFilter( String filter );
-
-        DataGrid<ProcessSummary> getDataGrid();
 
         void showBusyIndicator( String message );
 
@@ -59,19 +52,26 @@ public class GridExpListPresenter {
 
     private Menus menus;
 
+    private Constants constants = GWT.create(Constants.class);
+
+    private ListDataProvider<DataMockSummary> dataProvider = new ListDataProvider<DataMockSummary>();
+
+    private List<DataMockSummary> data;
+
     @Inject
     private GridExpListView view;
 
     @Inject
     private DataService dataServices;
 
-    private ListDataProvider<ProcessSummary> dataProvider = new ListDataProvider<ProcessSummary>();
-
-    private List<ProcessSummary> currentProcesses;
+    @WorkbenchMenu
+    public Menus getMenus() {
+        return menus;
+    }
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return "ProcDefs";
+        return "Grid Experiment";
     }
 
     @WorkbenchPartView
@@ -82,74 +82,34 @@ public class GridExpListPresenter {
     public GridExpListPresenter() {
         makeMenuBar();
     }
-    
-    public void refreshProcessList() {
-        currentProcesses = dataServices.getProcesses();
 
-        filterProcessList( view.getCurrentFilter() );
-    }
+    public void refreshList() {
+        data = dataServices.getData();
 
-    public void filterProcessList( String filter ) {
-        if ( filter.equals( "" ) ) {
-            if ( currentProcesses != null ) {
-                dataProvider.getList().clear();
-                dataProvider.getList().addAll( new ArrayList<ProcessSummary>( currentProcesses ) );
-                dataProvider.refresh();
+        if ( data != null ) {
+            dataProvider.getList().clear();
+            dataProvider.getList().addAll( new ArrayList<DataMockSummary>( data ) );
+            dataProvider.refresh();
 
-            }
-        } else {
-            if ( currentProcesses != null ) {
-                List<ProcessSummary> processes = new ArrayList<ProcessSummary>( currentProcesses );
-                List<ProcessSummary> filteredProcesses = new ArrayList<ProcessSummary>();
-                for ( ProcessSummary ps : processes ) {
-                    if ( ps.getName().toLowerCase().contains( filter.toLowerCase() ) ) {
-                        filteredProcesses.add( ps );
-                    }
-                }
-                dataProvider.getList().clear();
-                dataProvider.getList().addAll( filteredProcesses );
-                dataProvider.refresh();
-            }
         }
-
     }
 
-    public void addDataDisplay( HasData<ProcessSummary> display ) {
+    public void addDataDisplay( HasData<DataMockSummary> display ) {
         dataProvider.addDataDisplay( display );
     }
 
-    public ListDataProvider<ProcessSummary> getDataProvider() {
+    public ListDataProvider<DataMockSummary> getDataProvider() {
         return dataProvider;
-    }
-
-    public void refreshData() {
-        dataProvider.refresh();
     }
 
     @OnOpen
     public void onOpen() {
-        refreshProcessList();
+        refreshList();
     }
-    
+
     @OnFocus
     public void onFocus() {
-        refreshProcessList();
-    }
-
-//    public void onSearch( @Observes final ProcessDefinitionsSearchEvent searchFilter ) {
-//        view.setCurrentFilter( searchFilter.getFilter() );
-//        dataServices.call( new RemoteCallback<List<ProcessSummary>>() {
-//            @Override
-//            public void callback( List<ProcessSummary> processes ) {
-//                currentProcesses = processes;
-//                filterProcessList( view.getCurrentFilter() );
-//            }
-//        } ).getProcesses();
-//    }
-
-    @WorkbenchMenu
-    public Menus getMenus() {
-        return menus;
+        refreshList();
     }
 
     private void makeMenuBar() {
@@ -158,8 +118,7 @@ public class GridExpListPresenter {
                 .respondsWith( new Command() {
                     @Override
                     public void execute() {
-                        refreshProcessList();
-                        view.setCurrentFilter( "" );
+                        refreshList();
                         view.displayNotification( "Refreshed" );
                     }
                 } )
@@ -167,7 +126,4 @@ public class GridExpListPresenter {
                         build();
 
     }
-    
-
-     
 }

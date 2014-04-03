@@ -16,44 +16,26 @@
 package org.jbpm.console.ng.gc.client.gridexp;
 
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.DataGrid;
-import com.github.gwtbootstrap.client.ui.SimplePager;
-import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.ActionCell.Delegate;
 import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.CompositeCell;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.dom.client.BrowserEvents;
-import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.DefaultSelectionEventManager;
-import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.jbpm.console.ng.gc.client.experimental.pagination.DataMockSummary;
+import org.jbpm.console.ng.gc.client.i18n.Constants;
+import org.jbpm.console.ng.gc.client.util.ResizableHeader;
 import org.uberfire.client.common.BusyPopup;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.mvp.PlaceStatus;
-import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
-import org.uberfire.security.Identity;
 import org.uberfire.workbench.events.NotificationEvent;
 
 @Dependent
@@ -63,210 +45,191 @@ public class GridExpListViewImpl extends Composite
         RequiresResize {
 
     @Inject
-    private Identity identity;
-
-    @Inject
     private PlaceManager placeManager;
 
     private GridExpListPresenter presenter;
-
-    private String currentFilter = "";
-
-    @Inject
-    @DataField
-    public DataGrid<ProcessSummary> processdefListGrid;
 
     @Inject
     @DataField
     public LayoutPanel listContainer;
 
+    @Inject
     @DataField
-    public SimplePager pager;
-
-    private Set<ProcessSummary> selectedProcessDef;
+    public DataGrid<DataMockSummary> listGrid;
 
     @Inject
     private Event<NotificationEvent> notification;
 
-    private ListHandler<ProcessSummary> sortHandler;
+    private Constants constants = GWT.create(Constants.class);
 
-    public GridExpListViewImpl() {
-        pager = new SimplePager(SimplePager.TextLocation.LEFT, false, true);
-    }
+    protected ListHandler<DataMockSummary> sortHandler;
 
-    @Override
-    public String getCurrentFilter() {
-        return currentFilter;
-    }
-
-    @Override
-    public void setCurrentFilter(String currentFilter) {
-        this.currentFilter = currentFilter;
-    }
+    public GridExpListViewImpl() {}
 
     @Override
     public void init(final GridExpListPresenter presenter) {
         this.presenter = presenter;
+        listContainer.clear();
+        listGrid = new DataGrid<DataMockSummary>();
+        listGrid.setStyleName("table table-bordered table-striped table-hover");
+        listGrid.setEmptyTableWidget(new HTMLPanel(constants.No_Items_Found()));
 
-        listContainer.add(processdefListGrid);
-        pager.setDisplay(processdefListGrid);
-        pager.setPageSize(10);
+        sortHandler = new ColumnSortEvent.ListHandler<DataMockSummary>(presenter.getDataProvider().getList());
+        listGrid.getColumnSortList().setLimit(1);
+        listGrid.addColumnSortHandler(sortHandler);
 
-        // Set the message to display when the table is empty.
-        Label emptyTable = new Label("None");
-        emptyTable.setStyleName("");
-        processdefListGrid.setEmptyTableWidget(emptyTable);
-
-        // Attach a column sort handler to the ListDataProvider to sort the list.
-        sortHandler = new ListHandler<ProcessSummary>(presenter.getDataProvider().getList());
-        processdefListGrid.addColumnSortHandler(sortHandler);
-
-        // Add a selection model so we can select cells.
-        final MultiSelectionModel<ProcessSummary> selectionModel = new MultiSelectionModel<ProcessSummary>();
-        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-            @Override
-            public void onSelectionChange(SelectionChangeEvent event) {
-                selectedProcessDef = selectionModel.getSelectedSet();
-                for (ProcessSummary pd : selectedProcessDef) {
-                }
-            }
-        });
-
-        processdefListGrid.setSelectionModel(selectionModel,
-                DefaultSelectionEventManager.<ProcessSummary>createCheckboxManager());
-
-        initTableColumns(selectionModel);
-
-        presenter.addDataDisplay(processdefListGrid);
-
+        listContainer.add(listGrid);
+        this.initGridColumns();
+        this.refreshItems();
+        presenter.addDataDisplay(listGrid);
     }
 
-    private void initTableColumns(final SelectionModel<ProcessSummary> selectionModel) {
+    public void initGridColumns() {
+        idColumn();
+        column1Column();
+        column2Column();
+        column3Column();
+        column4Column();
+    }
 
-        processdefListGrid.addCellPreviewHandler(new CellPreviewEvent.Handler<ProcessSummary>() {
+    private void idColumn() {
+        Column<DataMockSummary, String> columnIdColumn = new Column<DataMockSummary, String>(
+                new TextCell()) {
 
             @Override
-            public void onCellPreview(final CellPreviewEvent<ProcessSummary> event) {
-                ProcessSummary process = null;
-                if (BrowserEvents.CLICK.equalsIgnoreCase(event.getNativeEvent().getType())) {
-                    int column = event.getColumn();
-                    int columnCount = processdefListGrid.getColumnCount();
-                    if (column != columnCount - 1) {
-                        PlaceStatus instanceDetailsStatus = placeManager.getStatus(new DefaultPlaceRequest("Process Instance Details"));
-                        if(instanceDetailsStatus == PlaceStatus.OPEN){
-                            placeManager.closePlace("Process Instance Details");
-                        }
-                        process = event.getValue();
-                        placeManager.goTo("Process Definition Details");
-                    }
-                }
+            public void render(Cell.Context context, DataMockSummary unit, SafeHtmlBuilder sb) {
+                String title = unit.getId();
+                sb.append(org.jbpm.console.ng.gc.client.util.DataGridUtils.createDivStart(title));
+                super.render(context, unit, sb);
+                sb.append(org.jbpm.console.ng.gc.client.util.DataGridUtils.createDivEnd());
             }
-        });
 
-        // Process Name String.
-        Column<ProcessSummary, String> processNameColumn = new Column<ProcessSummary, String>(new TextCell()) {
             @Override
-            public String getValue(ProcessSummary object) {
-                return object.getName();
+            public String getValue(DataMockSummary unit) {
+                return org.jbpm.console.ng.gc.client.util.DataGridUtils.trimToColumnWidth(listGrid, this, unit.getId());
             }
         };
-        processNameColumn.setSortable(true);
-        sortHandler.setComparator(processNameColumn, new Comparator<ProcessSummary>() {
+        columnIdColumn.setSortable(true);
+        sortHandler.setComparator(columnIdColumn, new Comparator<DataMockSummary>() {
             @Override
-            public int compare(ProcessSummary o1,
-                    ProcessSummary o2) {
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+            public int compare(DataMockSummary o1, DataMockSummary o2) {
+                return o1.getId().compareTo(o2.getId());
             }
         });
-        processdefListGrid.addColumn(processNameColumn, new SafeHtml() {
-            @Override
-            public String asString() {
-                return "Name";
-            }
-        });
+        listGrid.addColumn(columnIdColumn, new ResizableHeader("ID",  listGrid, columnIdColumn));
+        listGrid.setColumnWidth(columnIdColumn, "300px");
+    }
 
-        // Version Type
-        Column<ProcessSummary, String> versionColumn = new Column<ProcessSummary, String>(new TextCell()) {
+    private void column1Column() {
+        Column<DataMockSummary, String> column1Column = new Column<DataMockSummary, String>(
+                new TextCell()) {
+
             @Override
-            public String getValue(ProcessSummary object) {
-                return object.getVersion();
+            public void render(Cell.Context context, DataMockSummary unit, SafeHtmlBuilder sb) {
+                String title = unit.getColumn1();
+                sb.append(org.jbpm.console.ng.gc.client.util.DataGridUtils.createDivStart(title));
+                super.render(context, unit, sb);
+                sb.append(org.jbpm.console.ng.gc.client.util.DataGridUtils.createDivEnd());
+            }
+
+            @Override
+            public String getValue(DataMockSummary unit) {
+                return org.jbpm.console.ng.gc.client.util.DataGridUtils.trimToColumnWidth(listGrid, this, unit.getColumn1());
             }
         };
-        versionColumn.setSortable(true);
-        sortHandler.setComparator(versionColumn, new Comparator<ProcessSummary>() {
+        column1Column.setSortable(true);
+        sortHandler.setComparator(column1Column, new Comparator<DataMockSummary>() {
             @Override
-            public int compare(ProcessSummary o1,
-                    ProcessSummary o2) {
-                Integer version1;
-                Integer version2;
-                try{
-                    version1 =  Integer.valueOf(o1.getVersion());
-                    version2 = Integer.valueOf(o2.getVersion());
-                    return version1.compareTo(version2);
-                }catch(NumberFormatException nfe){
-                    return o1.getVersion().compareTo(o2.getVersion());
-                }
+            public int compare(DataMockSummary o1, DataMockSummary o2) {
+                return o1.getColumn1().compareTo(o2.getColumn1());
             }
         });
-        processdefListGrid
-                .addColumn(versionColumn, new SafeHtml() {
-                    @Override
-                    public String asString() {
-                        return "Version";
-                    }
-                });
-        processdefListGrid.setColumnWidth(versionColumn, "90px");
+        listGrid.addColumn(column1Column, new ResizableHeader("Column1",  listGrid, column1Column));
+        listGrid.setColumnWidth(column1Column, "100px");
+    }
 
-        // actions (icons)
-        List<HasCell<ProcessSummary, ?>> cells = new LinkedList<HasCell<ProcessSummary, ?>>();
+    private void column2Column() {
+        Column<DataMockSummary, String> column2Column = new Column<DataMockSummary, String>(
+                new TextCell()) {
 
-        cells.add(new StartActionHasCell("Start process", new Delegate<ProcessSummary>() {
             @Override
-            public void execute(ProcessSummary process) {
-                PlaceRequest placeRequestImpl = new DefaultPlaceRequest("Form Display Popup");
-                placeRequestImpl.addParameter("processId", process.getId());
-                placeRequestImpl.addParameter("domainId", process.getDeploymentId());
-                placeRequestImpl.addParameter("processName", process.getName() );
-                placeManager.goTo(placeRequestImpl);
+            public void render(Cell.Context context, DataMockSummary unit, SafeHtmlBuilder sb) {
+                String title = unit.getColumn2();
+                sb.append(org.jbpm.console.ng.gc.client.util.DataGridUtils.createDivStart(title));
+                super.render(context, unit, sb);
+                sb.append(org.jbpm.console.ng.gc.client.util.DataGridUtils.createDivEnd());
             }
-        }));
 
-        cells.add(new DetailsActionHasCell("Details", new Delegate<ProcessSummary>() {
             @Override
-            public void execute(ProcessSummary process) {
-
-                PlaceStatus status = placeManager.getStatus(new DefaultPlaceRequest("Process Definition Details"));
-                String nameSelected = DataGridUtils.getProcessNameRowSelected(processdefListGrid);
-                String versionSelected = DataGridUtils.getProcessVersionRowSelected(processdefListGrid);
-                PlaceStatus instanceDetailsStatus = placeManager.getStatus(new DefaultPlaceRequest("Process Instance Details"));
-                if(instanceDetailsStatus == PlaceStatus.OPEN){
-                    placeManager.closePlace("Process Instance Details");
-                }
-                if (status == PlaceStatus.CLOSE || !(process.getName().equals(nameSelected)
-                        && process.getVersion().equals(versionSelected))) {
-                    placeManager.goTo("Process Definition Details");
-                } else if (status == PlaceStatus.OPEN || (process.getName().equals(nameSelected)
-                        && process.getVersion().equals(versionSelected))) {
-                    placeManager.closePlace(new DefaultPlaceRequest("Process Definition Details"));
-                }
-
-            }
-        }));
-
-        CompositeCell<ProcessSummary> cell = new CompositeCell<ProcessSummary>(cells);
-        Column<ProcessSummary, ProcessSummary> actionsColumn = new Column<ProcessSummary, ProcessSummary>(cell) {
-            @Override
-            public ProcessSummary getValue(ProcessSummary object) {
-                return object;
+            public String getValue(DataMockSummary unit) {
+                return org.jbpm.console.ng.gc.client.util.DataGridUtils.trimToColumnWidth(listGrid, this, unit.getColumn2());
             }
         };
-        processdefListGrid.addColumn(actionsColumn, new SafeHtml() {
+        column2Column.setSortable(true);
+        sortHandler.setComparator(column2Column, new Comparator<DataMockSummary>() {
             @Override
-            public String asString() {
-                return "Actions";
+            public int compare(DataMockSummary o1, DataMockSummary o2) {
+                return o1.getColumn2().compareTo(o2.getColumn2());
             }
         });
-        processdefListGrid.setColumnWidth(actionsColumn, "70px");
+        listGrid.addColumn(column2Column, new ResizableHeader("Column2",  listGrid, column2Column));
+        listGrid.setColumnWidth(column2Column, "100px");
+    }
+
+    private void column3Column() {
+        Column<DataMockSummary, String> column3Column = new Column<DataMockSummary, String>(
+                new TextCell()) {
+
+            @Override
+            public void render(Cell.Context context, DataMockSummary unit, SafeHtmlBuilder sb) {
+                String title = unit.getColumn3();
+                sb.append(org.jbpm.console.ng.gc.client.util.DataGridUtils.createDivStart(title));
+                super.render(context, unit, sb);
+                sb.append(org.jbpm.console.ng.gc.client.util.DataGridUtils.createDivEnd());
+            }
+
+            @Override
+            public String getValue(DataMockSummary unit) {
+                return org.jbpm.console.ng.gc.client.util.DataGridUtils.trimToColumnWidth(listGrid, this, unit.getColumn3());
+            }
+        };
+        column3Column.setSortable(true);
+        sortHandler.setComparator(column3Column, new Comparator<DataMockSummary>() {
+            @Override
+            public int compare(DataMockSummary o1, DataMockSummary o2) {
+                return o1.getColumn3().compareTo(o2.getColumn3());
+            }
+        });
+        listGrid.addColumn(column3Column, new ResizableHeader("Column3", listGrid, column3Column));
+        listGrid.setColumnWidth(column3Column, "100px");
+    }
+
+    private void column4Column() {
+        Column<DataMockSummary, String> column4Column = new Column<DataMockSummary, String>(
+                new TextCell()) {
+
+            @Override
+            public void render(Cell.Context context, DataMockSummary unit, SafeHtmlBuilder sb) {
+                String title = unit.getColumn4();
+                sb.append(org.jbpm.console.ng.gc.client.util.DataGridUtils.createDivStart(title));
+                super.render(context, unit, sb);
+                sb.append(org.jbpm.console.ng.gc.client.util.DataGridUtils.createDivEnd());
+            }
+
+            @Override
+            public String getValue(DataMockSummary unit) {
+                return org.jbpm.console.ng.gc.client.util.DataGridUtils.trimToColumnWidth(listGrid, this, unit.getColumn4());
+            }
+        };
+        column4Column.setSortable(true);
+        sortHandler.setComparator(column4Column, new Comparator<DataMockSummary>() {
+            @Override
+            public int compare(DataMockSummary o1, DataMockSummary o2) {
+                return o1.getColumn4().compareTo(o2.getColumn4());
+            }
+        });
+        listGrid.addColumn(column4Column, new ResizableHeader("Column4",  listGrid, column4Column));
+        listGrid.setColumnWidth(column4Column, "100px");
     }
 
     @Override
@@ -276,25 +239,17 @@ public class GridExpListViewImpl extends Composite
         }
     }
 
-//    public void changeRowSelected(@Observes ProcessDefStyleEvent processDefStyleEvent) {
-//        if (processDefStyleEvent.getProcessDefName() != null) {
-//            DataGridUtils.paintRowSelected(processdefListGrid,
-//                    processDefStyleEvent.getProcessDefName(), processDefStyleEvent.getProcessDefVersion());
-//        }
-//    }
-
     @Override
     public void displayNotification(String text) {
         notification.fire(new NotificationEvent(text));
     }
+//
+//    public ListHandler<DataMockSummary> getSortHandler() {
+//        return sortHandler;
+//    }
 
-    @Override
-    public DataGrid<ProcessSummary> getDataGrid() {
-        return processdefListGrid;
-    }
-
-    public ListHandler<ProcessSummary> getSortHandler() {
-        return sortHandler;
+    public void refreshItems() {
+        presenter.refreshList();
     }
 
     @Override
@@ -305,89 +260,5 @@ public class GridExpListViewImpl extends Composite
     @Override
     public void hideBusyIndicator() {
         BusyPopup.close();
-    }
-
-    private class StartActionHasCell implements HasCell<ProcessSummary, ProcessSummary> {
-
-        private ActionCell<ProcessSummary> cell;
-
-        public StartActionHasCell(String text,
-                Delegate<ProcessSummary> delegate) {
-            cell = new ActionCell<ProcessSummary>(text, delegate) {
-                @Override
-                public void render(Cell.Context context,
-                        ProcessSummary value,
-                        SafeHtmlBuilder sb) {
-
-                    SafeHtmlBuilder mysb = new SafeHtmlBuilder();
-                    mysb.appendHtmlConstant("<span title='Start' style='margin-right:5px;'>");
-                    mysb.append(new SafeHtml() {
-                        @Override
-                        public String asString() {
-                            return "Start";
-                        }
-                    });
-                    mysb.appendHtmlConstant("</span>");
-                    sb.append(mysb.toSafeHtml());
-                }
-            };
-        }
-
-        @Override
-        public Cell<ProcessSummary> getCell() {
-            return cell;
-        }
-
-        @Override
-        public FieldUpdater<ProcessSummary, ProcessSummary> getFieldUpdater() {
-            return null;
-        }
-
-        @Override
-        public ProcessSummary getValue(ProcessSummary object) {
-            return object;
-        }
-    }
-
-    private class DetailsActionHasCell implements HasCell<ProcessSummary, ProcessSummary> {
-
-        private ActionCell<ProcessSummary> cell;
-
-        public DetailsActionHasCell(String text,
-                Delegate<ProcessSummary> delegate) {
-            cell = new ActionCell<ProcessSummary>(text, delegate) {
-                @Override
-                public void render(Cell.Context context,
-                        ProcessSummary value,
-                        SafeHtmlBuilder sb) {
-
-                    SafeHtmlBuilder mysb = new SafeHtmlBuilder();
-                    mysb.appendHtmlConstant("<span title='Details' style='margin-right:5px;'>");
-                    mysb.append(new SafeHtml() {
-                        @Override
-                        public String asString() {
-                            return "Details";
-                        }
-                    });
-                    mysb.appendHtmlConstant("</span>");
-                    sb.append(mysb.toSafeHtml());
-                }
-            };
-        }
-
-        @Override
-        public Cell<ProcessSummary> getCell() {
-            return cell;
-        }
-
-        @Override
-        public FieldUpdater<ProcessSummary, ProcessSummary> getFieldUpdater() {
-            return null;
-        }
-
-        @Override
-        public ProcessSummary getValue(ProcessSummary object) {
-            return object;
-        }
     }
 }
