@@ -53,6 +53,9 @@ public class GridExpListViewImpl extends Composite
     @DataField
     public LayoutPanel listContainer;
 
+    @DataField
+    public ColumnSelectionWidget columnSelector = new ColumnSelectionWidget();
+
     @Inject
     @DataField
     public DataGrid<DataMockSummary> listGrid;
@@ -82,6 +85,9 @@ public class GridExpListViewImpl extends Composite
         this.initGridColumns();
         this.refreshItems();
         presenter.addDataDisplay(listGrid);
+
+        columnSelector.setVisible(true);
+        columnSelector.setDataGrid(listGrid);
     }
 
     public void initGridColumns() {
