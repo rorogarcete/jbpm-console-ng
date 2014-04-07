@@ -37,8 +37,8 @@ public class ColumnSelectionWidget extends Composite {
     CheckBox col4;
 
     private DataGrid dataGrid;
-
-    private HashMap<Integer, Column> columns = new HashMap<Integer, Column>(5);
+    private GridColumnsSetup gridColumnsSetup;
+    private boolean initialized = false;
 
     public ColumnSelectionWidget() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -50,65 +50,65 @@ public class ColumnSelectionWidget extends Composite {
     }
 
     public void setDataGrid( DataGrid dataGrid ) {
+        if (dataGrid == null) return;
         this.dataGrid = dataGrid;
+        gridColumnsSetup = new GridColumnsSetup(dataGrid);
+        initialized = true;
     }
+
+    // TODO for now hardcoded 'real' (as in not the cached ones from when we initialized the widget) column indexes
 
     @UiHandler("id")
     void colIdSelectionChanged(final ClickEvent event) {
-        if (dataGrid == null) return;
         if (!id.getValue()) {
-            columns.put(0, dataGrid.getColumn(0));
             dataGrid.removeColumn(0);
         } else {
-            dataGrid.insertColumn(0, columns.get(0));
+            dataGrid.insertColumn(0, gridColumnsSetup.getColumn(0), gridColumnsSetup.getColumnHeader(0));
+            dataGrid.setColumnWidth(0, gridColumnsSetup.getColumnWidth(0));
         }
         dataGrid.redraw();
     }
 
     @UiHandler("col1")
     void col1SelectionChanged(final ClickEvent event) {
-        if (dataGrid == null) return;
         if (!col1.getValue()) {
-            columns.put(1, dataGrid.getColumn(1));
             dataGrid.removeColumn(1);
         } else {
-            dataGrid.insertColumn(1, columns.get(1));
+            dataGrid.insertColumn(1, gridColumnsSetup.getColumn(1), gridColumnsSetup.getColumnHeader(1));
+            dataGrid.setColumnWidth(1, gridColumnsSetup.getColumnWidth(1));
         }
         dataGrid.redraw();
     }
 
     @UiHandler("col2")
     void col2SelectionChanged(final ClickEvent event) {
-        if (dataGrid == null) return;
         if (!col2.getValue()) {
-            columns.put(2, dataGrid.getColumn(2));
             dataGrid.removeColumn(2);
         } else {
-            dataGrid.insertColumn(2, columns.get(2));
+            dataGrid.insertColumn(2, gridColumnsSetup.getColumn(2), gridColumnsSetup.getColumnHeader(2));
+            dataGrid.setColumnWidth(2, gridColumnsSetup.getColumnWidth(2));
         }
         dataGrid.redraw();
     }
 
     @UiHandler("col3")
     void col3SelectionChanged(final ClickEvent event) {
-        if (dataGrid == null) return;
         if (!col3.getValue()) {
-            columns.put(3, dataGrid.getColumn(3));
             dataGrid.removeColumn(3);
         } else {
-            dataGrid.insertColumn(3, columns.get(3));
+            dataGrid.insertColumn(3, gridColumnsSetup.getColumn(3), gridColumnsSetup.getColumnHeader(3));
+            dataGrid.setColumnWidth(3, gridColumnsSetup.getColumnWidth(3));
         }
         dataGrid.redraw();
     }
 
     @UiHandler("col4")
     void col4SelectionChanged(final ClickEvent event) {
-        if (dataGrid == null) return;
         if (!col4.getValue()) {
-            columns.put(4, dataGrid.getColumn(4));
             dataGrid.removeColumn(4);
         } else {
-            dataGrid.insertColumn(4, columns.get(4));
+            dataGrid.insertColumn(4, gridColumnsSetup.getColumn(4), gridColumnsSetup.getColumnHeader(4));
+            dataGrid.setColumnWidth(4, gridColumnsSetup.getColumnWidth(4));
         }
         dataGrid.redraw();
     }
