@@ -7,71 +7,10 @@
     <!--<ui:with field="i18n" type="org.kie.workbench.common.screens.explorer.client.resources.i18n.ProjectExplorerConstants"/>-->
 
     <g:HTMLPanel visible="true">
-        <div ui:field="columnSelector">
-
-            <table class="row-fluid span12" style="padding: 4px;">
-                <tr>
-                    <td style="padding: 4px;">
-                        <b:CheckBox ui:field="id"></b:CheckBox>
-                    </td>
-                    <td style="white-space: nowrap; vertical-align: top;">
-                        <g:Label text="id"/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td colspan="2" style="padding: 3px;"></td>
-                </tr>
-
-                <tr>
-                    <td style="padding: 4px;">
-                        <b:CheckBox ui:field="col1"></b:CheckBox>
-                    </td>
-                    <td style="white-space: nowrap; vertical-align: top;">
-                        <g:Label text="column1"/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td colspan="2" style="padding: 3px;"></td>
-                </tr>
-
-                <tr>
-                    <td style="padding: 4px;">
-                        <b:CheckBox ui:field="col2"></b:CheckBox>
-                    </td>
-                    <td style="white-space: nowrap; vertical-align: top;">
-                        <g:Label text="column2"/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td colspan="2" style="padding: 3px;"></td>
-                </tr>
-
-                <tr>
-                    <td style="padding: 4px;">
-                        <b:CheckBox ui:field="col3"></b:CheckBox>
-                    </td>
-                    <td style="white-space: nowrap; vertical-align: top;">
-                        <g:Label text="column3"/>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td colspan="2" style="padding: 3px;"></td>
-                </tr>
-
-                <tr>
-                    <td style="padding: 4px;">
-                        <b:CheckBox ui:field="col4"></b:CheckBox>
-                    </td>
-                    <td style="white-space: nowrap; vertical-align: top;">
-                        <g:Label text="column4"/>
-                    </td>
-                </tr>
-
-            </table>
+        <div>
+            <b:Popover placement="LEFT" trigger="HOVER" heading="Configure table columns">
+                <b:Icon ui:field="dynGridIcon" type="COLUMNS"></b:Icon>
+            </b:Popover>
         </div>
     </g:HTMLPanel>
 
