@@ -55,6 +55,7 @@ public class ColumnConfigPopup extends Modal {
                 new Command() {
                     @Override
                     public void execute() {
+                        // TODO 'materialize' the new setup in the gridcolumnssetup, i.e. replace the original setups with the new ones
                         hide();
                     }
                 }
@@ -79,55 +80,40 @@ public class ColumnConfigPopup extends Modal {
 
     @UiHandler("id")
     void colIdSelectionChanged(final ClickEvent event) {
-        if (!id.getValue()) {
-            dataGrid.removeColumn(0);
-        } else {
-            dataGrid.insertColumn(0, gridColumnsSetup.getColumn(0), gridColumnsSetup.getColumnHeader(0));
-            dataGrid.setColumnWidth(0, gridColumnsSetup.getColumnWidth(0));
-        }
-        dataGrid.redraw();
+        applyColumnChange(id.getValue(), 0);
     }
 
     @UiHandler("col1")
     void col1SelectionChanged(final ClickEvent event) {
-        if (!col1.getValue()) {
-            dataGrid.removeColumn(1);
-        } else {
-            dataGrid.insertColumn(1, gridColumnsSetup.getColumn(1), gridColumnsSetup.getColumnHeader(1));
-            dataGrid.setColumnWidth(1, gridColumnsSetup.getColumnWidth(1));
-        }
-        dataGrid.redraw();
+        applyColumnChange(col1.getValue(), 1);
     }
 
     @UiHandler("col2")
     void col2SelectionChanged(final ClickEvent event) {
-        if (!col2.getValue()) {
-            dataGrid.removeColumn(2);
-        } else {
-            dataGrid.insertColumn(2, gridColumnsSetup.getColumn(2), gridColumnsSetup.getColumnHeader(2));
-            dataGrid.setColumnWidth(2, gridColumnsSetup.getColumnWidth(2));
-        }
-        dataGrid.redraw();
+        applyColumnChange(col2.getValue(), 2);
     }
 
     @UiHandler("col3")
     void col3SelectionChanged(final ClickEvent event) {
-        if (!col3.getValue()) {
-            dataGrid.removeColumn(3);
-        } else {
-            dataGrid.insertColumn(3, gridColumnsSetup.getColumn(3), gridColumnsSetup.getColumnHeader(3));
-            dataGrid.setColumnWidth(3, gridColumnsSetup.getColumnWidth(3));
-        }
-        dataGrid.redraw();
+        applyColumnChange(col3.getValue(), 3);
     }
 
     @UiHandler("col4")
     void col4SelectionChanged(final ClickEvent event) {
-        if (!col4.getValue()) {
-            dataGrid.removeColumn(4);
+        applyColumnChange(col4.getValue(), 4);
+    }
+
+    private void applyColumnChange(boolean insert, int selectedColumnIndex) {
+        if (!insert) {
+            int removeIndex = gridColumnsSetup.notifyColumnToBeRemoved( selectedColumnIndex );
+            dataGrid.removeColumn( removeIndex );
         } else {
-            dataGrid.insertColumn(4, gridColumnsSetup.getColumn(4), gridColumnsSetup.getColumnHeader(4));
-            dataGrid.setColumnWidth(4, gridColumnsSetup.getColumnWidth(4));
+            int addIndex = gridColumnsSetup.notifyColumnToBeAdded( selectedColumnIndex );
+            dataGrid.insertColumn(addIndex,
+                    gridColumnsSetup.getColumn(selectedColumnIndex),
+                    gridColumnsSetup.getColumnHeader(selectedColumnIndex),
+                    gridColumnsSetup.getColumnFooter(selectedColumnIndex));
+            dataGrid.setColumnWidth( addIndex, gridColumnsSetup.getColumnWidth( selectedColumnIndex ) );
         }
         dataGrid.redraw();
     }

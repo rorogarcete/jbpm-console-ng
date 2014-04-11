@@ -1,19 +1,27 @@
 package org.jbpm.console.ng.gc.client.gridexp;
 
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 
-public class ColumnInfo {
+public class ColumnSetup {
 
-    private String columnWidth;
+    private Column<?, ?> column;
 
     private Header<?> columnHeader;
 
     private Header<?> columnFooter;
 
-    public ColumnInfo( String columnWidth, Header<?> columnHeader, Header<?> columnFooter ) {
-        this.columnWidth = columnWidth;
+    private String columnWidth;
+
+    public ColumnSetup( Column<?, ?> column, Header<?> columnHeader, Header<?> columnFooter, String columnWidth ) {
+        this.column = column;
         this.columnHeader = columnHeader;
         this.columnFooter = columnFooter;
+        this.columnWidth = columnWidth;
+    }
+
+    public Column<?, ?> getColumn() {
+        return column;
     }
 
     public Header<?> getColumnFooter() {
