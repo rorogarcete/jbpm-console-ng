@@ -6,23 +6,23 @@ import com.github.gwtbootstrap.client.ui.DataGrid;
 
 import java.util.HashMap;
 
-public class GridColumnsSetup {//TODO rename to GridColumnHelper
+public class GridColumnsHelper {
 
-    private HashMap<Integer, ColumnSetup> columnSetupCollection = new HashMap<Integer, ColumnSetup>(10);
+    private HashMap<Integer, ColumnConfig> columnConfigCollection = new HashMap<Integer, ColumnConfig>(10);
 
     private ColumnIndexHelper helper;
 
-    public GridColumnsSetup( DataGrid dataGrid ) {
+    public GridColumnsHelper( DataGrid dataGrid ) {
         for (int i = 0; i < dataGrid.getColumnCount(); i++) {
             Column<?, ?> column = dataGrid.getColumn(i);
-            columnSetupCollection.put(
+            columnConfigCollection.put(
                             i,
-                            new ColumnSetup( column,
+                            new ColumnConfig( column,
                                              dataGrid.getHeader(i),
                                              dataGrid.getFooter(i),
                                              dataGrid.getColumnWidth(column) )
                            );
-            helper = new ColumnIndexHelper( columnSetupCollection.size() );
+            helper = new ColumnIndexHelper( columnConfigCollection.size() );
         }
     }
 
@@ -45,23 +45,57 @@ public class GridColumnsSetup {//TODO rename to GridColumnHelper
     }
 
     public String getColumnWidth( int cacheIndex ) {
-        ColumnSetup columnSetup = columnSetupCollection.get( cacheIndex );
-        return columnSetup != null ? columnSetup.getColumnWidth() : "";
+        ColumnConfig columnConfig = columnConfigCollection.get( cacheIndex );
+        return columnConfig != null ? columnConfig.getColumnWidth() : "";
     }
 
     public Header<?> getColumnHeader( int cacheIndex ) {
-        ColumnSetup columnSetup = columnSetupCollection.get( cacheIndex );
-        return columnSetup != null ? columnSetup.getColumnHeader() : null;
+        ColumnConfig columnConfig = columnConfigCollection.get( cacheIndex );
+        return columnConfig != null ? columnConfig.getColumnHeader() : null;
     }
 
     public Header<?> getColumnFooter( int cacheIndex ) {
-        ColumnSetup columnSetup = columnSetupCollection.get( cacheIndex );
-        return columnSetup != null ? columnSetup.getColumnFooter() : null;
+        ColumnConfig columnConfig = columnConfigCollection.get( cacheIndex );
+        return columnConfig != null ? columnConfig.getColumnFooter() : null;
     }
 
     public Column<?, ?> getColumn( int cacheIndex ) {
-        ColumnSetup columnSetup = columnSetupCollection.get( cacheIndex );
-        return columnSetup != null ? columnSetup.getColumn() : null;
+        ColumnConfig columnConfig = columnConfigCollection.get( cacheIndex );
+        return columnConfig != null ? columnConfig.getColumn() : null;
+    }
+
+    private class ColumnConfig {
+
+        private Column<?, ?> column;
+
+        private Header<?> columnHeader;
+
+        private Header<?> columnFooter;
+
+        private String columnWidth;
+
+        private ColumnConfig( Column<?, ?> column, Header<?> columnHeader, Header<?> columnFooter, String columnWidth ) {
+            this.column = column;
+            this.columnHeader = columnHeader;
+            this.columnFooter = columnFooter;
+            this.columnWidth = columnWidth;
+        }
+
+        public Column<?, ?> getColumn() {
+            return column;
+        }
+
+        public Header<?> getColumnFooter() {
+            return columnFooter;
+        }
+
+        public Header<?> getColumnHeader() {
+            return columnHeader;
+        }
+
+        public String getColumnWidth() {
+            return columnWidth;
+        }
     }
 
     //TODO implement some kind of adequate test for this

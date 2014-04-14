@@ -38,7 +38,7 @@ public class ColumnConfigPopup extends Modal {
     CheckBox col4;
 
     private DataGrid dataGrid;
-    private GridColumnsSetup gridColumnsSetup;
+    private GridColumnsHelper gridColumnsHelper;
 
     public ColumnConfigPopup() {
 
@@ -55,7 +55,7 @@ public class ColumnConfigPopup extends Modal {
                 new Command() {
                     @Override
                     public void execute() {
-                        // TODO 'materialize' the new setup in the gridcolumnssetup, i.e. replace the original setups with the new ones
+                        // TODO 'materialize' the new setup in the gridcolumnshelper, i.e. replace the original setups with the new ones
                         hide();
                     }
                 }
@@ -72,7 +72,7 @@ public class ColumnConfigPopup extends Modal {
         // Initialize the popup when the widget's icon is actually clicked
         if (this.dataGrid == null) {
             this.dataGrid = dataGrid;
-            gridColumnsSetup = new GridColumnsSetup(dataGrid);
+            gridColumnsHelper = new GridColumnsHelper(dataGrid);
         }
     }
 
@@ -105,15 +105,15 @@ public class ColumnConfigPopup extends Modal {
 
     private void applyColumnChange(boolean insert, int selectedColumnIndex) {
         if (!insert) {
-            int removeIndex = gridColumnsSetup.notifyColumnToBeRemoved( selectedColumnIndex );
+            int removeIndex = gridColumnsHelper.notifyColumnToBeRemoved( selectedColumnIndex );
             dataGrid.removeColumn( removeIndex );
         } else {
-            int addIndex = gridColumnsSetup.notifyColumnToBeAdded( selectedColumnIndex );
+            int addIndex = gridColumnsHelper.notifyColumnToBeAdded( selectedColumnIndex );
             dataGrid.insertColumn(addIndex,
-                    gridColumnsSetup.getColumn(selectedColumnIndex),
-                    gridColumnsSetup.getColumnHeader(selectedColumnIndex),
-                    gridColumnsSetup.getColumnFooter(selectedColumnIndex));
-            dataGrid.setColumnWidth( addIndex, gridColumnsSetup.getColumnWidth( selectedColumnIndex ) );
+                    gridColumnsHelper.getColumn(selectedColumnIndex),
+                    gridColumnsHelper.getColumnHeader(selectedColumnIndex),
+                    gridColumnsHelper.getColumnFooter(selectedColumnIndex));
+            dataGrid.setColumnWidth( addIndex, gridColumnsHelper.getColumnWidth( selectedColumnIndex ) );
         }
         dataGrid.redraw();
     }
