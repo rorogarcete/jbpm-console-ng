@@ -5,25 +5,38 @@ import com.google.gwt.user.cellview.client.Header;
 import com.github.gwtbootstrap.client.ui.DataGrid;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class GridColumnsHelper {
 
-    private HashMap<Integer, ColumnConfig> columnConfigCollection = new HashMap<Integer, ColumnConfig>(10);
+    private Map<Integer, CachedColumn> cachedColumns = new HashMap<Integer, CachedColumn>(10);
+    private Map<Integer, ColumnSettings> columnSettings = new HashMap<Integer, ColumnSettings>(10);
 
     private ColumnIndexHelper helper;
 
     public GridColumnsHelper( DataGrid dataGrid ) {
         for (int i = 0; i < dataGrid.getColumnCount(); i++) {
             Column<?, ?> column = dataGrid.getColumn(i);
-            columnConfigCollection.put(
-                            i,
-                            new ColumnConfig( column,
+            cachedColumns.put(
+                                i,
+                                new CachedColumn( column,
                                              dataGrid.getHeader(i),
                                              dataGrid.getFooter(i),
                                              dataGrid.getColumnWidth(column) )
-                           );
-            helper = new ColumnIndexHelper( columnConfigCollection.size() );
+                             );
+            columnSettings.put(
+                                i,
+                                new ColumnSettings(i,
+                                true,
+                                // TODO adapt this for non-string headers
+                                (String) dataGrid.getHeader(i).getValue())
+                              );
+            helper = new ColumnIndexHelper( cachedColumns.size() );
         }
+    }
+
+    public Map<Integer, ColumnSettings> getColumnSettings() {
+        return columnSettings;
     }
 
     /**
@@ -45,26 +58,26 @@ public class GridColumnsHelper {
     }
 
     public String getColumnWidth( int cacheIndex ) {
-        ColumnConfig columnConfig = columnConfigCollection.get( cacheIndex );
-        return columnConfig != null ? columnConfig.getColumnWidth() : "";
+        CachedColumn cachedColumn = cachedColumns.get( cacheIndex );
+        return cachedColumn != null ? cachedColumn.getColumnWidth() : "";
     }
 
     public Header<?> getColumnHeader( int cacheIndex ) {
-        ColumnConfig columnConfig = columnConfigCollection.get( cacheIndex );
-        return columnConfig != null ? columnConfig.getColumnHeader() : null;
+        CachedColumn cachedColumn = cachedColumns.get( cacheIndex );
+        return cachedColumn != null ? cachedColumn.getColumnHeader() : null;
     }
 
     public Header<?> getColumnFooter( int cacheIndex ) {
-        ColumnConfig columnConfig = columnConfigCollection.get( cacheIndex );
-        return columnConfig != null ? columnConfig.getColumnFooter() : null;
+        CachedColumn cachedColumn = cachedColumns.get( cacheIndex );
+        return cachedColumn != null ? cachedColumn.getColumnFooter() : null;
     }
 
     public Column<?, ?> getColumn( int cacheIndex ) {
-        ColumnConfig columnConfig = columnConfigCollection.get( cacheIndex );
-        return columnConfig != null ? columnConfig.getColumn() : null;
+        CachedColumn cachedColumn = cachedColumns.get( cacheIndex );
+        return cachedColumn != null ? cachedColumn.getColumn() : null;
     }
 
-    private class ColumnConfig {
+    private class CachedColumn {
 
         private Column<?, ?> column;
 
@@ -74,7 +87,7 @@ public class GridColumnsHelper {
 
         private String columnWidth;
 
-        private ColumnConfig( Column<?, ?> column, Header<?> columnHeader, Header<?> columnFooter, String columnWidth ) {
+        private CachedColumn( Column<?, ?> column, Header<?> columnHeader, Header<?> columnFooter, String columnWidth ) {
             this.column = column;
             this.columnHeader = columnHeader;
             this.columnFooter = columnFooter;

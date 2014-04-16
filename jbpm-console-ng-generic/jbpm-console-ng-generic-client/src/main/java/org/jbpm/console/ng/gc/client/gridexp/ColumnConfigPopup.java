@@ -1,18 +1,22 @@
 package org.jbpm.console.ng.gc.client.gridexp;
 
-import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.DataGrid;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.constants.BackdropType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.uberfire.client.common.popups.footers.ModalFooterOKButton;
+
+import java.util.Map;
 
 public class ColumnConfigPopup extends Modal {
 
@@ -23,19 +27,7 @@ public class ColumnConfigPopup extends Modal {
     private static ColumnConfigPopupUIBinder uiBinder = GWT.create(ColumnConfigPopupUIBinder.class);
 
     @UiField
-    CheckBox id;
-
-    @UiField
-    CheckBox col1;
-
-    @UiField
-    CheckBox col2;
-
-    @UiField
-    CheckBox col3;
-
-    @UiField
-    CheckBox col4;
+    VerticalPanel columnPopupMainPanel;
 
     private DataGrid dataGrid;
     private GridColumnsHelper gridColumnsHelper;
@@ -47,9 +39,9 @@ public class ColumnConfigPopup extends Modal {
         setBackdrop( BackdropType.STATIC );
         setKeyboard( true );
         setAnimation( true );
-        setDynamicSafe( true );
+        setDynamicSafe(true);
 
-        add( uiBinder.createAndBindUi( this ) );
+        add(uiBinder.createAndBindUi(this));
 
         add( new ModalFooterOKButton(
                 new Command() {
@@ -60,47 +52,26 @@ public class ColumnConfigPopup extends Modal {
                     }
                 }
         ) );
-
-        id.setValue(Boolean.TRUE);
-        col1.setValue(Boolean.TRUE);
-        col2.setValue(Boolean.TRUE);
-        col3.setValue(Boolean.TRUE);
-        col4.setValue(Boolean.TRUE);
     }
 
     public void init( DataGrid dataGrid ) {
         // Initialize the popup when the widget's icon is actually clicked
-        if (this.dataGrid == null) {
-            this.dataGrid = dataGrid;
-            gridColumnsHelper = new GridColumnsHelper(dataGrid);
+        this.dataGrid = dataGrid;
+        gridColumnsHelper = new GridColumnsHelper(dataGrid);
+        columnPopupMainPanel.clear();
+        for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsHelper.getColumnSettings().entrySet()) {
+            ColumnSettings columnSettings = entry.getValue();
+
+            final CheckBox checkBox = new com.google.gwt.user.client.ui.CheckBox();
+            checkBox.setValue( columnSettings.isVisible() );
+            checkBox.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick( ClickEvent event ) {
+                    applyColumnChange(checkBox.getValue(), entry.getKey());
+                }
+            });
+            columnPopupMainPanel.add( new ColumnConfigRowWidget( checkBox, columnSettings.getColumnLabel()) );
         }
-    }
-
-    // TODO for now hardcoded 'real' (as in not the cached ones from when we initialized the widget) column indexes
-
-    @UiHandler("id")
-    void colIdSelectionChanged(final ClickEvent event) {
-        applyColumnChange(id.getValue(), 0);
-    }
-
-    @UiHandler("col1")
-    void col1SelectionChanged(final ClickEvent event) {
-        applyColumnChange(col1.getValue(), 1);
-    }
-
-    @UiHandler("col2")
-    void col2SelectionChanged(final ClickEvent event) {
-        applyColumnChange(col2.getValue(), 2);
-    }
-
-    @UiHandler("col3")
-    void col3SelectionChanged(final ClickEvent event) {
-        applyColumnChange(col3.getValue(), 3);
-    }
-
-    @UiHandler("col4")
-    void col4SelectionChanged(final ClickEvent event) {
-        applyColumnChange(col4.getValue(), 4);
     }
 
     private void applyColumnChange(boolean insert, int selectedColumnIndex) {
