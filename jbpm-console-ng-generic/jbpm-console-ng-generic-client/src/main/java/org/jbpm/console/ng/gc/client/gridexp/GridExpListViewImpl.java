@@ -31,7 +31,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.jbpm.console.ng.gc.client.customGrid.ColumnSelectionWidget;
+import org.jbpm.console.ng.gc.client.experimental.customGrid.ColumnSelectionWidget;
 import org.jbpm.console.ng.gc.client.experimental.pagination.DataMockSummary;
 import org.jbpm.console.ng.gc.client.i18n.Constants;
 import org.jbpm.console.ng.gc.client.util.ResizableHeader;
