@@ -1,4 +1,4 @@
-package org.jbpm.console.ng.gc.client.gridexp;
+package org.jbpm.console.ng.gc.client.customGrid;
 
 public class ColumnSettings {
 

@@ -1,4 +1,4 @@
-package org.jbpm.console.ng.gc.client.gridexp;
+package org.jbpm.console.ng.gc.client.customGrid;
 
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
@@ -86,11 +86,11 @@ public class GridColumnsHelper {
 
         GridColumnsConfig gridColumnsConfig = new GridColumnsConfig( gridId );
         for (int i = 0; i < dataGrid.getColumnCount(); i++) {
-            gridColumnsConfig.put( i,
-                                   new ColumnSettings( true,
-                                                       // TODO adapt this for non-string headers
-                                                       (String) dataGrid.getHeader(i).getValue())
-                                 );
+            gridColumnsConfig.put(i,
+                    new ColumnSettings(true,
+                            // TODO adapt this for non-string headers
+                            (String) dataGrid.getHeader(i).getValue())
+            );
         }
         return gridColumnsConfig;
     }

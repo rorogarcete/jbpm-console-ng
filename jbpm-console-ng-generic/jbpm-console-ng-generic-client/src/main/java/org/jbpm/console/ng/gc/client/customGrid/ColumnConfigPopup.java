@@ -1,4 +1,4 @@
-package org.jbpm.console.ng.gc.client.gridexp;
+package org.jbpm.console.ng.gc.client.customGrid;
 
 import com.github.gwtbootstrap.client.ui.DataGrid;
 import com.github.gwtbootstrap.client.ui.Modal;
@@ -50,7 +50,7 @@ public class ColumnConfigPopup extends Modal {
                 new Command() {
                     @Override
                     public void execute() {
-                        gridColumnsHelper.saveGridColumnsConfig( gridColumnsConfig );
+                        gridColumnsHelper.saveGridColumnsConfig(gridColumnsConfig);
                         hide();
                     }
                 }
@@ -68,12 +68,12 @@ public class ColumnConfigPopup extends Modal {
             final ColumnSettings columnSettings = entry.getValue();
 
             final CheckBox checkBox = new com.google.gwt.user.client.ui.CheckBox();
-            checkBox.setValue( columnSettings.isVisible() );
+            checkBox.setValue(columnSettings.isVisible());
             checkBox.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick( ClickEvent event ) {
                     columnSettings.setVisible( checkBox.getValue() );
-                    applyGridChange( checkBox.getValue(), entry.getKey() );
+                    applyGridChange(checkBox.getValue(), entry.getKey());
                 }
             });
             columnPopupMainPanel.add( new ColumnConfigRowWidget( checkBox, columnSettings.getColumnLabel()) );
@@ -82,10 +82,10 @@ public class ColumnConfigPopup extends Modal {
 
     private void applyGridChange(boolean insert, int selectedColumnIndex) {
         if (!insert) {
-            int removeIndex = gridColumnsHelper.notifyColumnRemoved( selectedColumnIndex );
+            int removeIndex = gridColumnsHelper.notifyColumnRemoved(selectedColumnIndex);
             dataGrid.removeColumn( removeIndex );
         } else {
-            int addIndex = gridColumnsHelper.notifyColumnAdded( selectedColumnIndex );
+            int addIndex = gridColumnsHelper.notifyColumnAdded(selectedColumnIndex);
             dataGrid.insertColumn(addIndex,
                     gridColumnsHelper.getColumn(selectedColumnIndex),
                     gridColumnsHelper.getColumnHeader(selectedColumnIndex),
