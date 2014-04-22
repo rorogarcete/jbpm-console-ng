@@ -23,6 +23,7 @@ public class ColumnSelectionWidget extends Composite {
     @UiField
     Icon dynGridIcon;
 
+    private String gridId;
     private DataGrid dataGrid;
     private ColumnConfigPopup selectorPopup;
     private boolean initialized = false;
@@ -43,15 +44,17 @@ public class ColumnSelectionWidget extends Composite {
     }
 
     //TODO add some kind of error message, to be shown in case the widget is not well configured (i.e. has been included but does not set the datagrid)
-    public void setDataGrid( DataGrid dataGrid ) {
+    public void setDataGrid( String gridId, DataGrid dataGrid ) {
         if (dataGrid == null) return;
+        this.gridId = gridId;
         this.dataGrid = dataGrid;
-        selectorPopup = new ColumnConfigPopup();
+        selectorPopup = new ColumnConfigPopup( dataGrid );
         initialized = true;
     }
 
     private void iconClicked() {
-        selectorPopup.init(dataGrid);
+        // TODO initialize the popup each time?
+        selectorPopup.init( gridId );
         selectorPopup.show();
     }
 }

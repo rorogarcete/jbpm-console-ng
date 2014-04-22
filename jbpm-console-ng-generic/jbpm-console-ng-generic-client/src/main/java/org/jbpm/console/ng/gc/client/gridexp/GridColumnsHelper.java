@@ -9,34 +9,39 @@ import java.util.Map;
 
 public class GridColumnsHelper {
 
-    private Map<Integer, CachedColumn> cachedColumns = new HashMap<Integer, CachedColumn>(10);
-    private Map<Integer, ColumnSettings> columnSettings = new HashMap<Integer, ColumnSettings>(10);
+    // TODO temporal 'storage' for grid configurations
+    private static Map<String, GridColumnsConfig> gridColumnsConfigs = new HashMap<String, GridColumnsConfig>(10);
 
-    private ColumnIndexHelper helper;
+    private Map<Integer, CachedColumn> cachedColumns = new HashMap<Integer, CachedColumn>(10);
+
+    private DataGrid dataGrid;
+
+    private ColumnIndexHelper indexManager;
 
     public GridColumnsHelper( DataGrid dataGrid ) {
+        this.dataGrid = dataGrid;
         for (int i = 0; i < dataGrid.getColumnCount(); i++) {
             Column<?, ?> column = dataGrid.getColumn(i);
             cachedColumns.put(
                                 i,
                                 new CachedColumn( column,
-                                             dataGrid.getHeader(i),
-                                             dataGrid.getFooter(i),
-                                             dataGrid.getColumnWidth(column) )
+                                                  dataGrid.getHeader(i),
+                                                  dataGrid.getFooter(i),
+                                                  dataGrid.getColumnWidth(column) )
                              );
-            columnSettings.put(
-                                i,
-                                new ColumnSettings(i,
-                                true,
-                                // TODO adapt this for non-string headers
-                                (String) dataGrid.getHeader(i).getValue())
-                              );
-            helper = new ColumnIndexHelper( cachedColumns.size() );
+            indexManager = new ColumnIndexHelper( cachedColumns.size() );
         }
     }
 
-    public Map<Integer, ColumnSettings> getColumnSettings() {
-        return columnSettings;
+    public void saveGridColumnsConfig( GridColumnsConfig gridColumnsConfig ) {
+        if (gridColumnsConfig != null) gridColumnsConfigs.put( gridColumnsConfig.getGridId(), gridColumnsConfig );
+        // TODO persist, attach to user preferences, ...
+    }
+
+    public GridColumnsConfig getColumnsConfigForGrid( String gridId ) {
+        GridColumnsConfig gcc = gridColumnsConfigs.get( gridId );
+        if ( gcc == null ) gridColumnsConfigs.put( gridId, gcc = initializeGridColumnsConfig( gridId, dataGrid ) );
+        return gcc;
     }
 
     /**
@@ -44,8 +49,8 @@ public class GridColumnsHelper {
      * @param selectedColumnIndex The selector's index
      * @return The column that is about to be removed's true index within the data-grid
      */
-    public int notifyColumnToBeRemoved( int selectedColumnIndex ) {
-        return helper.indexDropped( selectedColumnIndex );
+    public int notifyColumnRemoved( int selectedColumnIndex ) {
+        return indexManager.indexDropped( selectedColumnIndex );
     }
 
     /**
@@ -53,8 +58,8 @@ public class GridColumnsHelper {
      * @param selectedColumnIndex The selector's index
      * @return The index of the column before which the column that is about to be inserted should be placed.
      */
-    public int notifyColumnToBeAdded( int selectedColumnIndex ) {
-        return helper.indexAdded( selectedColumnIndex );
+    public int notifyColumnAdded( int selectedColumnIndex ) {
+        return indexManager.indexAdded( selectedColumnIndex );
     }
 
     public String getColumnWidth( int cacheIndex ) {
@@ -75,6 +80,19 @@ public class GridColumnsHelper {
     public Column<?, ?> getColumn( int cacheIndex ) {
         CachedColumn cachedColumn = cachedColumns.get( cacheIndex );
         return cachedColumn != null ? cachedColumn.getColumn() : null;
+    }
+
+    private GridColumnsConfig initializeGridColumnsConfig( String gridId, DataGrid dataGrid ) {
+
+        GridColumnsConfig gridColumnsConfig = new GridColumnsConfig( gridId );
+        for (int i = 0; i < dataGrid.getColumnCount(); i++) {
+            gridColumnsConfig.put( i,
+                                   new ColumnSettings( true,
+                                                       // TODO adapt this for non-string headers
+                                                       (String) dataGrid.getHeader(i).getValue())
+                                 );
+        }
+        return gridColumnsConfig;
     }
 
     private class CachedColumn {

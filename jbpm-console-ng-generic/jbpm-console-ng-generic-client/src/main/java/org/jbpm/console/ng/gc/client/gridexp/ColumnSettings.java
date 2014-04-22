@@ -6,7 +6,7 @@ public class ColumnSettings {
     private String columnLabel;
 
     // TODO adapt this for non-string headers
-    public ColumnSettings( int index, boolean visible, String columnLabel ) {
+    public ColumnSettings( boolean visible, String columnLabel ) {
         isVisible = visible;
         this.columnLabel = columnLabel;
     }

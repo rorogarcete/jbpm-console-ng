@@ -87,7 +87,7 @@ public class GridExpListViewImpl extends Composite
         presenter.addDataDisplay(listGrid);
 
         columnSelector.setVisible(true);
-        columnSelector.setDataGrid(listGrid);
+        columnSelector.setDataGrid("testGrid1", listGrid);
     }
 
     public void initGridColumns() {

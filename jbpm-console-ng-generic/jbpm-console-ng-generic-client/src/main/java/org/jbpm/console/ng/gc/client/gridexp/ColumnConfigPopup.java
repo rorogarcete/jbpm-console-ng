@@ -8,7 +8,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -31,8 +30,12 @@ public class ColumnConfigPopup extends Modal {
 
     private DataGrid dataGrid;
     private GridColumnsHelper gridColumnsHelper;
+    private GridColumnsConfig gridColumnsConfig;
 
-    public ColumnConfigPopup() {
+    public ColumnConfigPopup( DataGrid<?> dataGrid ) {
+
+        this.dataGrid = dataGrid;
+        gridColumnsHelper = new GridColumnsHelper(dataGrid);
 
         setTitle( "Configure grid columns" );
         setMaxHeigth( ( Window.getClientHeight() * 0.75 ) + "px" );
@@ -47,39 +50,42 @@ public class ColumnConfigPopup extends Modal {
                 new Command() {
                     @Override
                     public void execute() {
-                        // TODO 'materialize' the new setup in the gridcolumnshelper, i.e. replace the original setups with the new ones
+                        gridColumnsHelper.saveGridColumnsConfig( gridColumnsConfig );
                         hide();
                     }
                 }
         ) );
     }
 
-    public void init( DataGrid dataGrid ) {
-        // Initialize the popup when the widget's icon is actually clicked
-        this.dataGrid = dataGrid;
-        gridColumnsHelper = new GridColumnsHelper(dataGrid);
+    public void init( String gridId ) {
+        // Initialize the popup when the widget's icon is clicked
         columnPopupMainPanel.clear();
-        for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsHelper.getColumnSettings().entrySet()) {
-            ColumnSettings columnSettings = entry.getValue();
+
+        gridColumnsConfig = gridColumnsHelper.getColumnsConfigForGrid( gridId );
+
+        for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsConfig.entrySet() ) {
+
+            final ColumnSettings columnSettings = entry.getValue();
 
             final CheckBox checkBox = new com.google.gwt.user.client.ui.CheckBox();
             checkBox.setValue( columnSettings.isVisible() );
             checkBox.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick( ClickEvent event ) {
-                    applyColumnChange(checkBox.getValue(), entry.getKey());
+                    columnSettings.setVisible( checkBox.getValue() );
+                    applyGridChange( checkBox.getValue(), entry.getKey() );
                 }
             });
             columnPopupMainPanel.add( new ColumnConfigRowWidget( checkBox, columnSettings.getColumnLabel()) );
         }
     }
 
-    private void applyColumnChange(boolean insert, int selectedColumnIndex) {
+    private void applyGridChange(boolean insert, int selectedColumnIndex) {
         if (!insert) {
-            int removeIndex = gridColumnsHelper.notifyColumnToBeRemoved( selectedColumnIndex );
+            int removeIndex = gridColumnsHelper.notifyColumnRemoved( selectedColumnIndex );
             dataGrid.removeColumn( removeIndex );
         } else {
-            int addIndex = gridColumnsHelper.notifyColumnToBeAdded( selectedColumnIndex );
+            int addIndex = gridColumnsHelper.notifyColumnAdded( selectedColumnIndex );
             dataGrid.insertColumn(addIndex,
                     gridColumnsHelper.getColumn(selectedColumnIndex),
                     gridColumnsHelper.getColumnHeader(selectedColumnIndex),
