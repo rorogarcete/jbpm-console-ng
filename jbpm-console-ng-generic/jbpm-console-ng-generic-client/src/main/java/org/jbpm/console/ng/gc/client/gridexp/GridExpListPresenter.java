@@ -41,89 +41,89 @@ import org.uberfire.workbench.model.menu.Menus;
 @WorkbenchScreen(identifier = "Grid Experimental")
 public class GridExpListPresenter {
 
-    public interface GridExpListView extends UberView<GridExpListPresenter> {
+	public interface GridExpListView extends UberView<GridExpListPresenter> {
 
-        void displayNotification( String text );
+		void displayNotification( String text );
 
-        void showBusyIndicator( String message );
+		void showBusyIndicator( String message );
 
-        void hideBusyIndicator();
-    }
+		void hideBusyIndicator();
+	}
 
-    private Menus menus;
+	private Menus menus;
 
-    private Constants constants = GWT.create(Constants.class);
+	private Constants constants = GWT.create(Constants.class);
 
-    private ListDataProvider<DataMockSummary> dataProvider = new ListDataProvider<DataMockSummary>();
+	private ListDataProvider<DataMockSummary> dataProvider = new ListDataProvider<DataMockSummary>();
 
-    private List<DataMockSummary> data;
+	private List<DataMockSummary> data;
 
-    @Inject
-    private GridExpListView view;
+	@Inject
+	private GridExpListView view;
 
-    @Inject
-    private DataService dataServices;
+	@Inject
+	private DataService dataServices;
 
-    @WorkbenchMenu
-    public Menus getMenus() {
-        return menus;
-    }
+	@WorkbenchMenu
+	public Menus getMenus() {
+		return menus;
+	}
 
-    @WorkbenchPartTitle
-    public String getTitle() {
-        return "Grid Experiment";
-    }
+	@WorkbenchPartTitle
+	public String getTitle() {
+		return "Grid Experiment";
+	}
 
-    @WorkbenchPartView
-    public UberView<GridExpListPresenter> getView() {
-        return view;
-    }
+	@WorkbenchPartView
+	public UberView<GridExpListPresenter> getView() {
+		return view;
+	}
 
-    public GridExpListPresenter() {
-        makeMenuBar();
-    }
+	public GridExpListPresenter() {
+		makeMenuBar();
+	}
 
-    public void refreshList() {
-        data = dataServices.getData();
+	public void refreshList() {
+		data = dataServices.getData();
 
-        if ( data != null ) {
-            dataProvider.getList().clear();
-            dataProvider.getList().addAll( new ArrayList<DataMockSummary>( data ) );
-            dataProvider.refresh();
+		if ( data != null ) {
+			dataProvider.getList().clear();
+			dataProvider.getList().addAll( new ArrayList<DataMockSummary>( data ) );
+			dataProvider.refresh();
 
-        }
-    }
+		}
+	}
 
-    public void addDataDisplay( HasData<DataMockSummary> display ) {
-        dataProvider.addDataDisplay( display );
-    }
+	public void addDataDisplay( HasData<DataMockSummary> display ) {
+		dataProvider.addDataDisplay( display );
+	}
 
-    public ListDataProvider<DataMockSummary> getDataProvider() {
-        return dataProvider;
-    }
+	public ListDataProvider<DataMockSummary> getDataProvider() {
+		return dataProvider;
+	}
 
-    @OnOpen
-    public void onOpen() {
-        refreshList();
-    }
+	@OnOpen
+	public void onOpen() {
+		refreshList();
+	}
 
-    @OnFocus
-    public void onFocus() {
-        refreshList();
-    }
+	@OnFocus
+	public void onFocus() {
+		refreshList();
+	}
 
-    private void makeMenuBar() {
-        menus = MenuFactory
-                .newTopLevelMenu( "Refresh" )
-                .respondsWith( new Command() {
-                    @Override
-                    public void execute() {
-                        refreshList();
-                        view.displayNotification( "Refreshed" );
-                    }
-                } )
-                .endMenu().
-                        build();
+	private void makeMenuBar() {
+		menus = MenuFactory
+				.newTopLevelMenu( "Refresh" )
+				.respondsWith( new Command() {
+					@Override
+					public void execute() {
+						refreshList();
+						view.displayNotification( "Refreshed" );
+					}
+				} )
+				.endMenu().
+						build();
 
-    }
+	}
 }

@@ -6,55 +6,130 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.*;
+
+import java.util.Map;
 
 public class ColumnSelectionWidget extends Composite {
 
-    interface ColumnSelectionWidgetUIBinder
-            extends UiBinder<Widget, ColumnSelectionWidget> {
-    };
+	interface ColumnSelectionWidgetUIBinder
+			extends UiBinder<Widget, ColumnSelectionWidget> {
+	}
 
-    private static ColumnSelectionWidgetUIBinder uiBinder = GWT.create(ColumnSelectionWidgetUIBinder.class);
+	private static ColumnSelectionWidgetUIBinder uiBinder = GWT.create( ColumnSelectionWidgetUIBinder.class );
 
-    @UiField
-    Icon dynGridIcon;
+	@UiField
+	Icon dynGridIcon;
 
-    private String gridId;
-    private DataGrid dataGrid;
-    private ColumnConfigPopup selectorPopup;
-    private boolean initialized = false;
+	PopupPanel columnSelectorPopup;
+	Panel popupContent;
 
-    public ColumnSelectionWidget() {
-        initWidget(uiBinder.createAndBindUi(this));
+	private GridColumnsHelper gridColumnsHelper;
 
-        dynGridIcon.getElement().getStyle().setPaddingLeft(4, Style.Unit.PX);
-        dynGridIcon.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+	public ColumnSelectionWidget() {
+		initWidget( uiBinder.createAndBindUi( this ) );
 
-        dynGridIcon.sinkEvents(Event.ONCLICK);
-        dynGridIcon.addHandler(new ClickHandler() {
-            @Override
-            public void onClick( ClickEvent event ) {
-                iconClicked();
-            }
-        }, ClickEvent.getType());
-    }
+		dynGridIcon.getElement().getStyle().setPaddingLeft( 4, Style.Unit.PX );
+		dynGridIcon.getElement().getStyle().setCursor( Style.Cursor.POINTER );
 
-    //TODO add some kind of error message, to be shown in case the widget is not well configured (i.e. has been included but does not set the datagrid)
-    public void setDataGrid( String gridId, DataGrid dataGrid ) {
-        if (dataGrid == null) return;
-        this.gridId = gridId;
-        this.dataGrid = dataGrid;
-        selectorPopup = new ColumnConfigPopup( dataGrid );
-        initialized = true;
-    }
+		dynGridIcon.sinkEvents( Event.ONCLICK );
+		dynGridIcon.addHandler( new ClickHandler() {
+			@Override
+			public void onClick( ClickEvent event ) {
+				showSelectorPopup();
+			}
+		}, ClickEvent.getType() );
 
-    private void iconClicked() {
-        // TODO initialize the popup each time?
-        selectorPopup.init( gridId );
-        selectorPopup.show();
-    }
+		columnSelectorPopup = new PopupPanel( true );
+		columnSelectorPopup.setTitle( "Configure columns" );
+		columnSelectorPopup.addCloseHandler( new CloseHandler<PopupPanel>() {
+			public void onClose( CloseEvent<PopupPanel> popupPanelCloseEvent ) {
+				gridColumnsHelper.saveGridColumnsConfig();
+				columnSelectorPopup.hide();
+			}
+		} );
+
+		popupContent = new VerticalPanel();
+		columnSelectorPopup.add( popupContent );
+	}
+
+	public void setDataGrid( String gridId, DataGrid dataGrid ) {
+		if ( dataGrid == null ) {
+			Window.alert( "Grid customization widget is not correctly configured!" );
+			return;
+		}
+		gridColumnsHelper = new GridColumnsHelper( gridId, dataGrid );
+
+	}
+
+	// Apply any previously applied column configuration to the data grid (an explicit call to this method is necessary whenever the data grid is being redrawn)
+	// Made this into a separate call, so that it can be executed when clicking the typical table refresh button (for example)
+	public void applyGridColumnsConfig() {
+		gridColumnsHelper.applyGridColumnsConfig();
+	}
+
+	private void setPopupContent() {
+
+		popupContent.clear();
+
+		for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsHelper.getGridColumnsConfig().getColumnSettingsBySelectorIndex() ) {
+			final int selectedIndex = entry.getKey();
+			final ColumnSettings columnSettings = entry.getValue();
+
+			final CheckBox checkBox = new com.google.gwt.user.client.ui.CheckBox();
+			checkBox.setValue( columnSettings.isVisible() );
+			checkBox.addClickHandler( new ClickHandler() {
+				@Override
+				public void onClick( ClickEvent event ) {
+					gridColumnsHelper.applyGridColumnConfig( selectedIndex, checkBox.getValue() );
+				}
+			} );
+
+			popupContent.add(
+					new ColumnConfigRowWidget(
+							checkBox,
+							columnSettings.getColumnLabel(),
+							new RightColumnShiftCallback() {
+								@Override
+								public void columnShiftedRight() {
+									// This call updates the data grid and also reset the internal indexes in the getGridColumnsConfig
+									gridColumnsHelper.columnShiftedRight( selectedIndex );
+									// Refresh the selector popup's content after moving columns
+									refreshSelectorPopup();
+								}
+							},
+							new LeftColumnShiftCallback() {
+								@Override
+								public void columnShiftedLeft() {
+									// This call updates the data grid and also reset the internal indexes in the getGridColumnsConfig
+									gridColumnsHelper.columnShiftedLeft( selectedIndex );
+									// Refresh the selector popup's content after moving columns
+									refreshSelectorPopup();
+								}
+							}
+					)
+			);
+		}
+	}
+
+	private void showSelectorPopup() {
+
+		setPopupContent();
+
+		columnSelectorPopup.setPopupPosition( dynGridIcon.getAbsoluteLeft(),
+				dynGridIcon.getAbsoluteTop() + dynGridIcon.getOffsetHeight() );
+		columnSelectorPopup.show();
+	}
+
+	private void refreshSelectorPopup() {
+
+		columnSelectorPopup.hide();
+		showSelectorPopup();
+	}
 }
