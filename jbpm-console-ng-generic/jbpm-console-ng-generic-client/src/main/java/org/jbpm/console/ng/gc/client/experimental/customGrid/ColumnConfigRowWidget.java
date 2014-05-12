@@ -22,14 +22,33 @@ public class ColumnConfigRowWidget extends Composite {
 	@UiField
 	HTMLPanel rowPanel;
 
-	public ColumnConfigRowWidget( CheckBox checkBox, String columnLabel, final RightColumnShiftCallback rightShiftCallback , final LeftColumnShiftCallback leftShiftCallback ) {
+	public ColumnConfigRowWidget( Boolean isVisible,
+								  final ColumnVisibilityChangedCallback columnVisibilityChangedCallback,
+								  String columnLabel,
+								  final RightColumnShiftCallback rightShiftCallback,
+								  final LeftColumnShiftCallback leftShiftCallback ) {
 		initWidget( uiBinder.createAndBindUi( this ) );
+
+		final Icon shiftRightIcon = new Icon( IconType.ARROW_DOWN );
+		final Icon shiftLeftIcon = new Icon( IconType.ARROW_UP );
+
+		final CheckBox checkBox = new com.google.gwt.user.client.ui.CheckBox();
+		checkBox.setValue( isVisible );
+		checkBox.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick( ClickEvent event ) {
+				boolean isVisible = checkBox.getValue();
+				shiftLeftIcon.setVisible( isVisible );
+				shiftRightIcon.setVisible( isVisible );
+				columnVisibilityChangedCallback.columnVisibilityChanged( checkBox.getValue() );
+			}
+		} );
+
+
 		rowPanel.add( checkBox, "columnVisibleId" );
 		rowPanel.add( new Label( columnLabel ), "columnLabelId" );
 
 		if ( rightShiftCallback != null ) {
-			Icon shiftRightIcon = new Icon( IconType.ARROW_DOWN );
-//			shiftRightIcon.getElement().getStyle().setPadding( 4, Style.Unit.PX );
 			shiftRightIcon.getElement().getStyle().setCursor( Style.Cursor.POINTER );
 			shiftRightIcon.sinkEvents( Event.ONCLICK );
 			shiftRightIcon.addHandler( new ClickHandler() {
@@ -43,7 +62,6 @@ public class ColumnConfigRowWidget extends Composite {
 		}
 
 		if ( leftShiftCallback != null ) {
-			Icon shiftLeftIcon = new Icon( IconType.ARROW_UP );
 			shiftLeftIcon.getElement().getStyle().setCursor( Style.Cursor.POINTER );
 			shiftLeftIcon.sinkEvents( Event.ONCLICK );
 			shiftLeftIcon.addHandler( new ClickHandler() {

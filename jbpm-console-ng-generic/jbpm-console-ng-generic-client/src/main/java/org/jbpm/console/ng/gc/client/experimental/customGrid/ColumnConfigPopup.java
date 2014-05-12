@@ -70,7 +70,7 @@ public class ColumnConfigPopup extends Modal {
 					gridColumnsHelper.applyGridColumnConfig( entry.getKey(), checkBox.getValue() );
 				}
 			} );
-			columnPopupMainPanel.add( new ColumnConfigRowWidget( checkBox, columnSettings.getColumnLabel(), null, null ) );
+//			columnPopupMainPanel.add( new ColumnConfigRowWidget( checkBox, columnSettings.getColumnLabel(), null, null ) );
 		}
 	}
 }

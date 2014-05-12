@@ -82,18 +82,15 @@ public class ColumnSelectionWidget extends Composite {
 			final int selectedIndex = entry.getKey();
 			final ColumnSettings columnSettings = entry.getValue();
 
-			final CheckBox checkBox = new com.google.gwt.user.client.ui.CheckBox();
-			checkBox.setValue( columnSettings.isVisible() );
-			checkBox.addClickHandler( new ClickHandler() {
-				@Override
-				public void onClick( ClickEvent event ) {
-					gridColumnsHelper.applyGridColumnConfig( selectedIndex, checkBox.getValue() );
-				}
-			} );
-
 			popupContent.add(
 					new ColumnConfigRowWidget(
-							checkBox,
+							columnSettings.isVisible(),
+							new ColumnVisibilityChangedCallback() {
+								@Override
+								public void columnVisibilityChanged(Boolean isVisible) {
+									gridColumnsHelper.applyGridColumnConfig( selectedIndex, isVisible );
+								}
+							},
 							columnSettings.getColumnLabel(),
 							new RightColumnShiftCallback() {
 								@Override
