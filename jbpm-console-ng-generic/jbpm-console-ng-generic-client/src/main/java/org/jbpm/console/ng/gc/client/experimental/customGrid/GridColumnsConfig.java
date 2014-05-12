@@ -1,15 +1,16 @@
 package org.jbpm.console.ng.gc.client.experimental.customGrid;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class GridColumnsConfig {
 
 	// Save some kind of grid identifier for future storage of specific grid column configurations.
 	private String gridId;
 
-	private HashMap<Integer, ColumnSettings> columnSettingsMap = new HashMap<Integer, ColumnSettings>(10);
+	// Keep this key-ordered, for the purpose of applying the grid configuration as a whole, e.g. when returning to a previously customized table
+	private TreeMap<Integer, ColumnSettings> columnSettingsMap = new TreeMap<Integer, ColumnSettings>();
 
 	public GridColumnsConfig( String gridId ) {
 		this.gridId = gridId;

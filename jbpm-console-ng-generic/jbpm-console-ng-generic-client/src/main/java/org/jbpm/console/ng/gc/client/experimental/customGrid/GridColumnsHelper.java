@@ -34,9 +34,16 @@ public class GridColumnsHelper {
 	// Apply to all columns
 	public void applyGridColumnsConfig() {
 		if ( gridColumnsConfig == null ) throw new RuntimeException( "Grid customization widget is not correctly configured!" );
-		for ( Map.Entry<Integer, ColumnSettings> entry : gridColumnsConfig.getColumnSettingsBySelectorIndex() ) {
-			if ( !entry.getValue().isVisible() ) applyGridColumnConfig( entry.getKey(), false );
+		// Empty the table to redraw it completely
+		for ( int i = dataGrid.getColumnCount() - 1; i >= 0; i-- ) {
+			dataGrid.removeColumn( i );
 		}
+		dataGrid.flush();
+		for ( Map.Entry<Integer, ColumnSettings> entry : gridColumnsConfig.getColumnSettingsBySelectorIndex() ) {
+			ColumnSettings settings = entry.getValue();
+			if ( entry.getValue().isVisible() ) dataGrid.addColumn( settings.getCachedColumn(), settings.getCachedColumnHeader(), settings.getCachedColumnFooter() );
+		}
+		dataGrid.redraw();
 	}
 
 	// Apply to one single column
