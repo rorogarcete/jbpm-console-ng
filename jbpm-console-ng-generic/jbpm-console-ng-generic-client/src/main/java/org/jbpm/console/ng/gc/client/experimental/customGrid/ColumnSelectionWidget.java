@@ -28,6 +28,7 @@ public class ColumnSelectionWidget extends Composite {
 	Icon dynGridIcon;
 
 	PopupPanel columnSelectorPopup;
+	Panel popupContent;
 
 	private GridColumnsHelper gridColumnsHelper;
 
@@ -41,17 +42,9 @@ public class ColumnSelectionWidget extends Composite {
 		dynGridIcon.addHandler( new ClickHandler() {
 			@Override
 			public void onClick( ClickEvent event ) {
-				iconClicked();
+				showSelectorPopup();
 			}
 		}, ClickEvent.getType() );
-	}
-
-	public void setDataGrid( String gridId, DataGrid dataGrid ) {
-		if ( dataGrid == null ) {
-			Window.alert( "Grid customization widget is not correctly configured!" );
-			return;
-		}
-		gridColumnsHelper = new GridColumnsHelper( gridId, dataGrid );
 
 		columnSelectorPopup = new PopupPanel( true );
 		columnSelectorPopup.setTitle( "Configure columns" );
@@ -62,21 +55,17 @@ public class ColumnSelectionWidget extends Composite {
 			}
 		} );
 
-		VerticalPanel columnPopupMainPanel = new VerticalPanel();
-		for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsHelper.getGridColumnsConfig().entrySet() ) {
-			final ColumnSettings columnSettings = entry.getValue();
-			final CheckBox checkBox = new com.google.gwt.user.client.ui.CheckBox();
-			checkBox.setValue( columnSettings.isVisible() );
-			checkBox.addClickHandler( new ClickHandler() {
-				@Override
-				public void onClick( ClickEvent event ) {
-					gridColumnsHelper.applyGridColumnConfig( entry.getKey(), checkBox.getValue() );
-				}
-			} );
-			columnPopupMainPanel.add( new ColumnConfigRowWidget( checkBox, columnSettings.getColumnLabel() ) );
-		}
+		popupContent = new VerticalPanel();
+		columnSelectorPopup.add( popupContent );
+	}
 
-		columnSelectorPopup.add( columnPopupMainPanel );
+	public void setDataGrid( String gridId, DataGrid dataGrid ) {
+		if ( dataGrid == null ) {
+			Window.alert( "Grid customization widget is not correctly configured!" );
+			return;
+		}
+		gridColumnsHelper = new GridColumnsHelper( gridId, dataGrid );
+
 	}
 
 	// Apply any previously applied column configuration to the data grid (an explicit call to this method is necessary whenever the data grid is being redrawn)
@@ -85,9 +74,62 @@ public class ColumnSelectionWidget extends Composite {
 		gridColumnsHelper.applyGridColumnsConfig();
 	}
 
-	private void iconClicked() {
+	private void setPopupContent() {
+
+		popupContent.clear();
+
+		for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsHelper.getGridColumnsConfig().getColumnSettingsBySelectorIndex() ) {
+			final int selectedIndex = entry.getKey();
+			final ColumnSettings columnSettings = entry.getValue();
+
+			final CheckBox checkBox = new com.google.gwt.user.client.ui.CheckBox();
+			checkBox.setValue( columnSettings.isVisible() );
+			checkBox.addClickHandler( new ClickHandler() {
+				@Override
+				public void onClick( ClickEvent event ) {
+					gridColumnsHelper.applyGridColumnConfig( selectedIndex, checkBox.getValue() );
+				}
+			} );
+
+			popupContent.add(
+					new ColumnConfigRowWidget(
+							checkBox,
+							columnSettings.getColumnLabel(),
+							new RightColumnShiftCallback() {
+								@Override
+								public void columnShiftedRight() {
+									// This call updates the data grid and also reset the internal indexes in the getGridColumnsConfig
+									gridColumnsHelper.columnShiftedRight( selectedIndex );
+									// Refresh the selector popup's content after moving columns
+									refreshSelectorPopup();
+								}
+							},
+							new LeftColumnShiftCallback() {
+								@Override
+								public void columnShiftedLeft() {
+									// This call updates the data grid and also reset the internal indexes in the getGridColumnsConfig
+									gridColumnsHelper.columnShiftedLeft( selectedIndex );
+									// Refresh the selector popup's content after moving columns
+									refreshSelectorPopup();
+								}
+							}
+					)
+			);
+		}
+	}
+
+	private void showSelectorPopup() {
+
+		setPopupContent();
+
 		columnSelectorPopup.setPopupPosition( dynGridIcon.getAbsoluteLeft(),
 				dynGridIcon.getAbsoluteTop() + dynGridIcon.getOffsetHeight() );
 		columnSelectorPopup.show();
+	}
+
+	private void refreshSelectorPopup() {
+
+		columnSelectorPopup.hide();
+		showSelectorPopup();
 	}
 }

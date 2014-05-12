@@ -9,6 +9,10 @@
                 </td>
                 <td id="columnLabelId" style="padding: 4px;">
                 </td>
+                <td id="columnShiftRightIcon" style="padding: 4px;">
+                </td>
+                <td id="columnShiftLeftIcon" style="padding: 4px;">
+                </td>
             </tr>
         </table>
     </g:HTMLPanel>

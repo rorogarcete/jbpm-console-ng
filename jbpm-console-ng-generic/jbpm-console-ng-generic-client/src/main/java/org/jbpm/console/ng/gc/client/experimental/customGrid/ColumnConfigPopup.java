@@ -16,6 +16,7 @@ import org.uberfire.client.common.popups.footers.ModalFooterOKButton;
 
 import java.util.Map;
 
+// TODO leave this for now, might still need it
 public class ColumnConfigPopup extends Modal {
 
 	interface ColumnConfigPopupUIBinder
@@ -57,7 +58,7 @@ public class ColumnConfigPopup extends Modal {
 		// Initialize the popup when the widget's icon is clicked
 		columnPopupMainPanel.clear();
 
-		for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsConfig.entrySet() ) {
+		for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsConfig.getColumnSettingsBySelectorIndex() ) {
 
 			final ColumnSettings columnSettings = entry.getValue();
 
@@ -69,7 +70,7 @@ public class ColumnConfigPopup extends Modal {
 					gridColumnsHelper.applyGridColumnConfig( entry.getKey(), checkBox.getValue() );
 				}
 			} );
-			columnPopupMainPanel.add( new ColumnConfigRowWidget( checkBox, columnSettings.getColumnLabel() ) );
+			columnPopupMainPanel.add( new ColumnConfigRowWidget( checkBox, columnSettings.getColumnLabel(), null, null ) );
 		}
 	}
 }
