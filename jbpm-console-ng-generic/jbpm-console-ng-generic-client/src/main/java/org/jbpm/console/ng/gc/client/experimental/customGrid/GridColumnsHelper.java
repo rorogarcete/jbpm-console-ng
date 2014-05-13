@@ -5,6 +5,7 @@ import com.google.gwt.user.cellview.client.Column;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class GridColumnsHelper {
 
@@ -37,14 +38,29 @@ public class GridColumnsHelper {
 	// Apply to all columns
 	public void applyGridColumnsConfig() {
 		if ( gridColumnsConfig == null ) throw new RuntimeException( "Grid customization widget is not correctly configured!" );
-		// Empty the table to redraw it completely
-		for ( int i = grid.getColumnCount() - 1; i >= 0; i-- ) {
-			grid.removeColumn( i );
+
+		// Empty the table to redraw it completely (need to do maintain indexMap updated in the process, otherwise
+		// when disabling columns, switching perspectives, then returning to the table and re-enabling a previously
+		// disabled column, RuntimeExceptions might be thrown by the ColumnIndexMap.columnAdded/columnRemoved methods
+		Set<Map.Entry<Integer, ColumnSettings>> columnSettings = gridColumnsConfig.getColumnSettingsBySelectorIndex();
+		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings ) {
+			int removeIndex = indexMap.columnDropped( entry.getKey() );
+			grid.removeColumn( removeIndex );
 		}
 		grid.flush();
-		for ( Map.Entry<Integer, ColumnSettings> entry : gridColumnsConfig.getColumnSettingsBySelectorIndex() ) {
+		// Now add the visible columns
+		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings ) {
+			int selectorIndex = entry.getKey();
 			ColumnSettings settings = entry.getValue();
-			if ( entry.getValue().isVisible() ) grid.addColumn( settings.getCachedColumn(), settings.getCachedColumnHeader(), settings.getCachedColumnFooter() );
+			if ( entry.getValue().isVisible() ) {
+				indexMap.columnAdded( selectorIndex );
+				int addIndex = indexMap.getGridIndexForSelectedColumn( selectorIndex );
+				grid.insertColumn(  addIndex,
+									settings.getCachedColumn(),
+									settings.getCachedColumnHeader(),
+									settings.getCachedColumnFooter() );
+				grid.setColumnWidth( addIndex, settings.getColumnWidth() );
+			}
 		}
 		grid.redraw();
 	}
