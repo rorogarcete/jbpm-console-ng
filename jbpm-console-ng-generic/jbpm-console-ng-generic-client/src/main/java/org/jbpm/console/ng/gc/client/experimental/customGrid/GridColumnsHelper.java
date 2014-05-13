@@ -1,29 +1,32 @@
 package org.jbpm.console.ng.gc.client.experimental.customGrid;
 
+import com.google.gwt.user.cellview.client.AbstractCellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.github.gwtbootstrap.client.ui.DataGrid;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GridColumnsHelper {
 
+	// TODO this won't do for clustered environments
 	// Temporal 'storage' for grid configurations
 	private static Map<String, GridColumnsConfig> gridColumnsConfigs = new HashMap<String, GridColumnsConfig>( 10 );
 
-	private DataGrid dataGrid;
+	private AbstractCellTable grid;
 
 	private GridColumnsConfig gridColumnsConfig;
 
 	private ColumnIndexMap indexMap;
 
-	public GridColumnsHelper( String gridId, DataGrid dataGrid ) {
-		this.dataGrid = dataGrid;
-		this.gridColumnsConfig = gridColumnsConfigs.get( gridId );
-		if ( gridColumnsConfig == null )
-			gridColumnsConfigs.put( gridId, gridColumnsConfig = initializeGridColumnsConfig( gridId, dataGrid ) );
+	public GridColumnsHelper( String gridId, AbstractCellTable grid ) {
+		if ( grid != null ) {
+			this.grid = grid;
+			this.gridColumnsConfig = gridColumnsConfigs.get( gridId );
+			if ( gridColumnsConfig == null )
+				gridColumnsConfigs.put( gridId, gridColumnsConfig = initializeGridColumnsConfig( gridId, grid ) );
 
-		indexMap = new ColumnIndexMap( dataGrid.getColumnCount() );
+			indexMap = new ColumnIndexMap( grid.getColumnCount() );
+		}
 	}
 
 	public void saveGridColumnsConfig() {
@@ -35,15 +38,15 @@ public class GridColumnsHelper {
 	public void applyGridColumnsConfig() {
 		if ( gridColumnsConfig == null ) throw new RuntimeException( "Grid customization widget is not correctly configured!" );
 		// Empty the table to redraw it completely
-		for ( int i = dataGrid.getColumnCount() - 1; i >= 0; i-- ) {
-			dataGrid.removeColumn( i );
+		for ( int i = grid.getColumnCount() - 1; i >= 0; i-- ) {
+			grid.removeColumn( i );
 		}
-		dataGrid.flush();
+		grid.flush();
 		for ( Map.Entry<Integer, ColumnSettings> entry : gridColumnsConfig.getColumnSettingsBySelectorIndex() ) {
 			ColumnSettings settings = entry.getValue();
-			if ( entry.getValue().isVisible() ) dataGrid.addColumn( settings.getCachedColumn(), settings.getCachedColumnHeader(), settings.getCachedColumnFooter() );
+			if ( entry.getValue().isVisible() ) grid.addColumn( settings.getCachedColumn(), settings.getCachedColumnHeader(), settings.getCachedColumnFooter() );
 		}
-		dataGrid.redraw();
+		grid.redraw();
 	}
 
 	// Apply to one single column
@@ -53,18 +56,18 @@ public class GridColumnsHelper {
 
 		if ( !insertColumn ) {
 			int removeIndex = indexMap.columnDropped( selectorIndex );
-			dataGrid.removeColumn( removeIndex );
+			grid.removeColumn( removeIndex );
 		} else {
 			indexMap.columnAdded( selectorIndex );
 			int addIndex = indexMap.getGridIndexForSelectedColumn( selectorIndex );
-			dataGrid.insertColumn(  addIndex,
+			grid.insertColumn(  addIndex,
 					columnSettings.getCachedColumn(),
 					columnSettings.getCachedColumnHeader(),
 					columnSettings.getCachedColumnFooter() );
-			dataGrid.setColumnWidth( addIndex, columnSettings.getColumnWidth() );
+			grid.setColumnWidth( addIndex, columnSettings.getColumnWidth() );
 		}
 		// TODO leave data grid redrawing up to the caller?
-		dataGrid.redraw();
+		grid.redraw();
 	}
 
 	public void columnShiftedRight( int selectorIndex ) {
@@ -99,35 +102,35 @@ public class GridColumnsHelper {
 		ColumnSettings columnSettings1 = gridColumnsConfig.getColumnSettings( selectorIndex1 );
 
 		// Adapt and redraw the data grid (don't change the order of the following calls)
-		dataGrid.removeColumn( originalGridIndexForSelectorIndex1 );
+		grid.removeColumn( originalGridIndexForSelectorIndex1 );
 		if (isRollOverSwap) {
-			dataGrid.removeColumn( originalGridIndexForSelectorIndex2 );
+			grid.removeColumn( originalGridIndexForSelectorIndex2 );
 		}
-		dataGrid.insertColumn(  originalGridIndexForSelectorIndex2,
+		grid.insertColumn(  originalGridIndexForSelectorIndex2,
 				columnSettings1.getCachedColumn(),
 				columnSettings1.getCachedColumnHeader(),
 				columnSettings1.getCachedColumnFooter() );
-		dataGrid.setColumnWidth( originalGridIndexForSelectorIndex2, columnSettings1.getColumnWidth() );
+		grid.setColumnWidth( originalGridIndexForSelectorIndex2, columnSettings1.getColumnWidth() );
 
 		if (isRollOverSwap) {
 			ColumnSettings columnSettings2 = gridColumnsConfig.getColumnSettings( selectorIndex2 );
-			dataGrid.insertColumn(  originalGridIndexForSelectorIndex1,
+			grid.insertColumn(  originalGridIndexForSelectorIndex1,
 					columnSettings2.getCachedColumn(),
 					columnSettings2.getCachedColumnHeader(),
 					columnSettings2.getCachedColumnFooter() );
-			dataGrid.setColumnWidth( originalGridIndexForSelectorIndex1, columnSettings2.getColumnWidth() );
+			grid.setColumnWidth( originalGridIndexForSelectorIndex1, columnSettings2.getColumnWidth() );
 		}
 
-		dataGrid.redraw();
+		grid.redraw();
 
 		// Switch columnsettings in gridColumnsConfig
 		gridColumnsConfig.swapColumnSettings( selectorIndex1, selectorIndex2 );
 	}
 
-	private GridColumnsConfig initializeGridColumnsConfig( String gridId, DataGrid dataGrid ) {
+	private GridColumnsConfig initializeGridColumnsConfig( String gridId, AbstractCellTable grid ) {
 
 		GridColumnsConfig gridColumnsConfig = new GridColumnsConfig( gridId );
-		int maxIndex = dataGrid.getColumnCount() - 1;
+		int maxIndex = grid.getColumnCount() - 1;
 		for ( int i = 0; i <= maxIndex ; i++ ) {
 			ColumnSettings settings = new ColumnSettings();
 
@@ -139,14 +142,14 @@ public class GridColumnsHelper {
 //			settings.setGridIndex( i );
 
 			settings.setVisible( true );
-			settings.setColumnLabel( ( String ) dataGrid.getHeader( i ).getValue() );
+			settings.setColumnLabel( ( String ) grid.getHeader( i ).getValue() );
 
-			Column<?, ?> column = dataGrid.getColumn( i );
+			Column<?, ?> column = grid.getColumn( i );
 			settings.setCachedColumn( column );
-			settings.setColumnWidth( dataGrid.getColumnWidth( column ) );
+			settings.setColumnWidth( grid.getColumnWidth( column ) );
 
-			settings.setCachedColumnHeader( dataGrid.getHeader( i ) );
-			settings.setCachedColumnFooter( dataGrid.getFooter( i ) );
+			settings.setCachedColumnHeader( grid.getHeader( i ) );
+			settings.setCachedColumnFooter( grid.getFooter( i ) );
 
 			gridColumnsConfig.putColumnSettings( i, settings );
 		}

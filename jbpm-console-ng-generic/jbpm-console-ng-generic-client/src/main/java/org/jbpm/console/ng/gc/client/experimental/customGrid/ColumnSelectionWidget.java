@@ -1,6 +1,5 @@
 package org.jbpm.console.ng.gc.client.experimental.customGrid;
 
-import com.github.gwtbootstrap.client.ui.DataGrid;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -10,6 +9,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.AbstractCellTable;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
@@ -30,6 +30,7 @@ public class ColumnSelectionWidget extends Composite {
 	PopupPanel columnSelectorPopup;
 	Panel popupContent;
 
+	private AbstractCellTable grid;
 	private GridColumnsHelper gridColumnsHelper;
 
 	public ColumnSelectionWidget() {
@@ -59,12 +60,9 @@ public class ColumnSelectionWidget extends Composite {
 		columnSelectorPopup.add( popupContent );
 	}
 
-	public void setDataGrid( String gridId, DataGrid dataGrid ) {
-		if ( dataGrid == null ) {
-			Window.alert( "Grid customization widget is not correctly configured!" );
-			return;
-		}
-		gridColumnsHelper = new GridColumnsHelper( gridId, dataGrid );
+	public void setGrid( String gridId, AbstractCellTable grid ) {
+		this.grid = grid;
+		gridColumnsHelper = new GridColumnsHelper( gridId, grid );
 
 	}
 
@@ -82,6 +80,8 @@ public class ColumnSelectionWidget extends Composite {
 			final int selectedIndex = entry.getKey();
 			final ColumnSettings columnSettings = entry.getValue();
 
+			// TODO Replace the ColumnConfigRowWidgets with a DataGrid widget in the ColumnSelectionWidget, thus improving styling
+			// options, which would also allow getting rid of the callbacks
 			popupContent.add(
 					new ColumnConfigRowWidget(
 							columnSettings.isVisible(),
@@ -116,6 +116,10 @@ public class ColumnSelectionWidget extends Composite {
 	}
 
 	private void showSelectorPopup() {
+		if ( grid == null ) {
+			Window.alert( "Grid customization widget is not correctly configured!" );
+			return;
+		}
 
 		setPopupContent();
 
