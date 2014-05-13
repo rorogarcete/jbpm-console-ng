@@ -22,15 +22,15 @@ public class ColumnConfigRowWidget extends Composite {
 	@UiField
 	HTMLPanel rowPanel;
 
+	final private Icon shiftRightIcon = new Icon( IconType.ARROW_DOWN );
+	final private Icon shiftLeftIcon = new Icon( IconType.ARROW_UP );
+
 	public ColumnConfigRowWidget( Boolean isVisible,
 								  final ColumnVisibilityChangedCallback columnVisibilityChangedCallback,
 								  String columnLabel,
 								  final RightColumnShiftCallback rightShiftCallback,
 								  final LeftColumnShiftCallback leftShiftCallback ) {
 		initWidget( uiBinder.createAndBindUi( this ) );
-
-		final Icon shiftRightIcon = new Icon( IconType.ARROW_DOWN );
-		final Icon shiftLeftIcon = new Icon( IconType.ARROW_UP );
 
 		final CheckBox checkBox = new com.google.gwt.user.client.ui.CheckBox();
 		checkBox.setValue( isVisible );
@@ -60,6 +60,7 @@ public class ColumnConfigRowWidget extends Composite {
 
 			rowPanel.add( shiftRightIcon, "columnShiftRightIcon" );
 		}
+		shiftRightIcon.setVisible( isVisible );
 
 		if ( leftShiftCallback != null ) {
 			shiftLeftIcon.getElement().getStyle().setCursor( Style.Cursor.POINTER );
@@ -73,6 +74,6 @@ public class ColumnConfigRowWidget extends Composite {
 
 			rowPanel.add( shiftLeftIcon, "columnShiftLeftIcon" );
 		}
-
+		shiftLeftIcon.setVisible( isVisible );
 	}
 }
