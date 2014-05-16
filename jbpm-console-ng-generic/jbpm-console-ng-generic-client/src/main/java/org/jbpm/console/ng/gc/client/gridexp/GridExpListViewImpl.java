@@ -54,9 +54,6 @@ public class GridExpListViewImpl extends Composite
 	@DataField
 	public LayoutPanel listContainer;
 
-	@DataField
-	public ColumnSelectionWidget columnSelector = new ColumnSelectionWidget();
-
 	@Inject
 	@DataField
 	public DataGrid<DataMockSummary> listGrid;
@@ -67,6 +64,8 @@ public class GridExpListViewImpl extends Composite
 	private Constants constants = GWT.create(Constants.class);
 
 	protected ListHandler<DataMockSummary> sortHandler;
+
+	private ColumnSelectionWidget columnSelector = new ColumnSelectionWidget();
 
 	public GridExpListViewImpl() {}
 
@@ -237,6 +236,11 @@ public class GridExpListViewImpl extends Composite
 		});
 		listGrid.addColumn(column4Column, new ResizableHeader("Column4",  listGrid, column4Column));
 		listGrid.setColumnWidth(column4Column, "100px");
+	}
+
+	@Override
+	public Widget getColumnWidget() {
+		return columnSelector;
 	}
 
 	@Override
