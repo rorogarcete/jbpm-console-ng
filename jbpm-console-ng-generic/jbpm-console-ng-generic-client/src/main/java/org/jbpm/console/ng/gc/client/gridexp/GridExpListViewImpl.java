@@ -123,7 +123,7 @@ public class GridExpListViewImpl extends Composite
 			}
 		});
 		listGrid.addColumn(columnIdColumn, new ResizableHeader("ID",  listGrid, columnIdColumn));
-		listGrid.setColumnWidth(columnIdColumn, "300px");
+		listGrid.setColumnWidth(columnIdColumn, "40px");
 	}
 
 	private void column1Column() {
@@ -151,7 +151,7 @@ public class GridExpListViewImpl extends Composite
 			}
 		});
 		listGrid.addColumn(column1Column, new ResizableHeader("Column1",  listGrid, column1Column));
-		listGrid.setColumnWidth(column1Column, "100px");
+		listGrid.setColumnWidth(column1Column, "60px");
 	}
 
 	private void column2Column() {
@@ -179,7 +179,7 @@ public class GridExpListViewImpl extends Composite
 			}
 		});
 		listGrid.addColumn(column2Column, new ResizableHeader("Column2",  listGrid, column2Column));
-		listGrid.setColumnWidth(column2Column, "100px");
+		listGrid.setColumnWidth(column2Column, "90px");
 	}
 
 	private void column3Column() {
@@ -207,7 +207,7 @@ public class GridExpListViewImpl extends Composite
 			}
 		});
 		listGrid.addColumn(column3Column, new ResizableHeader("Column3", listGrid, column3Column));
-		listGrid.setColumnWidth(column3Column, "100px");
+		listGrid.setColumnWidth(column3Column, "120px");
 	}
 
 	private void column4Column() {
@@ -235,7 +235,7 @@ public class GridExpListViewImpl extends Composite
 			}
 		});
 		listGrid.addColumn(column4Column, new ResizableHeader("Column4",  listGrid, column4Column));
-		listGrid.setColumnWidth(column4Column, "100px");
+		listGrid.setColumnWidth(column4Column, "150px");
 	}
 
 	@Override
