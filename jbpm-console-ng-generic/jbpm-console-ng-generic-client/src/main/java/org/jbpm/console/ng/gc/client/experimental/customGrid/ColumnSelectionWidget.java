@@ -38,10 +38,15 @@ public class ColumnSelectionWidget extends Composite {
 	// Made this into a separate call, so that it can be executed when clicking the typical table refresh button (for example)
 	public void applyGridColumnsConfig() {
 		gridColumnsHelper.applyGridColumnsConfig();
-		setContent();
+		setSelectorContent();
 	}
 
-	private void setContent() {
+	private void setSelectorContent() {
+		setSelectorGridContent();
+		setSelectorButtons();
+	}
+
+	private void setSelectorGridContent() {
 		selectorGrid.clear( true );
 		int row = 0;
 		for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsHelper.getGridColumnsConfig().getColumnSettingsBySelectorIndex() ) {
@@ -77,7 +82,7 @@ public class ColumnSelectionWidget extends Composite {
 					// This call updates the data grid and also reset the internal indexes in the getGridColumnsConfig
 					gridColumnsHelper.columnShiftedRight( selectedIndex );
 					// Refresh the selector popup's content after moving columns
-					setContent();
+					setSelectorGridContent();
 				}
 			}, ClickEvent.getType() );
 
@@ -87,7 +92,7 @@ public class ColumnSelectionWidget extends Composite {
 					// This call updates the data grid and also reset the internal indexes in the getGridColumnsConfig
 					gridColumnsHelper.columnShiftedLeft( selectedIndex );
 					// Refresh the selector popup's content after moving columns
-					setContent();
+					setSelectorGridContent();
 				}
 			}, ClickEvent.getType() );
 
@@ -100,5 +105,16 @@ public class ColumnSelectionWidget extends Composite {
 			selectorGrid.setWidget( row, 6, shiftLeftIcon );
 			row++;
 		}
+	}
+
+	private void setSelectorButtons() {
+		Button resetButton = new Button( "Reset table", new ClickHandler() {
+			@Override
+			public void onClick( ClickEvent event ) {
+				gridColumnsHelper.resetGrid();
+				setSelectorGridContent();
+			}
+		});
+		panel.add( resetButton );
 	}
 }

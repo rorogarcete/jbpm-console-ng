@@ -6,6 +6,7 @@ import com.google.gwt.user.cellview.client.Column;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class GridColumnsHelper {
 
@@ -52,7 +53,7 @@ public class GridColumnsHelper {
 		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings ) {
 			int selectorIndex = entry.getKey();
 			ColumnSettings settings = entry.getValue();
-			if ( entry.getValue().isVisible() ) {
+			if ( settings.isVisible() ) {
 				indexMap.columnAdded( selectorIndex );
 				int addIndex = indexMap.getGridIndexForSelectedColumn( selectorIndex );
 				grid.insertColumn(  addIndex,
@@ -60,6 +61,32 @@ public class GridColumnsHelper {
 									settings.getCachedColumnHeader(),
 									settings.getCachedColumnFooter() );
 				grid.setColumnWidth( addIndex, settings.getColumnWidth() );
+			}
+		}
+		grid.redraw();
+	}
+
+	public void resetGrid() {
+
+		indexMap.init();
+		gridColumnsConfig.reset();
+
+		for ( int i = grid.getColumnCount() - 1; i >= 0; i-- ) {
+			grid.removeColumn( i );
+		}
+		grid.flush();
+		// Now add the visible columns
+		Set<Map.Entry<Integer, ColumnSettings>> columnSettings = gridColumnsConfig.getInitialColumnSettingsBySelectorIndex();
+		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings ) {
+			int selectorIndex = entry.getKey();
+			ColumnSettings settings = entry.getValue();
+			if ( settings.isVisible() ) {
+				// Use selector index, is ok because we've reset the index map
+				grid.insertColumn(  selectorIndex,
+									settings.getCachedColumn(),
+									settings.getCachedColumnHeader(),
+									settings.getCachedColumnFooter() );
+				grid.setColumnWidth( selectorIndex, settings.getColumnWidth() );
 			}
 		}
 		grid.redraw();
@@ -145,17 +172,10 @@ public class GridColumnsHelper {
 
 	private GridColumnsConfig initializeGridColumnsConfig( String gridId, AbstractCellTable grid ) {
 
-		GridColumnsConfig gridColumnsConfig = new GridColumnsConfig( gridId );
+		Map<Integer, ColumnSettings> settingsMap = new TreeMap<Integer, ColumnSettings>();
 		int maxIndex = grid.getColumnCount() - 1;
 		for ( int i = 0; i <= maxIndex ; i++ ) {
 			ColumnSettings settings = new ColumnSettings();
-
-//			settings.setSelectorIndex( i );
-//			int nextValidIndex = i < maxIndex ? i + 1 : 0;
-//			settings.setNextValidSelectorIndex( nextValidIndex );
-//			int previousValidIndex = i == 0 ? maxIndex : i - 1;
-//			settings.setPreviousValidSelectorIndex( previousValidIndex );
-//			settings.setGridIndex( i );
 
 			settings.setVisible( true );
 			settings.setColumnLabel( ( String ) grid.getHeader( i ).getValue() );
@@ -167,23 +187,20 @@ public class GridColumnsHelper {
 			settings.setCachedColumnHeader( grid.getHeader( i ) );
 			settings.setCachedColumnFooter( grid.getFooter( i ) );
 
-			gridColumnsConfig.putColumnSettings( i, settings );
+			settingsMap.put( i, settings );
 		}
-		return gridColumnsConfig;
+		return new GridColumnsConfig( gridId, settingsMap );
 	}
 
 	//TODO implement some kind of adequate test for this
 	private class ColumnIndexMap {
+		private int maxIndex;
 		private int[] selectorIndexes;
 		private int[] gridIndexes;
 
 		private ColumnIndexMap( int maxIndex ) {
-			selectorIndexes = new int[maxIndex];
-			gridIndexes = new int[maxIndex];
-			for ( int i = 0; i < maxIndex; i++ ) {
-				selectorIndexes[i] = i;
-				gridIndexes[i] = i;
-			}
+			this.maxIndex = maxIndex;
+			init();
 		}
 
 		/**
@@ -282,6 +299,15 @@ public class GridColumnsHelper {
 				}
 			}
 			return former;
+		}
+
+		private void init() {
+			selectorIndexes = new int[maxIndex];
+			gridIndexes = new int[maxIndex];
+			for ( int i = 0; i < maxIndex; i++ ) {
+				selectorIndexes[i] = i;
+				gridIndexes[i] = i;
+			}
 		}
 	}
 }

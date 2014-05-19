@@ -10,20 +10,18 @@ public class GridColumnsConfig {
 	private String gridId;
 
 	// Keep this key-ordered, for the purpose of applying the grid configuration as a whole, e.g. when returning to a previously customized table
-	private TreeMap<Integer, ColumnSettings> columnSettingsMap = new TreeMap<Integer, ColumnSettings>();
+	private Map<Integer, ColumnSettings> initialSettingsMap;
+	private Map<Integer, ColumnSettings> columnSettingsMap = new TreeMap<Integer, ColumnSettings>();
 
-	public GridColumnsConfig( String gridId ) {
+	public GridColumnsConfig( String gridId, Map<Integer, ColumnSettings> settingsMap ) {
 		this.gridId = gridId;
+		this.columnSettingsMap = settingsMap;
+		initialSettingsMap = cloneSettingsMap( columnSettingsMap );
 	}
 
 	// Get the ColumnSettings associated to the specified selectorIndex, if any.
 	public ColumnSettings getColumnSettings( Integer selectorIndex ) {
 		return columnSettingsMap.get( selectorIndex );
-	}
-
-	// Put the ColumnSettings to the specified selectorIndex and returns the previously associated value, if any.
-	public void putColumnSettings( Integer selectorIndex, ColumnSettings columnSettings ) {
-		columnSettingsMap.put( selectorIndex, columnSettings );
 	}
 
 	public void swapColumnSettings( Integer selectorIndex1, Integer selectorIndex2 ) {
@@ -36,7 +34,34 @@ public class GridColumnsConfig {
 		return columnSettingsMap.entrySet();
 	}
 
+	// Returns a Set of Map.Entry<Integer,ColumnSettings> objects
+	public Set<Map.Entry<Integer,ColumnSettings>> getInitialColumnSettingsBySelectorIndex() {
+		return initialSettingsMap.entrySet();
+	}
+
 	public String getGridId() {
 		return gridId;
+	}
+
+	// Reset the table configuration from the initial settings
+	public void reset() {
+		columnSettingsMap = cloneSettingsMap( initialSettingsMap );
+	}
+
+	// Clone a settings map
+	private Map<Integer, ColumnSettings> cloneSettingsMap(Map<Integer, ColumnSettings> source) {
+		Map<Integer, ColumnSettings> clone  =  new TreeMap<Integer, ColumnSettings>();
+		for ( Map.Entry<Integer, ColumnSettings> entry : source.entrySet() ) {
+			ColumnSettings origin = entry.getValue();
+			ColumnSettings copy = new ColumnSettings();
+			copy.setVisible( origin.isVisible() );
+			copy.setColumnLabel( origin.getColumnLabel() );
+			copy.setColumnWidth( origin.getColumnWidth() );
+			copy.setCachedColumn( origin.getCachedColumn() );
+			copy.setCachedColumnHeader( origin.getCachedColumnHeader() );
+			copy.setCachedColumnFooter( origin.getCachedColumnFooter() );
+			clone.put( entry.getKey(), copy );
+		}
+		return clone;
 	}
 }

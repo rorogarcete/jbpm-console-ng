@@ -6,11 +6,6 @@ import com.google.gwt.user.cellview.client.Header;
 // TODO adapt this for non-string headers
 public class ColumnSettings {
 
-//	private int selectorIndex;
-//	private int previousValidSelectorIndex;
-//	private int nextValidSelectorIndex;
-//	private int gridIndex;
-
 	private boolean isVisible;
 	private String columnLabel;
 	private String columnWidth;
@@ -20,38 +15,6 @@ public class ColumnSettings {
 	private Header<?> cachedColumnFooter;
 
 	public ColumnSettings(){}
-
-//	public int getSelectorIndex() {
-//		return selectorIndex;
-//	}
-//
-//	public void setSelectorIndex( int selectorIndex ) {
-//		this.selectorIndex = selectorIndex;
-//	}
-//
-//	public int getNextValidSelectorIndex() {
-//		return nextValidSelectorIndex;
-//	}
-//
-//	public void setNextValidSelectorIndex( int nextValidSelectorIndex ) {
-//		this.nextValidSelectorIndex = nextValidSelectorIndex;
-//	}
-//
-//	public int getPreviousValidSelectorIndex() {
-//		return previousValidSelectorIndex;
-//	}
-//
-//	public void setPreviousValidSelectorIndex( int previousValidSelectorIndex ) {
-//		this.previousValidSelectorIndex = previousValidSelectorIndex;
-//	}
-//
-//	public int getGridIndex() {
-//		return gridIndex;
-//	}
-//
-//	public void setGridIndex( int gridIndex ) {
-//		this.gridIndex = gridIndex;
-//	}
 
 	public boolean isVisible() {
 		return isVisible;
