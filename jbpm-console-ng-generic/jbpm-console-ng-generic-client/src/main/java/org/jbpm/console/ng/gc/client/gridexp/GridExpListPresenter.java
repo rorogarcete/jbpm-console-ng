@@ -43,7 +43,7 @@ import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.*;
 
 @Dependent
-@WorkbenchScreen(identifier = "Grid Experimental")
+@WorkbenchScreen(identifier = "Grid Experiments")
 public class GridExpListPresenter {
 
 	public interface GridExpListView extends UberView<GridExpListPresenter> {
@@ -78,7 +78,7 @@ public class GridExpListPresenter {
 
 	@WorkbenchPartTitle
 	public String getTitle() {
-		return "Grid Experiment";
+		return "Grid Experiments";
 	}
 
 	@WorkbenchPartView

@@ -45,9 +45,6 @@ public class GridExpListViewImpl extends Composite
 		implements GridExpListPresenter.GridExpListView,
 		RequiresResize {
 
-	@Inject
-	private PlaceManager placeManager;
-
 	private GridExpListPresenter presenter;
 
 	@Inject

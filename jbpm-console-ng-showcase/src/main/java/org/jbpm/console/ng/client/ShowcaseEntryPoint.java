@@ -176,7 +176,7 @@ public class ShowcaseEntryPoint {
         result.add( MenuFactory.newSimpleItem( constants.Experimental_Grid() ).respondsWith( new Command() {
             @Override
             public void execute() {
-                placeManager.goTo( new DefaultPlaceRequest( "Grid Experimental" ) );
+                placeManager.goTo( new DefaultPlaceRequest( "Experimental Grid" ) );
             }
         } ).endMenu().build().getItems().get( 0 ) );
 
