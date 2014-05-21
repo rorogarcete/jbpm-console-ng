@@ -1,5 +1,6 @@
 package org.jbpm.console.ng.gc.client.experimental.customGrid;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -29,14 +30,13 @@ public class GridColumnsConfig {
 		columnSettingsMap.put( selectorIndex1, columnSettingsMap.put( selectorIndex2, columnSettings1 ) );
 	}
 
-	// Returns a Set of Map.Entry<Integer,ColumnSettings> objects
-	public Set<Map.Entry<Integer,ColumnSettings>> getColumnSettingsBySelectorIndex() {
-		return columnSettingsMap.entrySet();
+	// Returns a Map<Integer,ColumnSettings>
+	public Map<Integer,ColumnSettings> getColumnSettingsBySelectorIndex() {
+		return Collections.unmodifiableMap( columnSettingsMap );
 	}
 
-	// Returns a Set of Map.Entry<Integer,ColumnSettings> objects
-	public Set<Map.Entry<Integer,ColumnSettings>> getInitialColumnSettingsBySelectorIndex() {
-		return initialSettingsMap.entrySet();
+	public Map<Integer,ColumnSettings> getInitialColumnSettingsBySelectorIndex() {
+		return Collections.unmodifiableMap( initialSettingsMap );
 	}
 
 	public String getGridId() {

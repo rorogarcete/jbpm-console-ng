@@ -3,10 +3,7 @@ package org.jbpm.console.ng.gc.client.experimental.customGrid;
 import com.google.gwt.user.cellview.client.AbstractCellTable;
 import com.google.gwt.user.cellview.client.Column;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public class GridColumnsHelper {
 
@@ -20,6 +17,9 @@ public class GridColumnsHelper {
 
 	private ColumnIndexMap indexMap;
 
+	// Selector indexes of excluded columns
+	private TreeSet<Integer> excludedColumns;
+
 	public GridColumnsHelper( String gridId, AbstractCellTable grid ) {
 		if ( grid != null ) {
 			this.grid = grid;
@@ -28,7 +28,24 @@ public class GridColumnsHelper {
 				gridColumnsConfigs.put( gridId, gridColumnsConfig = initializeGridColumnsConfig( gridId, grid ) );
 
 			indexMap = new ColumnIndexMap( grid.getColumnCount() );
+			excludedColumns = new TreeSet<Integer>();
 		}
+	}
+
+	/**
+	 * Indicate columns that shouldn't be taken into account when building the column selector widget.
+	 * @param gridColumnIndex The index of the column within the grid.
+	 */
+	public void excludeFromSelection( Integer gridColumnIndex ) {
+		excludedColumns.add( indexMap.getSelectorIndexForGridColumn( gridColumnIndex ) );
+	}
+
+	public Set<Map.Entry<Integer,ColumnSettings>> getFilteredColumnSettingsBySelectorIndex() {
+		Map<Integer,ColumnSettings> settingsMap = new TreeMap<Integer, ColumnSettings>( gridColumnsConfig.getColumnSettingsBySelectorIndex() );
+		for ( Iterator<Integer> it = settingsMap.keySet().iterator(); it.hasNext(); ) {
+			if (excludedColumns.contains( it.next() ) ) it.remove();
+		}
+		return settingsMap.entrySet();
 	}
 
 	public void saveGridColumnsConfig() {
@@ -43,14 +60,14 @@ public class GridColumnsHelper {
 		// Empty the table to redraw it completely (need to do maintain indexMap updated in the process, otherwise
 		// when disabling columns, switching perspectives, then returning to the table and re-enabling a previously
 		// disabled column, RuntimeExceptions might be thrown by the ColumnIndexMap.columnAdded/columnRemoved methods
-		Set<Map.Entry<Integer, ColumnSettings>> columnSettings = gridColumnsConfig.getColumnSettingsBySelectorIndex();
-		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings ) {
+		Map<Integer, ColumnSettings> columnSettings = gridColumnsConfig.getColumnSettingsBySelectorIndex();
+		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings.entrySet() ) {
 			int removeIndex = indexMap.columnDropped( entry.getKey() );
 			grid.removeColumn( removeIndex );
 		}
 		grid.flush();
 		// Now add the visible columns
-		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings ) {
+		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings.entrySet() ) {
 			int selectorIndex = entry.getKey();
 			ColumnSettings settings = entry.getValue();
 			if ( settings.isVisible() ) {
@@ -63,7 +80,6 @@ public class GridColumnsHelper {
 				grid.setColumnWidth( addIndex, settings.getColumnWidth() );
 			}
 		}
-		grid.redraw();
 	}
 
 	public void resetGrid() {
@@ -76,8 +92,8 @@ public class GridColumnsHelper {
 		}
 		grid.flush();
 		// Now add the visible columns
-		Set<Map.Entry<Integer, ColumnSettings>> columnSettings = gridColumnsConfig.getInitialColumnSettingsBySelectorIndex();
-		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings ) {
+		Map<Integer, ColumnSettings> columnSettings = gridColumnsConfig.getInitialColumnSettingsBySelectorIndex();
+		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings.entrySet() ) {
 			int selectorIndex = entry.getKey();
 			ColumnSettings settings = entry.getValue();
 			if ( settings.isVisible() ) {
@@ -89,7 +105,6 @@ public class GridColumnsHelper {
 				grid.setColumnWidth( selectorIndex, settings.getColumnWidth() );
 			}
 		}
-		grid.redraw();
 	}
 
 	// Apply to one single column
@@ -109,29 +124,80 @@ public class GridColumnsHelper {
 					columnSettings.getCachedColumnFooter() );
 			grid.setColumnWidth( addIndex, columnSettings.getColumnWidth() );
 		}
-		// TODO leave data grid redrawing up to the caller?
-		grid.redraw();
 	}
 
 	public void columnShiftedRight( int selectorIndex ) {
 		// Double check, but shouldn't really occur
 		if (indexMap.getActiveGridColumnsCount() > 1) {
+			// To avoid over-complicating things, 1/ get the current grid indexes for the anchored columns
+			TreeMap<Integer, Integer> stashedIndexes = stashAnchoredIndexes();
+
+			// 2/ remove the anchored columns
+			removeAnchored( stashedIndexes.keySet() );
+
+			// 3/ perform the swap operation
 			int nextValidSelectorIndex = indexMap.getNextValidSelectorIndex( selectorIndex );
 			swapColumns( selectorIndex, nextValidSelectorIndex );
+
+			// 4/ Finally, restore the anchored columns
+			restoreAnchored( stashedIndexes );
 		}
 	}
 
 	public void columnShiftedLeft( int selectorIndex ) {
 		// Double check, but shouldn't really occur
 		if (indexMap.getActiveGridColumnsCount() > 1) {
+			// To avoid over-complicating things, 1/ get the current grid indexes for the anchored columns
+			TreeMap<Integer, Integer> stashedIndexes = stashAnchoredIndexes();
+
+			// 2/ remove the anchored columns
+			removeAnchored( stashedIndexes.keySet() );
+
+			// 3/ perform the swap operation
 			int previousValidSelectorIndex = indexMap.getPreviousValidSelectorIndex( selectorIndex );
 			swapColumns( previousValidSelectorIndex, selectorIndex );
+
+			// 4/ Finally, restore the anchored columns
+			restoreAnchored( stashedIndexes );
 		}
 	}
 
-	public GridColumnsConfig getGridColumnsConfig() {
-		return gridColumnsConfig;
+//	public GridColumnsConfig getGridColumnsConfig() {
+//		return gridColumnsConfig;
+//	}
+
+	private void removeAnchored( Set<Integer> selectorIndexes ) {
+		for ( Iterator<Integer> it = selectorIndexes.iterator(); it.hasNext(); ) {
+			int formerGridIndex = indexMap.columnDropped( it.next() );
+			grid.removeColumn( formerGridIndex );
+		}
 	}
+
+	private void restoreAnchored( TreeMap<Integer, Integer> stashedIndexes ) {
+		for ( Map.Entry<Integer, Integer> entry : stashedIndexes.entrySet() ) {
+			ColumnSettings columnSettings = gridColumnsConfig.getColumnSettings( entry.getKey() );
+			indexMap.columnAdded( entry.getKey() );
+			grid.insertColumn(  entry.getValue(),
+								columnSettings.getCachedColumn(),
+								columnSettings.getCachedColumnHeader(),
+								columnSettings.getCachedColumnFooter() );
+			grid.setColumnWidth( entry.getValue(), columnSettings.getColumnWidth() );
+		}
+	}
+
+	private TreeMap<Integer, Integer> stashAnchoredIndexes() {
+		// key: selectorIndex, value: former grid index
+		TreeMap<Integer, Integer> stashedIndexes = new TreeMap<Integer, Integer>();
+		for ( Iterator<Integer> it = excludedColumns.iterator(); it.hasNext(); ) {
+			int selectedIndex = it.next();
+			stashedIndexes.put( selectedIndex, indexMap.getGridIndexForSelectedColumn( selectedIndex ) );
+		}
+		return stashedIndexes;
+	}
+
+//	private boolean columnIsExcluded( int selectorIndex ) {
+//		return excludedColumns.contains( selectorIndex );
+//	}
 
 	private void swapColumns( int selectorIndex1, int selectorIndex2 ) {
 		// TODO columns are being swapped, not added or dropped, is it necessary to mantain consistency with the indexMap?
@@ -164,8 +230,6 @@ public class GridColumnsHelper {
 			grid.setColumnWidth( originalGridIndexForSelectorIndex1, columnSettings2.getColumnWidth() );
 		}
 
-		grid.redraw();
-
 		// Switch columnsettings in gridColumnsConfig
 		gridColumnsConfig.swapColumnSettings( selectorIndex1, selectorIndex2 );
 	}
@@ -197,9 +261,12 @@ public class GridColumnsHelper {
 		private int maxIndex;
 		private int[] selectorIndexes;
 		private int[] gridIndexes;
+		// Selector indexes by grid index
+		private Map<Integer, Integer> gridSelectorMap;
 
 		private ColumnIndexMap( int maxIndex ) {
 			this.maxIndex = maxIndex;
+			gridSelectorMap = new HashMap<Integer, Integer>( maxIndex );
 			init();
 		}
 
@@ -207,6 +274,8 @@ public class GridColumnsHelper {
 		 * This method will look from the index passed in onwards to find the next valid column-switching candidate.
 		 * If none is found, it will roll around to the beginning and continue looking until reaching the index passed.
 		 */
+		//todo las columnas 'excluidas' no deben ser tenidas en cuenta tampoco a la hora de calcular next o previous index
+		//todo pero tampoco no se les puede poner a -1, porque siguen siendo columnas validas a nivel de tabla
 		private int getNextValidSelectorIndex( int fromSelectedColumnIndex ) {
 			int nextValid = fromSelectedColumnIndex + 1;
 			// step upwards from position following selected index to end
@@ -263,6 +332,12 @@ public class GridColumnsHelper {
 			return index;
 		}
 
+		private int getSelectorIndexForGridColumn( int gridIndex ) {
+			Integer index = gridSelectorMap.get( gridIndex );
+			if ( index == null ) throw new RuntimeException( "Internal error: selector index corresponding to grid index: " + gridIndex + " not set" );
+			return index;
+		}
+
 		// Adjust the gridIndexes for adding the specified column
 		private void columnAdded( int selectorIndex ) {
 			int current = gridIndexes[selectorIndex];
@@ -282,6 +357,7 @@ public class GridColumnsHelper {
 				if ( i == selectorIndex ) gridIndexes[i] = nextValidGridIndexValue;
 				else if ( gridIndexes[i] != -1 ) gridIndexes[i] = gridIndexes[i] + 1;
 			}
+			calculateGridSelectorMap();
 		}
 
 		// Adjust the gridIndexes for removing the specified column, return the former grid index of the selected column
@@ -298,7 +374,16 @@ public class GridColumnsHelper {
 					gridIndexes[i] = counter++;
 				}
 			}
+			calculateGridSelectorMap();
 			return former;
+		}
+
+		private void calculateGridSelectorMap() {
+			gridSelectorMap.clear();
+			for ( int i = 0; i < selectorIndexes.length; i++ ) {
+				int gridIndex = gridIndexes[i];
+				if (gridIndex != -1) gridSelectorMap.put( gridIndex, i );
+			}
 		}
 
 		private void init() {
@@ -308,6 +393,7 @@ public class GridColumnsHelper {
 				selectorIndexes[i] = i;
 				gridIndexes[i] = i;
 			}
+			calculateGridSelectorMap();
 		}
 	}
 }

@@ -31,14 +31,24 @@ public class ColumnSelectionWidget extends Composite {
 	public void setGrid( String gridId, AbstractCellTable grid ) {
 		this.grid = grid;
 		gridColumnsHelper = new GridColumnsHelper( gridId, grid );
-
 	}
 
 	// Apply any previously applied column configuration to the data grid (an explicit call to this method is necessary whenever the data grid is being redrawn)
 	// Made this into a separate call, so that it can be executed when clicking the typical table refresh button (for example)
 	public void applyGridColumnsConfig() {
+		check();
 		gridColumnsHelper.applyGridColumnsConfig();
+		grid.redraw();
 		setSelectorContent();
+	}
+
+	public void anchorColumn( Integer gridIndex ) {
+		check();
+		gridColumnsHelper.excludeFromSelection( gridIndex );
+	}
+
+	private void check() {
+		if (grid == null) throw new RuntimeException( "Table column widget is not initialized" );
 	}
 
 	private void setSelectorContent() {
@@ -49,7 +59,7 @@ public class ColumnSelectionWidget extends Composite {
 	private void setSelectorGridContent() {
 		selectorGrid.clear( true );
 		int row = 0;
-		for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsHelper.getGridColumnsConfig().getColumnSettingsBySelectorIndex() ) {
+		for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsHelper.getFilteredColumnSettingsBySelectorIndex() ) {
 			final int selectedIndex = entry.getKey();
 			final ColumnSettings columnSettings = entry.getValue();
 
@@ -73,6 +83,7 @@ public class ColumnSelectionWidget extends Composite {
 					shiftLeftIcon.setVisible( isVisible );
 					shiftRightIcon.setVisible( isVisible );
 					gridColumnsHelper.applyGridColumnConfig( selectedIndex, isVisible );
+					grid.redraw();
 				}
 			} );
 
@@ -81,6 +92,7 @@ public class ColumnSelectionWidget extends Composite {
 				public void onClick( ClickEvent event ) {
 					// This call updates the data grid and also reset the internal indexes in the getGridColumnsConfig
 					gridColumnsHelper.columnShiftedRight( selectedIndex );
+					grid.redraw();
 					// Refresh the selector popup's content after moving columns
 					setSelectorGridContent();
 				}
@@ -91,6 +103,7 @@ public class ColumnSelectionWidget extends Composite {
 				public void onClick( ClickEvent event ) {
 					// This call updates the data grid and also reset the internal indexes in the getGridColumnsConfig
 					gridColumnsHelper.columnShiftedLeft( selectedIndex );
+					grid.redraw();
 					// Refresh the selector popup's content after moving columns
 					setSelectorGridContent();
 				}
@@ -112,6 +125,7 @@ public class ColumnSelectionWidget extends Composite {
 			@Override
 			public void onClick( ClickEvent event ) {
 				gridColumnsHelper.resetGrid();
+				grid.redraw();
 				setSelectorGridContent();
 			}
 		});

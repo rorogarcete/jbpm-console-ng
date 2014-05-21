@@ -58,7 +58,7 @@ public class ColumnConfigPopup extends Modal {
 		// Initialize the popup when the widget's icon is clicked
 		columnPopupMainPanel.clear();
 
-		for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsConfig.getColumnSettingsBySelectorIndex() ) {
+		for ( final Map.Entry<Integer, ColumnSettings> entry : gridColumnsConfig.getColumnSettingsBySelectorIndex().entrySet() ) {
 
 			final ColumnSettings columnSettings = entry.getValue();
 
