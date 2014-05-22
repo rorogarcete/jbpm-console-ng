@@ -70,10 +70,12 @@ public class ColumnSelectionWidget extends Composite {
 			final Icon shiftRightIcon = new Icon( IconType.ARROW_DOWN );
 			shiftRightIcon.getElement().getStyle().setCursor( Style.Cursor.POINTER );
 			shiftRightIcon.sinkEvents( Event.ONCLICK );
+			shiftRightIcon.setVisible( columnSettings.isVisible() );
 
 			final Icon shiftLeftIcon = new Icon( IconType.ARROW_UP );
 			shiftLeftIcon.getElement().getStyle().setCursor( Style.Cursor.POINTER );
 			shiftLeftIcon.sinkEvents( Event.ONCLICK );
+			shiftLeftIcon.setVisible( columnSettings.isVisible() );
 
 			checkBox.setValue( columnSettings.isVisible() );
 			checkBox.addClickHandler( new ClickHandler() {
