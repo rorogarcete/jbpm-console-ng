@@ -84,7 +84,7 @@ public class ColumnSelectionWidget extends Composite {
 					boolean isVisible = checkBox.getValue();
 					shiftLeftIcon.setVisible( isVisible );
 					shiftRightIcon.setVisible( isVisible );
-					gridColumnsHelper.applyGridColumnConfig( selectedIndex, isVisible );
+					gridColumnsHelper.changeColumnVisibility( selectedIndex, isVisible );
 					grid.redraw();
 				}
 			} );

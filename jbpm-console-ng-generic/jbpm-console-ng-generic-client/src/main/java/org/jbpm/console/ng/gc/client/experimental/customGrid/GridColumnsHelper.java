@@ -62,8 +62,12 @@ public class GridColumnsHelper {
 		// disabled column, RuntimeExceptions might be thrown by the ColumnIndexMap.columnAdded/columnRemoved methods
 		Map<Integer, ColumnSettings> columnSettings = gridColumnsConfig.getColumnSettingsBySelectorIndex();
 		for ( Map.Entry<Integer, ColumnSettings> entry : columnSettings.entrySet() ) {
-			int removeIndex = indexMap.columnDropped( entry.getKey() );
-			grid.removeColumn( removeIndex );
+			indexMap.columnDropped( entry.getKey() );
+		}
+		// Set variable, because grid.getColumnCount() will vary as columns are being dropped!
+		int max = grid.getColumnCount();
+		for ( int i = 0 ; i < max; i++) {
+			grid.removeColumn( 0 );
 		}
 		grid.flush();
 		// Now add the visible columns
@@ -107,23 +111,10 @@ public class GridColumnsHelper {
 		}
 	}
 
-	// Apply to one single column
-	public void applyGridColumnConfig( int selectorIndex, boolean insertColumn ) {
+	public void changeColumnVisibility( int selectorIndex, boolean isVisible ) {
 		ColumnSettings columnSettings = gridColumnsConfig.getColumnSettings( selectorIndex );
-		columnSettings.setVisible( insertColumn );
-
-		if ( !insertColumn ) {
-			int removeIndex = indexMap.columnDropped( selectorIndex );
-			grid.removeColumn( removeIndex );
-		} else {
-			indexMap.columnAdded( selectorIndex );
-			int addIndex = indexMap.getGridIndexForSelectedColumn( selectorIndex );
-			grid.insertColumn(  addIndex,
-					columnSettings.getCachedColumn(),
-					columnSettings.getCachedColumnHeader(),
-					columnSettings.getCachedColumnFooter() );
-			grid.setColumnWidth( addIndex, columnSettings.getColumnWidth() );
-		}
+		columnSettings.setVisible( isVisible );
+		applyGridColumnsConfig();
 	}
 
 	public void columnShiftedRight( int selectorIndex ) {
@@ -162,10 +153,6 @@ public class GridColumnsHelper {
 		}
 	}
 
-//	public GridColumnsConfig getGridColumnsConfig() {
-//		return gridColumnsConfig;
-//	}
-
 	private void removeAnchored( Set<Integer> selectorIndexes ) {
 		for ( Iterator<Integer> it = selectorIndexes.iterator(); it.hasNext(); ) {
 			int formerGridIndex = indexMap.columnDropped( it.next() );
@@ -194,10 +181,6 @@ public class GridColumnsHelper {
 		}
 		return stashedIndexes;
 	}
-
-//	private boolean columnIsExcluded( int selectorIndex ) {
-//		return excludedColumns.contains( selectorIndex );
-//	}
 
 	private void swapColumns( int selectorIndex1, int selectorIndex2 ) {
 		// TODO columns are being swapped, not added or dropped, is it necessary to mantain consistency with the indexMap?
@@ -256,7 +239,7 @@ public class GridColumnsHelper {
 		return new GridColumnsConfig( gridId, settingsMap );
 	}
 
-	//TODO implement some kind of adequate test for this
+	//TODO move this to ColumnSettings (do grid index calculations through recurrent call)
 	private class ColumnIndexMap {
 		private int maxIndex;
 		private int[] selectorIndexes;
@@ -274,8 +257,6 @@ public class GridColumnsHelper {
 		 * This method will look from the index passed in onwards to find the next valid column-switching candidate.
 		 * If none is found, it will roll around to the beginning and continue looking until reaching the index passed.
 		 */
-		//todo las columnas 'excluidas' no deben ser tenidas en cuenta tampoco a la hora de calcular next o previous index
-		//todo pero tampoco no se les puede poner a -1, porque siguen siendo columnas validas a nivel de tabla
 		private int getNextValidSelectorIndex( int fromSelectedColumnIndex ) {
 			int nextValid = fromSelectedColumnIndex + 1;
 			// step upwards from position following selected index to end
@@ -341,9 +322,6 @@ public class GridColumnsHelper {
 		// Adjust the gridIndexes for adding the specified column
 		private void columnAdded( int selectorIndex ) {
 			int current = gridIndexes[selectorIndex];
-			if ( current != -1 )
-				throw new RuntimeException( "Internal error: index to be added (" + selectorIndex + ") was internally still set (" + current + "). " +
-						"Probably the widget's client forgot to call applyGridColumnsConfig()." );
 			// Find the grid index that should be set to the column that is becoming visible, 0 if the selector index is 0.
 			int nextValidGridIndexValue = 0;
 			for ( int i = selectorIndex - 1; i >= 0 ; i-- ) {
@@ -364,9 +342,6 @@ public class GridColumnsHelper {
 		private int columnDropped( int selectorIndex ) {
 			int former = gridIndexes[selectorIndex];
 			int counter = former;
-			if ( former == -1 )
-				throw new RuntimeException( "Internal error: index to be dropped (" + selectorIndex + ") was not set (" + former + "). " +
-						"Probably the widget's client forgot to call applyGridColumnsConfig()." );
 			// Assign gridIndex -1 to the to dropped column, and bump all the indexes of following visible columns' down one
 			for ( int i = selectorIndex; i < selectorIndexes.length; i++ ) {
 				if ( i == selectorIndex ) gridIndexes[i] = -1;
