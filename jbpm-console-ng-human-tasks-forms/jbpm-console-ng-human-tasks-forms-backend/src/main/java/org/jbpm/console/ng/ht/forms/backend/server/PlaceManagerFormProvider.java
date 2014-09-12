@@ -84,6 +84,7 @@ public class PlaceManagerFormProvider implements FormProvider {
     }
     if (task != null) {
       params.put("taskId", task.getId().toString());
+      params.put("taskStatus", task.getTaskData().getStatus().toString());
     }
     if (process != null) {
       params.put("processId", process.getId());

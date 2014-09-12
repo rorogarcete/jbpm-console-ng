@@ -83,6 +83,7 @@ public class PlaceManagerTaskDisplayerImpl extends AbstractHumanTaskFormDisplaye
 
     public void onFormRender(@Observes RenderFormEvent event) {
         String taskName = (String)event.getParams().get("TaskName");
+        String taskStatus = (String)event.getParams().get("taskStatus");
         if (taskName == null || taskName.equals("")) {
             return;
         }
@@ -92,6 +93,11 @@ public class PlaceManagerTaskDisplayerImpl extends AbstractHumanTaskFormDisplaye
         if (widget != null) {
             formContainer.add(widget);
             fdp = (FormDisplayerView)widget;
+            if(taskStatus.equals("Ready") || taskStatus.equals("Reserved")){
+                fdp.setReadOnly(true);
+            }else if(taskStatus.equals("InProgress")){
+                fdp.setReadOnly(false);
+            }
             fdp.setInputMap(event.getParams());
         }
     }
