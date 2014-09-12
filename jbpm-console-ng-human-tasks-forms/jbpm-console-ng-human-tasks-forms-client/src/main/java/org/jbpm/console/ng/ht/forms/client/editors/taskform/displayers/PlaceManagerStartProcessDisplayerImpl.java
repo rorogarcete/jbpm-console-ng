@@ -26,6 +26,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.Map;
+import org.kie.uberfire.client.forms.FormDisplayerView;
 
 /**
  *
@@ -39,19 +40,17 @@ public class PlaceManagerStartProcessDisplayerImpl extends AbstractStartProcessF
 
     @Inject
     private PlaceManagerFormActivitySearcher placeManagerFormActivitySearcher;
+    
+    private FormDisplayerView fdp;
 
     public PlaceManagerStartProcessDisplayerImpl() {
 
     }
-    @Override
-    protected native void startProcessFromDisplayer() /*-{
-        $wnd.startProcess($wnd.getFormValues($doc.getElementById("form-data")));
-    }-*/;
+    
 
     @Override
     protected void initDisplayer() {
-        publish(this);
-        jsniHelper.publishGetFormValues();
+        
     }
 
     @Override
@@ -65,15 +64,15 @@ public class PlaceManagerStartProcessDisplayerImpl extends AbstractStartProcessF
     }
 
     public void onFormRender(@Observes RenderFormEvent event) {
-        String processId = event.getParams().get("processId");
+        String processId = (String)event.getParams().get("processId");
         if (processId == null || processId.equals("")) {
             return;
         }
-
-        IsWidget widget = placeManagerFormActivitySearcher.findFormActivityWidget(processId, event.getParams());
-
+        IsWidget widget = placeManagerFormActivitySearcher.findFormActivityWidget(processId, null);
         formContainer.clear();
         if (widget != null) {
+            fdp = (FormDisplayerView)widget;
+            fdp.setInputMap(event.getParams());
             formContainer.add(widget);
         }
     }
@@ -84,15 +83,16 @@ public class PlaceManagerStartProcessDisplayerImpl extends AbstractStartProcessF
         placeManagerFormActivitySearcher.closeFormActivity();
     }
 
-    public void startProcess(String values) {
-        final Map<String, Object> params = jsniHelper.getUrlParameters(values);
+    public void startProcess() {
+        final Map<String, Object> params = fdp.getOutputMap();
         sessionServices.call(getStartProcessRemoteCallback(), getUnexpectedErrorCallback())
                 .startProcess(deploymentId, processDefId, params);
     }
 
-    protected native void publish(PlaceManagerStartProcessDisplayerImpl ftl)/*-{
-        $wnd.startProcess = function (from) {
-            ftl.@org.jbpm.console.ng.ht.forms.client.editors.taskform.displayers.PlaceManagerStartProcessDisplayerImpl::startProcess(Ljava/lang/String;)(from);
-        }
-    }-*/;
+    @Override
+    protected void startProcessFromDisplayer() {
+        startProcess();
+    }
+
+   
 }

@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.ht.forms.client.editors.taskform.displayers;
 
+import org.kie.uberfire.client.forms.FormDisplayerView;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jbpm.console.ng.ht.forms.client.editors.taskform.displayers.util.PlaceManagerFormActivitySearcher;
 import org.jbpm.console.ng.ht.model.events.RenderFormEvent;
@@ -33,14 +34,15 @@ public class PlaceManagerTaskDisplayerImpl extends AbstractHumanTaskFormDisplaye
 
     @Inject
     private PlaceManagerFormActivitySearcher placeManagerFormActivitySearcher;
+    
+    private FormDisplayerView fdp;
 
     public PlaceManagerTaskDisplayerImpl() {
     }
 
     @Override
     protected void initDisplayer() {
-        publish(this);
-        jsniHelper.publishGetFormValues();
+        
     }
 
     @Override
@@ -48,26 +50,16 @@ public class PlaceManagerTaskDisplayerImpl extends AbstractHumanTaskFormDisplaye
         return content.contains("handledByPlaceManagerFormProvider");
     }
 
-    public void complete(String values) {
-        Map<String, Object> params = jsniHelper.getUrlParameters(values);
+    public void complete() {
+        Map<String, Object> params = fdp.getOutputMap();
         complete(params);
         close();
     }
 
-    public void saveState(String values) {
-        Map<String, Object> params = jsniHelper.getUrlParameters(values);
+    public void saveState() {
+        Map<String, Object> params = fdp.getOutputMap();
         saveState(params);
     }
-
-    @Override
-    protected native void completeFromDisplayer()/*-{
-        $wnd.complete($wnd.getFormValues($doc.getElementById("form-data")));
-    }-*/;
-
-    @Override
-    protected native void saveStateFromDisplayer()/*-{
-        $wnd.saveState($wnd.getFormValues($doc.getElementById("form-data")));
-    }-*/;
 
     @Override
     protected void startFromDisplayer() {
@@ -90,16 +82,17 @@ public class PlaceManagerTaskDisplayerImpl extends AbstractHumanTaskFormDisplaye
     }
 
     public void onFormRender(@Observes RenderFormEvent event) {
-        String taskName = event.getParams().get("TaskName");
+        String taskName = (String)event.getParams().get("TaskName");
         if (taskName == null || taskName.equals("")) {
             return;
         }
-
-        IsWidget widget = placeManagerFormActivitySearcher.findFormActivityWidget(taskName, event.getParams());
+        IsWidget widget = placeManagerFormActivitySearcher.findFormActivityWidget(taskName, null);
 
         formContainer.clear();
         if (widget != null) {
             formContainer.add(widget);
+            fdp = (FormDisplayerView)widget;
+            fdp.setInputMap(event.getParams());
         }
     }
 
@@ -109,14 +102,14 @@ public class PlaceManagerTaskDisplayerImpl extends AbstractHumanTaskFormDisplaye
         placeManagerFormActivitySearcher.closeFormActivity();
     }
 
-    // Set up the JS-callable signature as a global JS function.
-    protected native void publish(PlaceManagerTaskDisplayerImpl td)/*-{
-        $wnd.complete = function (from) {
-            td.@org.jbpm.console.ng.ht.forms.client.editors.taskform.displayers.PlaceManagerTaskDisplayerImpl::complete(Ljava/lang/String;)(from);
-        }
+    @Override
+    protected void completeFromDisplayer() {
+        complete();
+    }
 
-        $wnd.saveState = function (from) {
-            td.@org.jbpm.console.ng.ht.forms.client.editors.taskform.displayers.PlaceManagerTaskDisplayerImpl::saveState(Ljava/lang/String;)(from);
-        }
-    }-*/;
+    @Override
+    protected void saveStateFromDisplayer() {
+        saveState();
+    }
+
 }
