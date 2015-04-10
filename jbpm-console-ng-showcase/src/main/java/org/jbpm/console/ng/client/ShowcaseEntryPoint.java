@@ -270,12 +270,19 @@ public class ShowcaseEntryPoint {
     }
 
     private List<? extends MenuItem> getWorkViews() {
-        final List<MenuItem> result = new ArrayList<MenuItem>( 2 );
+        final List<MenuItem> result = new ArrayList<MenuItem>( 3 );
 
         result.add( MenuFactory.newSimpleItem( constants.Tasks_List() ).respondsWith( new Command() {
             @Override
             public void execute() {
                 placeManager.goTo( new DefaultPlaceRequest( "Tasks" ) );
+            }
+        } ).endMenu().build().getItems().get( 0 ) );
+        
+        result.add( MenuFactory.newSimpleItem( "Dash Task List" ).respondsWith( new Command() {
+            @Override
+            public void execute() {
+                placeManager.goTo( new DefaultPlaceRequest( "Dash Tasks" ) );
             }
         } ).endMenu().build().getItems().get( 0 ) );
 
