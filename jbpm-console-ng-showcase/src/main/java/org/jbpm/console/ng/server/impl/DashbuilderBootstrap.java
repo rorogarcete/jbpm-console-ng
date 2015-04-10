@@ -16,6 +16,7 @@
 package org.jbpm.console.ng.server.impl;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.dashbuilder.dataset.DataSetFactory;
@@ -23,6 +24,7 @@ import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.uberfire.commons.services.cdi.Startup;
 
 @Startup
+@ApplicationScoped
 public class DashbuilderBootstrap {
 
     public static final String HUMAN_TASKS_DATASET = "jbpmHumanTasks";
@@ -37,11 +39,17 @@ public class DashbuilderBootstrap {
     }
 
     protected void registerDataSetDefinitions() {
+        System.out.println("Bootstrapping Dashbuilder stuff.....");
         dataSetDefRegistry.registerDataSetDef(
                 DataSetFactory.newSQLDataSetDef()
-                        .uuid(HUMAN_TASKS_DATASET)
-                        .dataSource(JBPM_DATASOURCE)
-                        .dbTable(HUMAN_TASKS_TABLE, true)
-                        .buildDef());
+                .uuid(HUMAN_TASKS_DATASET)
+                .dataSource(JBPM_DATASOURCE)
+                .dbTable(HUMAN_TASKS_TABLE, false)
+                .label("taskId")
+                .label("actualOwner")
+                .date("createdOn")
+                .text("name")
+                .text("description")
+                .buildDef());
     }
 }

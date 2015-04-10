@@ -30,8 +30,6 @@ import org.kie.workbench.common.widgets.client.search.ContextualSearch;
 import org.kie.workbench.common.widgets.client.search.SearchBehavior;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
-import org.uberfire.client.workbench.panels.impl.MultiTabWorkbenchPanelPresenter;
-import org.uberfire.client.workbench.panels.impl.SimpleWorkbenchPanelPresenter;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
@@ -40,6 +38,7 @@ import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 
 import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
+import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
 
 /**
  * A Perspective to show File Explorer
@@ -59,9 +58,8 @@ public class DashTasksListPerspective {
 
     @Perspective
     public PerspectiveDefinition getPerspective() {
-        final PerspectiveDefinition p = new PerspectiveDefinitionImpl( MultiTabWorkbenchPanelPresenter.class.getName() );
+        final PerspectiveDefinition p = new PerspectiveDefinitionImpl( MultiListWorkbenchPanelPresenter.class.getName() );
         p.setName("Dash Tasks");
-        p.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest("Dash Tasks List")));
         p.getRoot().addPart( new PartDefinitionImpl( createHumanTaskDisplayerPlaceRequest() ) );
         return p;
     }
@@ -91,7 +89,7 @@ public class DashTasksListPerspective {
 
         return createPlaceRequest(DisplayerSettingsFactory.newTableSettings()
                 .dataset("jbpmHumanTasks")
-                .column("id", "ID")
+                .column("taskId", "ID")
                 .column("actualOwner", "Owner")
                 .column("createdOn", "Creation Date")
                 .column("name", "Name")
