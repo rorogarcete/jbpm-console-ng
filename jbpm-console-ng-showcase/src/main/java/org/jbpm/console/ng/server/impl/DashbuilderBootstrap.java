@@ -50,6 +50,7 @@ public class DashbuilderBootstrap {
                 .date("createdOn")
                 .text("name")
                 .text("description")
+                .label("status")        
                 .buildDef());
     }
 }
