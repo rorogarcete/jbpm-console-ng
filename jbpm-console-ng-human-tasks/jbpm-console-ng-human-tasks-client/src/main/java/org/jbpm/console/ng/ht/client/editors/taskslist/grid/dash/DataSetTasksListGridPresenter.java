@@ -23,6 +23,7 @@ import com.google.gwt.user.cellview.client.ColumnSortList;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
+import java.util.ArrayList;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
@@ -37,7 +38,6 @@ import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.ht.service.TaskLifeCycleService;
 import org.jbpm.console.ng.ht.service.TaskQueryService;
 import org.uberfire.client.annotations.WorkbenchScreen;
-import org.uberfire.paging.PageResponse;
 
 import java.util.List;
 import org.dashbuilder.dataset.DataColumn;
@@ -53,7 +53,6 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.mvp.UberView;
 
 import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
-
 
 @Dependent
 @WorkbenchScreen(identifier = "DataSet Tasks List")
@@ -91,34 +90,13 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
                 //            .group(ClusterMetricsGenerator.COLUMN_SERVER)
                 //            .column(ClusterMetricsGenerator.COLUMN_SERVER)
                 .column("taskId")
+                .column("name")
                 .column("actualOwner")
                 .column("createdOn")
-                .column("name")
                 .column("status")
                 .column("description")
+                
                 .buildLookup();
-        
-        try {
-            DataSetClientServices.get().lookupDataSet(lookup, new DataSetReadyCallback() {
-                @Override
-                public void callback(DataSet dataSet) {
-                    if (dataSet != null && dataSet.getRowCount() > 0) {
-                       for(DataColumn dc : dataSet.getColumns()){
-                           GWT.log("Column : "+dc.getColumnType());
-                       }
-                    }
-                }
-   
-                @Override
-                public void notFound() {
-                    GWT.log("DataSet with UUID [  jbpmHumanTasks ] not found.");
-                }
-            });
-           
-        } catch (Exception e) {
-            GWT.log("Error looking up dataset with UUID [ jbpmHumanTasks ]");
-        }
-    
 
         dataProvider = new AsyncDataProvider<TaskSummary>() {
 
@@ -163,25 +141,57 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
                 currentFilter.setIsAscending((columnSortList.size() > 0) ? columnSortList.get(0)
                         .isAscending() : true);
 
-                taskQueryService.call(new RemoteCallback<PageResponse<TaskSummary>>() {
-                    @Override
-                    public void callback(PageResponse<TaskSummary> response) {
-                        view.hideBusyIndicator();
-                        dataProvider.updateRowCount(response.getTotalRowSize(),
-                                response.isTotalRowSizeExact());
-                        dataProvider.updateRowData(response.getStartRowIndex(),
-                                response.getPageRowList());
-                    }
-                }, new ErrorCallback<Message>() {
-                    @Override
-                    public boolean error(Message message, Throwable throwable) {
-                        view.hideBusyIndicator();
-                        view.displayNotification("Error: Getting Tasks: " + throwable.toString());
-                        GWT.log(message.toString());
-                        return true;
-                    }
-                }).getData(currentFilter);
+                try {
+                    lookup.setNumberOfRows(view.getListGrid().getPageSize());
+                    lookup.setRowOffset(visibleRange.getStart());
+                    lookup.setNumberOfRows(visibleRange.getLength());
+                    DataSetClientServices.get().lookupDataSet(lookup, new DataSetReadyCallback() {
+                        @Override
+                        public void callback(DataSet dataSet) {
+                            if (dataSet != null && dataSet.getRowCount() > 0) {
+                                List<TaskSummary> myTasksFromDataSet = new ArrayList<TaskSummary>();
+                                for (int i = 0;i <  dataSet.getRowCount(); i ++) {
+                                    myTasksFromDataSet.add(new TaskSummary((Long)dataSet.getColumnByIndex(0).getValues().get(i),
+                                            (String) dataSet.getColumnByIndex(1).getValues().get(i)));
+                                }
+                                
+                                
+                                view.hideBusyIndicator();
+                                dataProvider.updateRowCount(dataSet.getRowCount(),
+                                        true); // true ??
+                                dataProvider.updateRowData(0,///dataSet.getStartRowIndex() ???
+                                        myTasksFromDataSet);
+                            }
+                        }
 
+                        @Override
+                        public void notFound() {
+                            GWT.log("DataSet with UUID [  jbpmHumanTasks ] not found.");
+                        }
+                    });
+
+                } catch (Exception e) {
+                    GWT.log("Error looking up dataset with UUID [ jbpmHumanTasks ]");
+                }
+
+//                taskQueryService.call(new RemoteCallback<PageResponse<TaskSummary>>() {
+//                    @Override
+//                    public void callback(PageResponse<TaskSummary> response) {
+//                        view.hideBusyIndicator();
+//                        dataProvider.updateRowCount(response.getTotalRowSize(),
+//                                response.isTotalRowSizeExact());
+//                        dataProvider.updateRowData(response.getStartRowIndex(),
+//                                response.getPageRowList());
+//                    }
+//                }, new ErrorCallback<Message>() {
+//                    @Override
+//                    public boolean error(Message message, Throwable throwable) {
+//                        view.hideBusyIndicator();
+//                        view.displayNotification("Error: Getting Tasks: " + throwable.toString());
+//                        GWT.log(message.toString());
+//                        return true;
+//                    }
+//                }).getData(currentFilter);
             }
         };
     }
