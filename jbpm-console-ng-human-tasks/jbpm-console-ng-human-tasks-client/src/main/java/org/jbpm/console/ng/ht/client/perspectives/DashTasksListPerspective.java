@@ -94,6 +94,7 @@ public class DashTasksListPerspective {
                 .column("createdOn", "Creation Date")
                 .column("name", "Name")
                 .column("description", "Description")
+                .column("status", "Status")
                 .title("Human tasks")
                 .tablePageSize(10)
                 .tableOrderEnabled(true)

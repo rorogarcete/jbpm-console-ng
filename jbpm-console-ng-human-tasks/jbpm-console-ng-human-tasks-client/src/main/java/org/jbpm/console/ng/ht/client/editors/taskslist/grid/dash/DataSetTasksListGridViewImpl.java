@@ -104,18 +104,19 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
                 if (rowIndex == selectedRow) {
                     return "selected";
                 } else {
-                    if (row.getStatus().equals("InProgress") || row.getStatus().equals("Ready")) {
-                        if (row.getPriority() == 5) {
-                            return "five";
-                        } else if (row.getPriority() == 4) {
-                            return "four";
-                        } else if (row.getPriority() == 3) {
-                            return "three";
-                        } else if (row.getPriority() == 2) {
-                            return "two";
-                        } else if (row.getPriority() == 1) {
-                            return "one";
-                        }
+                    if (row.getStatus() != null && row.getStatus().equals("InProgress") || row.getStatus().equals("Ready")) {
+                            if (row.getPriority() == 5) {
+                                return "five";
+                            } else if (row.getPriority() == 4) {
+                                return "four";
+                            } else if (row.getPriority() == 3) {
+                                return "three";
+                            } else if (row.getPriority() == 2) {
+                                return "two";
+                            } else if (row.getPriority() == 1) {
+                                return "one";
+                            }
+                        
                     } else if (row.getStatus().equals("Completed")) {
                         return "completed";
                     }
