@@ -61,12 +61,12 @@ import javax.inject.Inject;
 import java.util.*;
 
 @Dependent
-public class DashTasksListGridViewImpl extends AbstractListView<TaskSummary, DashTasksListGridPresenter>
-        implements DashTasksListGridPresenter.DashTaskListView {
+public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, DataSetTasksListGridPresenter>
+        implements DataSetTasksListGridPresenter.DataSetTaskListView {
 
     interface Binder
             extends
-            UiBinder<Widget, DashTasksListGridViewImpl> {
+            UiBinder<Widget, DataSetTasksListGridViewImpl> {
 
     }
 
@@ -85,7 +85,7 @@ public class DashTasksListGridViewImpl extends AbstractListView<TaskSummary, Das
     private NewFilterPopup newFilterPopup;
 
     @Override
-    public void init(final DashTasksListGridPresenter presenter) {
+    public void init(final DataSetTasksListGridPresenter presenter) {
         List<String> bannedColumns = new ArrayList<String>();
         bannedColumns.add(constants.Task());
         List<String> initColumns = new ArrayList<String>();
@@ -289,8 +289,8 @@ public class DashTasksListGridViewImpl extends AbstractListView<TaskSummary, Das
                         new Command() {
                             @Override
                             public void execute() {
-                                List<String> states = (List) filterValues.get( DashTasksListGridPresenter.FILTER_STATUSES_PARAM_NAME);
-                                List<String> selectedCurrentRole = (List) filterValues.get( DashTasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME);
+                                List<String> states = (List) filterValues.get( DataSetTasksListGridPresenter.FILTER_STATUSES_PARAM_NAME);
+                                List<String> selectedCurrentRole = (List) filterValues.get( DataSetTasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME);
                                 String currentRole = null;
                                 if(selectedCurrentRole!=null && selectedCurrentRole.size()>0){
                                     currentRole = (String) selectedCurrentRole.get( 0 );
@@ -355,8 +355,8 @@ public class DashTasksListGridViewImpl extends AbstractListView<TaskSummary, Das
 
 
         newFilterPopup.init();
-        newFilterPopup.addListBoxToFilter( Constants.INSTANCE.Status(),DashTasksListGridPresenter.FILTER_STATUSES_PARAM_NAME ,true, stateListBoxInfo );
-        newFilterPopup.addListBoxToFilter( Constants.INSTANCE.TaskRole(),DashTasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME ,false, currentRoleListBoxInfo );
+        newFilterPopup.addListBoxToFilter( Constants.INSTANCE.Status(),DataSetTasksListGridPresenter.FILTER_STATUSES_PARAM_NAME ,true, stateListBoxInfo );
+        newFilterPopup.addListBoxToFilter( Constants.INSTANCE.TaskRole(),DataSetTasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME ,false, currentRoleListBoxInfo );
 
     }
     private void initCellPreview() {
