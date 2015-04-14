@@ -39,6 +39,7 @@ import org.jbpm.console.ng.ht.service.TaskLifeCycleService;
 import org.jbpm.console.ng.ht.service.TaskQueryService;
 import org.uberfire.client.annotations.WorkbenchScreen;
 
+import java.util.Date;
 import java.util.List;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.dataset.DataSet;
@@ -150,12 +151,18 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
                         public void callback(DataSet dataSet) {
                             if (dataSet != null && dataSet.getRowCount() > 0) {
                                 List<TaskSummary> myTasksFromDataSet = new ArrayList<TaskSummary>();
+
                                 for (int i = 0;i <  dataSet.getRowCount(); i ++) {
-                                    myTasksFromDataSet.add(new TaskSummary((Long)dataSet.getColumnByIndex(0).getValues().get(i),
-                                            (String) dataSet.getColumnByIndex(1).getValues().get(i)));
+                                    myTasksFromDataSet.add( new TaskSummary(
+                                                    (Long)dataSet.getColumnByIndex(0).getValues().get(i),
+                                                    (String) dataSet.getColumnByIndex(1).getValues().get(i),
+                                                    (String) dataSet.getColumnByIndex(5).getValues().get(i),
+                                                    (String) dataSet.getColumnByIndex(4).getValues().get(i),
+                                    0,(String) dataSet.getColumnByIndex(2).getValues().get(i),
+                                    "",(Date) dataSet.getColumnByIndex(3).getValues().get(i),null,null,"",-1,-1,"",-1)
+                                    );
                                 }
-                                
-                                
+
                                 view.hideBusyIndicator();
                                 dataProvider.updateRowCount(dataSet.getRowCount(),
                                         true); // true ??
