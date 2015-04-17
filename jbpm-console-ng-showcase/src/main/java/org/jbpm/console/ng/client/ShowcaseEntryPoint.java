@@ -261,25 +261,25 @@ public class ShowcaseEntryPoint {
                 placeManager.goTo( new DefaultPlaceRequest( "Tasks" ) );
             }
         } ).endMenu().build().getItems().get( 0 ) );
-        
-        result.add( MenuFactory.newSimpleItem( "Dash Task List" ).respondsWith( new Command() {
-            @Override
-            public void execute() {
-                placeManager.goTo( new DefaultPlaceRequest( "Dash Tasks" ) );
-            }
-        } ).endMenu().build().getItems().get( 0 ) );
-        
-        result.add( MenuFactory.newSimpleItem( "DataSet Task List" ).respondsWith( new Command() {
-            @Override
-            public void execute() {
-                placeManager.goTo( new DefaultPlaceRequest( "DataSet Tasks" ) );
-            }
-        } ).endMenu().build().getItems().get( 0 ) );
 
         result.add( MenuFactory.newSimpleItem( constants.Tasks_List_Admin() ).respondsWith( new Command() {
             @Override
             public void execute() {
                 placeManager.goTo( new DefaultPlaceRequest( "Tasks Admin" ) );
+            }
+        } ).endMenu().build().getItems().get( 0 ) );
+
+        result.add( MenuFactory.newSimpleItem( "Tasks (new)" ).respondsWith( new Command() {
+            @Override
+            public void execute() {
+                placeManager.goTo( new DefaultPlaceRequest( "Tasks (new)" ) );
+            }
+        } ).endMenu().build().getItems().get( 0 ) );
+
+        result.add( MenuFactory.newSimpleItem( "Data Sets (new)" ).respondsWith( new Command() {
+            @Override
+            public void execute() {
+                placeManager.goTo( new DefaultPlaceRequest( "DataSetAuthoringPerspective" ) );
             }
         } ).endMenu().build().getItems().get( 0 ) );
 
