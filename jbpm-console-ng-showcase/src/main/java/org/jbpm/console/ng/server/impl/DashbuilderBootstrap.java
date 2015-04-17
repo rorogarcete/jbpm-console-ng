@@ -43,6 +43,7 @@ public class DashbuilderBootstrap {
         dataSetDefRegistry.registerDataSetDef(
                 DataSetFactory.newSQLDataSetDef()
                 .uuid(HUMAN_TASKS_DATASET)
+                .name("Human tasks")
                 .dataSource(JBPM_DATASOURCE)
                 .dbTable(HUMAN_TASKS_TABLE, false)
                 .label("taskId")
