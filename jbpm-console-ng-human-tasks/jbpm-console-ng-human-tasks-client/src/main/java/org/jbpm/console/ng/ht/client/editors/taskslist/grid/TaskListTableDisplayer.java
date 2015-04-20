@@ -15,6 +15,8 @@
  */
 package org.jbpm.console.ng.ht.client.editors.taskslist.grid;
 
+import java.util.Date;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -34,25 +36,37 @@ import org.jbpm.console.ng.gc.client.displayer.TableSettings;
 import org.jbpm.console.ng.gc.client.displayer.TableSettingsBuilder;
 import org.jbpm.console.ng.ht.client.editors.quicknewtask.QuickNewTaskPopup;
 import org.jbpm.console.ng.ht.client.i18n.Constants;
+import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.ht.model.events.TaskSelectionEvent;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.PlaceStatus;
 import org.uberfire.ext.widgets.common.client.tables.PagedTable;
 
 import static org.dashbuilder.dataset.filter.FilterFactory.*;
+import static org.dashbuilder.dataset.sort.SortOrder.*;
 
 /**
  * Task list table displayer
  */
 @Dependent
-public class TaskListTableDisplayer extends BaseTableDisplayer {
+public class TaskListTableDisplayer extends BaseTableDisplayer<TaskSummary> {
 
-    public static final String COLUMN_ID = "taskId";
+    public static final String COLUMN_ACTIVATIONTIME = "activationTime";
+    public static final String COLUMN_ACTUALOWNER = "actualOwner";
+    public static final String COLUMN_CREATEDBY = "createdBy";
+    public static final String COLUMN_CREATEDON = "createdOn";
+    public static final String COLUMN_DEPLOYMENTID = "deploymentId";
+    public static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_DUEDATE = "dueDate";
     public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_DESCR = "description";
-    public static final String COLUMN_OWNER = "actualOwner";
-    public static final String COLUMN_CREATION = "createdOn";
+    public static final String COLUMN_PARENTID = "parentId";
+    public static final String COLUMN_PRIORITY = "priority";
+    public static final String COLUMN_PROCESSID = "processId";
+    public static final String COLUMN_PROCESSINSTANCEID = "processInstanceId";
+    public static final String COLUMN_PROCESSSESSIONID = "processSessionId";
     public static final String COLUMN_STATUS = "status";
+    public static final String COLUMN_TASKID = "taskId";
+    public static final String COLUMN_WORKITEMID = "workItemId";
 
     @Inject
     protected User identity;
@@ -68,12 +82,26 @@ public class TaskListTableDisplayer extends BaseTableDisplayer {
 
     private final Constants constants = GWT.create(Constants.class);
 
-    protected int selectedRow = -1;
-
     @PostConstruct
     protected void init() {
         buildDefaultTables();
         loadUserTables();
+    }
+
+    protected TableSettings buildTablePrototype() {
+        return (TableSettings) TableSettingsBuilder.init()
+                .dataset("jbpmHumanTasks")
+                .column(COLUMN_TASKID).format(constants.Id())
+                .column(COLUMN_NAME).format(constants.Task())
+                .column(COLUMN_ACTUALOWNER).format("Owner")
+                .column(COLUMN_CREATEDON).format("Created on", "MMM dd E, yyyy")
+                .column(COLUMN_STATUS).format(constants.Status())
+                .column(COLUMN_DESCRIPTION).format(constants.Description())
+                .filterOn(true, true, true)
+                .tableWidth(1000)
+                .tableOrderEnabled(true)
+                .tableOrderDefault(COLUMN_CREATEDON, DESCENDING)
+                .buildSettings();
     }
 
     protected void buildDefaultTables() {
@@ -82,27 +110,33 @@ public class TaskListTableDisplayer extends BaseTableDisplayer {
         super.addTableSettings("All", false,
                 (TableSettings) TableSettingsBuilder.init()
                         .dataset("jbpmHumanTasks")
-                        .column(COLUMN_ID).format(constants.Id())
+                        .column(COLUMN_TASKID).format(constants.Id())
                         .column(COLUMN_NAME).format(constants.Task())
-                        .column(COLUMN_OWNER).format("Owner")
-                        .column(COLUMN_CREATION).format("Created on", "MMM dd E, yyyy")
+                        .column(COLUMN_ACTUALOWNER).format("Owner")
+                        .column(COLUMN_CREATEDON).format("Created on", "MMM dd E, yyyy")
                         .column(COLUMN_STATUS).format(constants.Status())
-                        .column(COLUMN_DESCR).format(constants.Description())
+                        .column(COLUMN_DESCRIPTION).format(constants.Description())
+                        .filterOn(true, true, true)
                         .tableWidth(1000)
+                        .tableOrderEnabled(true)
+                        .tableOrderDefault(COLUMN_CREATEDON, DESCENDING)
                         .buildSettings());
 
         // Active
         super.addTableSettings("Active", false,
                 (TableSettings) TableSettingsBuilder.init()
                         .dataset("jbpmHumanTasks")
-                        .filter(COLUMN_OWNER, equalsTo(identity.getIdentifier()))
-                        .column(COLUMN_ID).format(constants.Id())
+                        .filter(COLUMN_ACTUALOWNER, equalsTo(identity.getIdentifier()))
+                        .column(COLUMN_TASKID).format(constants.Id())
                         .column(COLUMN_NAME).format(constants.Task())
-                        .column(COLUMN_OWNER).format("Owner")
-                        .column(COLUMN_CREATION).format("Created on", "MMM dd E, yyyy")
+                        .column(COLUMN_ACTUALOWNER).format("Owner")
+                        .column(COLUMN_CREATEDON).format("Created on", "MMM dd E, yyyy")
                         .column(COLUMN_STATUS).format(constants.Status()).expression("value.toUpperCase()")
-                        .column(COLUMN_DESCR).format(constants.Description())
+                        .column(COLUMN_DESCRIPTION).format(constants.Description())
+                        .filterOn(true, true, true)
                         .tableWidth(1000)
+                        .tableOrderEnabled(true)
+                        .tableOrderDefault(COLUMN_CREATEDON, DESCENDING)
                         .buildSettings());
     }
 
@@ -113,15 +147,19 @@ public class TaskListTableDisplayer extends BaseTableDisplayer {
         super.addTableSettings("Custom", true,
                 (TableSettings) TableSettingsBuilder.init()
                         .dataset("jbpmHumanTasks")
-                        .filter(COLUMN_CREATION, timeFrame("begin[year march] till now +1day"))
-                        .filter(COLUMN_OWNER, equalsTo(identity.getIdentifier()))
-                        .column(COLUMN_ID).format(constants.Id())
+                        .filter(COLUMN_CREATEDON, timeFrame("begin[year march] till now +1day"))
+                        .filter(COLUMN_ACTUALOWNER, equalsTo(identity.getIdentifier()))
+                        .filter(COLUMN_ACTUALOWNER, equalsTo(identity.getIdentifier()))
+                        .column(COLUMN_TASKID).format(constants.Id())
                         .column(COLUMN_NAME).format(constants.Task())
-                        .column(COLUMN_OWNER).format("Owner")
-                        .column(COLUMN_CREATION).format("Created on", "MMM dd E, yyyy")
-                        .column(COLUMN_STATUS).format(constants.Status())
+                        .column(COLUMN_ACTUALOWNER).format("Owner")
+                        .column(COLUMN_CREATEDON).format("Created on", "MMM dd E, yyyy")
+                        .column(COLUMN_STATUS).format(constants.Status()).expression("value.toUpperCase()")
                         .expression("value.toUpperCase().substring(0,3)")
+                        .filterOn(true, true, true)
                         .tableWidth(800)
+                        .tableOrderEnabled(true)
+                        .tableOrderDefault(COLUMN_CREATEDON, DESCENDING)
                         .buildSettings());
     }
 
@@ -163,47 +201,79 @@ public class TaskListTableDisplayer extends BaseTableDisplayer {
     }
 
     @Override
-    protected void onCellSelected(String columnId, boolean selectable, int rowIndex) {
-        super.onCellSelected(columnId, selectable, rowIndex);
-
-        String missingColumn = missingColumn(COLUMN_ID, COLUMN_NAME, COLUMN_STATUS);
+    protected TaskSummary createItem(Map<String, Object> itemValues) {
+        String missingColumn = missingColumn(COLUMN_TASKID, COLUMN_NAME, COLUMN_STATUS);
         if (missingColumn != null) {
             GWT.log("A mandatory data set column is missing: " + missingColumn);
-            return;
         }
 
-        Long taskId = Long.parseLong(dataSet.getValueAt(rowIndex, COLUMN_ID).toString());
-        String taskName = (String) dataSet.getValueAt(rowIndex, COLUMN_NAME);
-        String taskStatus = (String) dataSet.getValueAt(rowIndex, COLUMN_STATUS);
+        Long id = Long.parseLong(itemValues.get(COLUMN_TASKID).toString());
+        String parentId = (String) itemValues.get(COLUMN_PARENTID);
+        String processId = (String) itemValues.get(COLUMN_PROCESSID);
+        String processSessionId = (String) itemValues.get(COLUMN_PROCESSSESSIONID);
+        String processInstanceId = (String) itemValues.get(COLUMN_PROCESSINSTANCEID);
+        String deploymentId = (String) itemValues.get(COLUMN_DEPLOYMENTID);
+        String name = (String) itemValues.get(COLUMN_NAME);
+        String descr = (String) itemValues.get(COLUMN_DESCRIPTION);
+        String status = (String) itemValues.get(COLUMN_STATUS);
+        String owner = (String) itemValues.get(COLUMN_ACTUALOWNER);
+        String createdBy = (String) itemValues.get(COLUMN_CREATEDBY);
+        Date creation = (Date) itemValues.get(COLUMN_CREATEDON);
+        Date activation = (Date) itemValues.get(COLUMN_ACTIVATIONTIME);
+        Number priority = (Number) itemValues.get(COLUMN_PRIORITY);
 
-        // TODO: read from data set
-        boolean logOnly = false;
-        boolean forAdmin = false;
-        //boolean logOnly = Boolean.parseBoolean((String) dataSet.getValueAt(rowIndex, COLUMN_LOG_ONLY));
-        //boolean forAdmin = Boolean.parseBoolean((String) dataSet.getValueAt(rowIndex, COLUMN_FOR_ADMIN));
-        PlaceStatus status = placeManager.getStatus("Task Details Multi");
-        if (taskStatus.equals("Completed") && logOnly) logOnly = true;
+        return new TaskSummary(id,
+                name,
+                descr,
+                status,
+                (priority != null ? priority.intValue() : 0),
+                owner,
+                createdBy,
+                creation,
+                activation,
+                null,
+                processId,
+                (processSessionId != null ? Long.parseLong(processSessionId) : 0),
+                (processInstanceId != null ? Long.parseLong(processInstanceId) : 0),
+                deploymentId,
+                (parentId != null ? Long.parseLong(parentId) : 0));
+    }
+
+    protected TaskSummary selectedTask = null;
+
+    @Override
+    protected void onItemSelected(TaskSummary selectedItem) {
 
         boolean close = false;
-        if (selectedRow == -1) {
-            selectedRow = rowIndex;
+        if (selectedTask == null) {
+            selectedTask = selectedItem;
             //listGrid.setRowStyles(selectedStyles);
             //listGrid.redraw();
-        } else if (rowIndex != selectedRow) {
-            selectedRow = rowIndex;
+        } else if (!selectedTask.getTaskId().equals(selectedItem.getTaskId())) {
+            selectedTask = selectedItem;
             //listGrid.setRowStyles(selectedStyles);
             //listGrid.redraw();
         } else {
             close = true;
         }
 
+        PlaceStatus status = placeManager.getStatus("Task Details Multi");
+        boolean logOnly = false;
+        if(selectedItem.getStatus().equals("Completed") && selectedItem.isLogOnly()){
+            logOnly = true;
+        }
         if (status == PlaceStatus.CLOSE) {
             placeManager.goTo("Task Details Multi");
-            taskSelectedEvent.fire(new TaskSelectionEvent(taskId, taskName, forAdmin, logOnly));
+            taskSelectedEvent.fire(new TaskSelectionEvent(selectedItem.getTaskId(), selectedItem.getTaskName(), selectedItem.isForAdmin(), logOnly));
         } else if (status == PlaceStatus.OPEN && !close) {
-            taskSelectedEvent.fire(new TaskSelectionEvent(taskId, taskName, forAdmin, logOnly));
+            taskSelectedEvent.fire(new TaskSelectionEvent(selectedItem.getTaskId(), selectedItem.getTaskName(), selectedItem.isForAdmin(), logOnly));
         } else if (status == PlaceStatus.OPEN && close) {
             placeManager.closePlace("Task Details Multi");
         }
+    }
+
+    @Override
+    public TableSettings createTableSettingsPrototype() {
+        return buildTablePrototype();
     }
 }

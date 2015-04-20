@@ -24,6 +24,8 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
 import java.util.ArrayList;
+
+import org.dashbuilder.dataset.client.DataSetClientServiceError;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
@@ -170,10 +172,15 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
                                         myTasksFromDataSet);
                             }
                         }
-
                         @Override
                         public void notFound() {
                             GWT.log("DataSet with UUID [  jbpmHumanTasks ] not found.");
+                        }
+
+                        @Override
+                        public boolean onError(DataSetClientServiceError error) {
+                            GWT.log("DataSet with UUID [  jbpmHumanTasks ] error: ", error.getThrowable());
+                            return false;
                         }
                     });
 
