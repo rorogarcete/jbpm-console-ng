@@ -16,6 +16,7 @@
 package org.jbpm.console.ng.gc.client.displayer;
 
 import org.dashbuilder.displayer.DisplayerSettings;
+import org.dashbuilder.displayer.DisplayerType;
 
 /**
  * Custom settings class holding the configuration of any jBPM table displayer
@@ -24,6 +25,10 @@ public class TableSettings extends DisplayerSettings {
 
     protected String tableName;
     protected boolean editable;
+
+    public TableSettings() {
+        super(DisplayerType.TABLE);
+    }
 
     public String getTableName() {
         return tableName;
@@ -39,5 +44,28 @@ public class TableSettings extends DisplayerSettings {
 
     public void setEditable(boolean editable) {
         this.editable = editable;
+    }
+
+    public boolean equals(Object obj) {
+        try {
+            TableSettings other = (TableSettings) obj;
+            if (tableName == null || other.tableName == null) return false;
+            if (!tableName.equals(other.tableName)) return false;
+            return true;
+        } catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    public static TableSettings create(String name, DisplayerSettings settings) {
+        TableSettings tableSettings = new TableSettings();
+        tableSettings.setTableName(name);
+        tableSettings.setType(DisplayerType.TABLE);
+        tableSettings.setUUID(settings.getUUID());
+        tableSettings.setDataSet(settings.getDataSet());
+        tableSettings.setDataSetLookup(settings.getDataSetLookup());
+        tableSettings.setColumnSettingsList(settings.getColumnSettingsList());
+        tableSettings.getSettingsFlatMap().putAll(settings.getSettingsFlatMap());
+        return tableSettings;
     }
 }
