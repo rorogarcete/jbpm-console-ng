@@ -28,7 +28,7 @@ import org.uberfire.commons.services.cdi.Startup;
 public class DashbuilderBootstrap {
 
     public static final String HUMAN_TASKS_DATASET = "jbpmHumanTasks";
-    public static final String JBPM_DATASOURCE = "jdbc/jbpmConsoleDS";
+    public static final String JBPM_DATASOURCE = "java:jboss/datasources/ExampleDS";
     public static final String HUMAN_TASKS_TABLE = "AuditTaskImpl";
     @Inject
     protected DataSetDefRegistry dataSetDefRegistry;

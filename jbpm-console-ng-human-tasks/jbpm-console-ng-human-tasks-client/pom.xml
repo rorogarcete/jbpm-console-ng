@@ -117,6 +117,7 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-client-all</artifactId>
+      <scope>provided</scope>
     </dependency>
     
     <dependency>
@@ -127,6 +128,7 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-displayer-client</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -137,6 +139,7 @@
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-client</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

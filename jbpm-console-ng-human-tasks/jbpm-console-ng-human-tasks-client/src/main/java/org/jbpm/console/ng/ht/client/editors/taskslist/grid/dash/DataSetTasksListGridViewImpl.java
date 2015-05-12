@@ -40,7 +40,7 @@ import org.jbpm.console.ng.gc.client.list.base.AbstractListView;
 import org.jbpm.console.ng.gc.client.util.TaskUtils;
 import org.jbpm.console.ng.ht.client.editors.quicknewtask.QuickNewTaskPopup;
 import org.jbpm.console.ng.ht.client.i18n.Constants;
-import org.jbpm.console.ng.ht.client.resources.HumanTasksImages;
+
 import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.ht.model.events.NewTaskEvent;
 import org.jbpm.console.ng.ht.model.events.TaskRefreshedEvent;
@@ -73,7 +73,6 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
     private static Binder uiBinder = GWT.create(Binder.class);
 
     private final Constants constants = GWT.create(Constants.class);
-    private final HumanTasksImages images = GWT.create(HumanTasksImages.class);
 
     @Inject
     private Event<TaskSelectionEvent> taskSelected;
@@ -230,107 +229,6 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
         listGrid.addColumns(columnMetas);
     }
 
-    @Override
-    public void initFilters( ) {
-
-        listGrid.setShowFilterSelector( true );
-        listGrid.addFilter( new DataGridFilter<TaskSummary>( "active", Constants.INSTANCE.Active(), new Command() {
-            @Override
-            public void execute( ) {
-                presenter.refreshActiveTasks();
-                ;
-            }
-        } ) );
-
-        listGrid.addFilter( new DataGridFilter<TaskSummary>( "personal", Constants.INSTANCE.Personal(), new Command() {
-            @Override
-            public void execute( ) {
-                presenter.refreshPersonalTasks();
-                ;
-            }
-        } ) );
-
-        listGrid.addFilter( new DataGridFilter<TaskSummary>( "group", Constants.INSTANCE.Group(), new Command() {
-            @Override
-            public void execute( ) {
-                presenter.refreshGroupTasks();
-                ;
-            }
-        } ) );
-
-        listGrid.addFilter( new DataGridFilter<TaskSummary>( "all", Constants.INSTANCE.All(), new Command() {
-            @Override
-            public void execute(  ) {
-                presenter.refreshAllTasks();
-                ;
-            }
-        } ) );
-
-        listGrid.addFilter( new DataGridFilter<TaskSummary>( "taskAdmin", Constants.INSTANCE.Task_Admin(), new Command() {
-            @Override
-            public void execute( ) {
-                presenter.refreshAdminTasks();
-                ;
-            }
-        } ) );
-
-
-        HashMap storedCustomFilters = listGrid.getStoredCustomFilters();
-        if(storedCustomFilters!=null) {
-            Set customFilterKeys = storedCustomFilters.keySet();
-            Iterator it = customFilterKeys.iterator();
-            String customFilterName;
-
-            while ( it.hasNext() ) {
-                customFilterName = ( String ) it.next();
-
-                final HashMap filterValues = ( HashMap ) storedCustomFilters.get( customFilterName );
-
-                listGrid.addFilter( new DataGridFilter<TaskSummary>( customFilterName, customFilterName,
-                        new Command() {
-                            @Override
-                            public void execute() {
-                                List<String> states = (List) filterValues.get( DataSetTasksListGridPresenter.FILTER_STATUSES_PARAM_NAME);
-                                List<String> selectedCurrentRole = (List) filterValues.get( DataSetTasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME);
-                                String currentRole = null;
-                                if(selectedCurrentRole!=null && selectedCurrentRole.size()>0){
-                                    currentRole = (String) selectedCurrentRole.get( 0 );
-                                }
-                                presenter.filterGrid( currentRole ,states);
-                            }
-                        } ) );
-
-
-            }
-        }
-        final Command refreshFilterDropDownCommand = new Command() {
-            @Override
-            public void execute() {
-                listGrid.clearFilters();
-                initFilters();
-            }
-        };
-
-        listGrid.addFilter(new DataGridFilter<TaskSummary> ("addFilter","-- " + Constants.INSTANCE.FilterManagement() + " --",
-                new Command() {
-                    @Override
-                    public void execute() {
-                        Command addFilter =new Command() {
-                            @Override
-                            public void execute() {
-                                final String newFilterName =(String) newFilterPopup.getFormValues().get( NewFilterPopup.FILTER_NAME_PARAM);
-                                listGrid.storeNewCustomFilter( newFilterName , newFilterPopup.getFormValues() );
-                                listGrid.clearFilters();
-                                initFilters( );
-                            }
-                        } ;
-                        createFilterForm();
-                        newFilterPopup.show(addFilter,refreshFilterDropDownCommand,listGrid.getGridPreferencesStore());
-                    }
-                }  ));
-        listGrid.refreshFilterDropdown();
-
-    }
 
     private void createFilterForm(){
         HashMap<String,String> stateListBoxInfo = new HashMap<String, String>(  );
@@ -548,11 +446,8 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
                 @Override
                 public void render(Cell.Context context, TaskSummary value, SafeHtmlBuilder sb) {
                     if (value.getActualOwner() != null && value.getStatus().equals("InProgress")) {
-                        AbstractImagePrototype imageProto = AbstractImagePrototype.create(images.completeGridIcon());
                         SafeHtmlBuilder mysb = new SafeHtmlBuilder();
-                        mysb.appendHtmlConstant("<span title='" + constants.Complete() + "' style='margin-right:5px;'>");
-                        mysb.append(imageProto.getSafeHtml());
-                        mysb.appendHtmlConstant("</span>");
+                        mysb.appendHtmlConstant("<a href='javascript:;' class='btn btn-mini' style='margin-right:5px;' title='"+constants.Complete()+"'>"+constants.Complete()+"</a>");
                         sb.append(mysb.toSafeHtml());
                     }
                 }
@@ -584,11 +479,8 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
                 @Override
                 public void render(Cell.Context context, TaskSummary value, SafeHtmlBuilder sb) {
                     if (value.getStatus().equals("Ready")) {
-                        AbstractImagePrototype imageProto = AbstractImagePrototype.create(images.releaseGridIcon());
                         SafeHtmlBuilder mysb = new SafeHtmlBuilder();
-                        mysb.appendHtmlConstant("<span title='" + constants.Claim() + "' style='margin-right:5px;'>");
-                        mysb.append(imageProto.getSafeHtml());
-                        mysb.appendHtmlConstant("</span>");
+                        mysb.appendHtmlConstant("<a href='javascript:;' class='btn btn-mini' style='margin-right:5px;' title='"+constants.Claim()+"'>"+constants.Claim()+"</a>");
                         sb.append(mysb.toSafeHtml());
                     }
                 }
@@ -621,11 +513,8 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
                 public void render(Cell.Context context, TaskSummary value, SafeHtmlBuilder sb) {
                     if (value.getActualOwner() != null && value.getActualOwner().equals(identity.getIdentifier())
                             && (value.getStatus().equals("Reserved") || value.getStatus().equals("InProgress"))) {
-                        AbstractImagePrototype imageProto = AbstractImagePrototype.create(images.claimGridIcon());
                         SafeHtmlBuilder mysb = new SafeHtmlBuilder();
-                        mysb.appendHtmlConstant("<span title='" + constants.Release() + "' style='margin-right:5px;'>");
-                        mysb.append(imageProto.getSafeHtml());
-                        mysb.appendHtmlConstant("</span>");
+                        mysb.appendHtmlConstant("<a href='javascript:;' class='btn btn-mini' style='margin-right:5px;' title='"+constants.Release()+"'>"+constants.Release()+"</a>");
                         sb.append(mysb.toSafeHtml());
                     }
                 }
