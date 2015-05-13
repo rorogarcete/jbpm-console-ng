@@ -165,12 +165,12 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
                                     );
                                 }
 
-                                view.hideBusyIndicator();
                                 dataProvider.updateRowCount(dataSet.getRowCount(),
                                         true); // true ??
                                 dataProvider.updateRowData(0,///dataSet.getStartRowIndex() ???
                                         myTasksFromDataSet);
                             }
+                            view.hideBusyIndicator();
                         }
                         @Override
                         public void notFound() {

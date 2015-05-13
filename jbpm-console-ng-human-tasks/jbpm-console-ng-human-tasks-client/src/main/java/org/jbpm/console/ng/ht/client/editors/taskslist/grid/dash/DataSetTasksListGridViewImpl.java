@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.ht.client.editors.taskslist.grid.dash;
 
+import org.jbpm.console.ng.gc.client.list.base.AbstractMultiGridView;
 import org.jbpm.console.ng.ht.client.editors.taskslist.grid.*;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -51,6 +52,7 @@ import org.uberfire.client.mvp.PlaceStatus;
 import org.uberfire.ext.widgets.common.client.tables.ColumnMeta;
 import org.uberfire.ext.widgets.common.client.tables.DataGridFilter;
 import org.uberfire.ext.widgets.common.client.tables.popup.NewFilterPopup;
+import org.uberfire.ext.widgets.common.client.tables.popup.NewTabFilterPopup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
@@ -60,8 +62,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jbpm.console.ng.ht.util.TaskRoleDefinition.TASK_ROLE_ADMINISTRATOR;
+import static org.jbpm.console.ng.ht.util.TaskRoleDefinition.TASK_ROLE_POTENTIALOWNER;
+
 @Dependent
-public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, DataSetTasksListGridPresenter>
+public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSummary, DataSetTasksListGridPresenter>
         implements DataSetTasksListGridPresenter.DataSetTaskListView {
 
     interface Binder
@@ -81,21 +86,66 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
     private QuickNewTaskPopup quickNewTaskPopup;
 
     @Inject
-    private NewFilterPopup newFilterPopup;
+    private NewTabFilterPopup newTabFilterPopup;
+
 
     @Override
     public void init(final DataSetTasksListGridPresenter presenter) {
-        List<String> bannedColumns = new ArrayList<String>();
+
+        final List<String> bannedColumns = new ArrayList<String>();
         bannedColumns.add(constants.Task());
-        List<String> initColumns = new ArrayList<String>();
+        final List<String> initColumns = new ArrayList<String>();
         initColumns.add(constants.Task());
         initColumns.add(constants.Description());
-        super.init(presenter, new GridGlobalPreferences("TaskListGrid", initColumns, bannedColumns));
-        initSelectionModel( listGrid );
+        final Button button = new Button();
+        button.setText( "+" );
+        button.addClickHandler( new ClickHandler() {
+            public void onClick( ClickEvent event ) {
+                Command addNewGrid = new Command() {
+                    @Override
+                    public void execute() {
+                        HashMap<String,Object> newTabFormValues = newTabFilterPopup.getFormValues();
+
+                        //Convert value of list of roles selected  to String
+                        List<String> selectedCurrentRole = (List) newTabFormValues.get( TasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME);
+                        String currentRole = null;
+                        if(selectedCurrentRole!=null && selectedCurrentRole.size()>0){
+                            currentRole = selectedCurrentRole.get( 0 );
+                        }
+                        newTabFormValues.put(TasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME,currentRole);
+
+
+                        final String key = getValidKeyForAdditionalListGrid("TaskListGrid_");
+
+                        filterPagedTable.saveNewTabSettings( key, newTabFormValues );
+                        final ExtendedPagedTable<TaskSummary> extendedPagedTable = createGridInstance(  new GridGlobalPreferences( key, initColumns, bannedColumns ), key );
+
+                        presenter.addDataDisplay( extendedPagedTable );
+                        extendedPagedTable.setDataProvider(presenter.getDataProvider() );
+
+                        filterPagedTable.createNewTab( extendedPagedTable, key, button,new Command() {
+                            @Override
+                            public void execute() {
+                                currentListGrid = extendedPagedTable;
+                                applyFilterOnPresenter( key );
+                            }
+                        } ) ;
+                        applyFilterOnPresenter( newTabFormValues );
+
+
+                    }
+                };
+                createFilterForm();
+                newTabFilterPopup.show( addNewGrid, getMultiGridPreferencesStore() );
+
+            }
+        } );
+        super.init(presenter, new GridGlobalPreferences("DataSetTaskListGrid", initColumns, bannedColumns),button);
+
     }
 
-
-    public void initSelectionModel (final ExtendedPagedTable additionalGrid){
+    public void initSelectionModel (){
+        final ExtendedPagedTable<TaskSummary> extendedPagedTable = getListGrid();
         selectedStyles = new RowStyles<TaskSummary>() {
 
             @Override
@@ -103,20 +153,19 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
                 if (rowIndex == selectedRow) {
                     return "selected";
                 } else {
-                    if (row.getStatus() != null && (row.getStatus().equals("InProgress") || row.getStatus().equals("Ready"))) {
-                            if (row.getPriority() == 5) {
-                                return "five";
-                            } else if (row.getPriority() == 4) {
-                                return "four";
-                            } else if (row.getPriority() == 3) {
-                                return "three";
-                            } else if (row.getPriority() == 2) {
-                                return "two";
-                            } else if (row.getPriority() == 1) {
-                                return "one";
-                            }
-                        
-                    } else if (row.getStatus()!=null && row.getStatus().equals("Completed")) {
+                    if (row.getStatus().equals("InProgress") || row.getStatus().equals("Ready")) {
+                        if (row.getPriority() == 5) {
+                            return "five";
+                        } else if (row.getPriority() == 4) {
+                            return "four";
+                        } else if (row.getPriority() == 3) {
+                            return "three";
+                        } else if (row.getPriority() == 2) {
+                            return "two";
+                        } else if (row.getPriority() == 1) {
+                            return "one";
+                        }
+                    } else if (row.getStatus().equals("Completed")) {
                         return "completed";
                     }
 
@@ -125,21 +174,22 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
             }
         };
 
-        listGrid.setEmptyTableCaption(constants.No_Tasks_Found());
+        extendedPagedTable.setEmptyTableCaption(constants.No_Tasks_Found());
+
         selectionModel = new NoSelectionModel<TaskSummary>();
         selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 boolean close = false;
                 if (selectedRow == -1) {
-                    selectedRow = listGrid.getKeyboardSelectedRow();
-                    listGrid.setRowStyles(selectedStyles);
-                    listGrid.redraw();
+                    selectedRow = extendedPagedTable.getKeyboardSelectedRow();
+                    extendedPagedTable.setRowStyles( selectedStyles );
+                    extendedPagedTable.redraw();
 
-                } else if (listGrid.getKeyboardSelectedRow() != selectedRow) {
-                    listGrid.setRowStyles(selectedStyles);
-                    selectedRow = listGrid.getKeyboardSelectedRow();
-                    listGrid.redraw();
+                } else if (extendedPagedTable.getKeyboardSelectedRow() != selectedRow) {
+                    extendedPagedTable.setRowStyles( selectedStyles );
+                    selectedRow = extendedPagedTable.getKeyboardSelectedRow();
+                    extendedPagedTable.redraw();
                 } else {
                     close = true;
                 }
@@ -177,20 +227,20 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
                         NativeEvent nativeEvent = event.getNativeEvent();
                         if (BrowserEvents.CLICK.equals(nativeEvent.getType())) {
                             // Ignore if the event didn't occur in the correct column.
-                            if (listGrid.getColumnIndex(actionsColumn) == event.getColumn()) {
+                            if (extendedPagedTable.getColumnIndex(actionsColumn) == event.getColumn()) {
                                 return DefaultSelectionEventManager.SelectAction.IGNORE;
                             }
                         }
                         return DefaultSelectionEventManager.SelectAction.DEFAULT;
                     }
                 });
-        listGrid.setSelectionModel(selectionModel, noActionColumnManager);
+        extendedPagedTable.setSelectionModel( selectionModel, noActionColumnManager );
+        extendedPagedTable.setRowStyles( selectedStyles );
 
-        listGrid.setRowStyles( selectedStyles );
-        initExtraButtons();
     }
 
-    private void initExtraButtons() {
+    @Override
+    public void initExtraButtons(ExtendedPagedTable extendedPagedTable) {
         Button newTaskButton = new Button();
         newTaskButton.setTitle(constants.New_Task());
         newTaskButton.setIcon( IconType.PLUS_SIGN );
@@ -201,13 +251,15 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
                 quickNewTaskPopup.show();
             }
         });
-        listGrid.getLeftToolbar().add(newTaskButton);
+
+        extendedPagedTable.getRightActionsToolbar().clear();
+        extendedPagedTable.getRightActionsToolbar().add(newTaskButton);
 
     }
 
     @Override
-    public void initColumns(  ) {
-        initCellPreview();
+    public void initColumns( ExtendedPagedTable extendedPagedTable ) {
+        initCellPreview(extendedPagedTable);
         Column taskIdColumn = initTaskIdColumn();
         Column taskNameColumn = initTaskNameColumn();
         Column descriptionColumn = initTaskDescriptionColumn();
@@ -215,7 +267,7 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
         Column statusColumn = initTaskStatusColumn();
         Column createdOnDateColumn = initTaskCreatedOnColumn();
         Column dueDateColumn = initTaskDueColumn();
-        actionsColumn = initActionsColumn();
+        actionsColumn = initActionsColumn(extendedPagedTable);
 
         List<ColumnMeta<TaskSummary>> columnMetas = new ArrayList<ColumnMeta<TaskSummary>>();
         columnMetas.add(new ColumnMeta<TaskSummary>(taskIdColumn, constants.Id()));
@@ -226,7 +278,7 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
         columnMetas.add(new ColumnMeta<TaskSummary>(createdOnDateColumn, "CreatedOn"));
         columnMetas.add(new ColumnMeta<TaskSummary>(dueDateColumn, "DueOn"));
         columnMetas.add(new ColumnMeta<TaskSummary>(actionsColumn, constants.Actions()));
-        listGrid.addColumns(columnMetas);
+        extendedPagedTable.addColumns(columnMetas);
     }
 
 
@@ -234,7 +286,7 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
         HashMap<String,String> stateListBoxInfo = new HashMap<String, String>(  );
 
         stateListBoxInfo.put( TaskUtils.TASK_STATUS_CREATED, Constants.INSTANCE.Created() );
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_READY, Constants.INSTANCE.Ready());
+        stateListBoxInfo.put( TaskUtils.TASK_STATUS_READY, Constants.INSTANCE.Ready() );
         stateListBoxInfo.put( TaskUtils.TASK_STATUS_RESERVED, Constants.INSTANCE.Reserved() );
         stateListBoxInfo.put( TaskUtils.TASK_STATUS_INPROGRESS, Constants.INSTANCE.InProgress() );
         stateListBoxInfo.put( TaskUtils.TASK_STATUS_SUSPENDED, Constants.INSTANCE.Suspended() );
@@ -253,19 +305,19 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
         currentRoleListBoxInfo.put( TaskRoleDefinition.TASK_ROLE_ADMINISTRATOR, Constants.INSTANCE.Administrator() );
 
 
-        newFilterPopup.init();
-        newFilterPopup.addListBoxToFilter( Constants.INSTANCE.Status(),DataSetTasksListGridPresenter.FILTER_STATUSES_PARAM_NAME ,true, stateListBoxInfo );
-        newFilterPopup.addListBoxToFilter( Constants.INSTANCE.TaskRole(),DataSetTasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME ,false, currentRoleListBoxInfo );
+        newTabFilterPopup.init();
+        newTabFilterPopup.addListBoxToFilter( Constants.INSTANCE.Status(), TasksListGridPresenter.FILTER_STATUSES_PARAM_NAME, true, stateListBoxInfo );
+        newTabFilterPopup.addListBoxToFilter( Constants.INSTANCE.TaskRole(), TasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME, false, currentRoleListBoxInfo );
 
     }
-    private void initCellPreview() {
-        listGrid.addCellPreviewHandler(new CellPreviewEvent.Handler<TaskSummary>() {
+    private void initCellPreview(final ExtendedPagedTable extendedPagedTable) {
+        extendedPagedTable.addCellPreviewHandler(new CellPreviewEvent.Handler<TaskSummary>() {
 
             @Override
             public void onCellPreview(final CellPreviewEvent<TaskSummary> event) {
 
                 if (BrowserEvents.MOUSEOVER.equalsIgnoreCase(event.getNativeEvent().getType())) {
-                    onMouseOverGrid(event);
+                    onMouseOverGrid(extendedPagedTable,event);
                 }
 
             }
@@ -273,11 +325,11 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
 
     }
 
-    private void onMouseOverGrid(final CellPreviewEvent<TaskSummary> event) {
+    private void onMouseOverGrid(ExtendedPagedTable extendedPagedTable,final CellPreviewEvent<TaskSummary> event) {
         TaskSummary task = event.getValue();
 
         if (task.getDescription() != null) {
-            listGrid.setTooltip(listGrid.getKeyboardSelectedRow(), event.getColumn(), task.getDescription());
+            extendedPagedTable.setTooltip(extendedPagedTable.getKeyboardSelectedRow(), event.getColumn(), task.getDescription());
         }
     }
 
@@ -375,11 +427,12 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
         return dueDateColumn;
     }
 
+
     public void onTaskRefreshedEvent(@Observes TaskRefreshedEvent event) {
         presenter.refreshGrid();
     }
 
-    private Column initActionsColumn() {
+    private Column initActionsColumn(final ExtendedPagedTable extendedPagedTable) {
         List<HasCell<TaskSummary, ?>> cells = new LinkedList<HasCell<TaskSummary, ?>>();
         cells.add(new ClaimActionHasCell(constants.Claim(), new ActionCell.Delegate<TaskSummary>() {
             @Override
@@ -387,7 +440,7 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
 
                 presenter.claimTask(task.getTaskId(), identity.getIdentifier(), task.getDeploymentId());
                 taskSelected.fire(new TaskSelectionEvent(task.getTaskId(), task.getTaskName()));
-                listGrid.refresh();
+                extendedPagedTable.refresh();
             }
         }));
 
@@ -397,7 +450,7 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
 
                 presenter.releaseTask(task.getTaskId(), identity.getIdentifier());
                 taskSelected.fire(new TaskSelectionEvent(task.getTaskId(), task.getTaskName()));
-                listGrid.refresh();
+                extendedPagedTable.refresh();
             }
         }));
 
@@ -434,7 +487,7 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
             taskSelected.fire(new TaskSelectionEvent(newTask.getNewTaskId(), newTask.getNewTaskName()));
         }
 
-        selectionModel.setSelected(new TaskSummary(newTask.getNewTaskId(), newTask.getNewTaskName()), true);
+        selectionModel.setSelected( new TaskSummary( newTask.getNewTaskId(), newTask.getNewTaskName() ), true );
     }
 
     protected class CompleteActionHasCell implements HasCell<TaskSummary, TaskSummary> {
@@ -548,4 +601,74 @@ public class DataSetTasksListGridViewImpl extends AbstractListView<TaskSummary, 
             placeManager.closePlace(place);
         }
     }
+
+    public void initDefaultFilters(GridGlobalPreferences preferences ,Button createTabButton){
+
+
+        List<String> states;
+
+        //Filter status Active
+        states=TaskUtils.getStatusByType(TaskUtils.TaskType.ACTIVE  );
+        initTabFilter( preferences, "TaskListGrid_0", Constants.INSTANCE.Active(), "Filter " + Constants.INSTANCE.Active(), states,TASK_ROLE_POTENTIALOWNER );
+
+
+        //Filter status Personal
+        states=TaskUtils.getStatusByType(TaskUtils.TaskType.PERSONAL );
+        initTabFilter( preferences, "TaskListGrid_1", Constants.INSTANCE.Personal(), "Filter " + Constants.INSTANCE.Personal(), states, TASK_ROLE_POTENTIALOWNER );
+
+        //Filter status Group
+        states=TaskUtils.getStatusByType(TaskUtils.TaskType.GROUP );
+        initTabFilter( preferences, "TaskListGrid_2", Constants.INSTANCE.Group(), "Filter " + Constants.INSTANCE.Group(), states, TASK_ROLE_POTENTIALOWNER );
+
+        //Filter status All
+        states=TaskUtils.getStatusByType(TaskUtils.TaskType.ALL );
+        initTabFilter( preferences, "TaskListGrid_3", Constants.INSTANCE.All(), "Filter " + Constants.INSTANCE.All(), states,TASK_ROLE_POTENTIALOWNER );
+
+        //Filter status Admin
+        states=TaskUtils.getStatusByType(TaskUtils.TaskType.ADMIN );
+        initTabFilter( preferences, "TaskListGrid_4", Constants.INSTANCE.Task_Admin(), "Filter " + Constants.INSTANCE.Task_Admin(), states, TASK_ROLE_ADMINISTRATOR );
+
+        filterPagedTable.addAddTableButton( createTabButton );
+
+        filterPagedTable.setSelectedTab();
+        applyFilterOnPresenter( "TaskListGrid_4" );
+
+    }
+    private void initTabFilter(GridGlobalPreferences preferences, final String key, String tabName,
+                               String tabDesc, List<String> states, String role){
+
+        HashMap<String, Object> tabSettingsValues = new HashMap<String, Object>(  );
+
+        tabSettingsValues.put( NewTabFilterPopup.FILTER_TAB_NAME_PARAM,tabName);
+        tabSettingsValues.put( NewTabFilterPopup.FILTER_TAB_DESC_PARAM, tabDesc);
+        tabSettingsValues.put( TasksListGridPresenter.FILTER_STATUSES_PARAM_NAME, states );
+        tabSettingsValues.put( TasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME, role );
+
+        filterPagedTable.saveNewTabSettings( key, tabSettingsValues );
+        final ExtendedPagedTable<TaskSummary> extendedPagedTable = createGridInstance(  preferences, key );
+        currentListGrid = extendedPagedTable;
+        presenter.addDataDisplay( extendedPagedTable );
+        extendedPagedTable.setDataProvider(presenter.getDataProvider() );
+        filterPagedTable.addTab( extendedPagedTable, key, new Command() {
+            @Override
+            public void execute() {
+                currentListGrid = extendedPagedTable;
+                applyFilterOnPresenter( key );
+            }
+        } ) ;
+
+    }
+
+    public void applyFilterOnPresenter(HashMap<String, Object> params){
+        List<String> states = (List) params.get( TasksListGridPresenter.FILTER_STATUSES_PARAM_NAME);
+        String currentRole = (String) params.get( TasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME);
+
+        presenter.filterGrid( currentRole ,states);
+
+    }
+    public void applyFilterOnPresenter(String key) {
+        initSelectionModel();
+        applyFilterOnPresenter( filterPagedTable.getMultiGridPreferencesStore().getGridSettings( key ) );
+    }
+
 }
