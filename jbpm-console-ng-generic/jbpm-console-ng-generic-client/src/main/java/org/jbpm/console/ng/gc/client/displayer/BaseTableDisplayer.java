@@ -29,8 +29,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.displayer.client.DataSetHandlerImpl;
-import org.dashbuilder.displayer.client.widgets.DisplayerEditor;
-import org.dashbuilder.displayer.client.widgets.DisplayerEditorPopup;
 import org.dashbuilder.renderer.client.table.TableDisplayer;
 import org.uberfire.ext.widgets.common.client.tables.PagedTable;
 
@@ -82,16 +80,16 @@ public abstract class BaseTableDisplayer<T> extends TableDisplayer {
     public void addTableSettings(String name, boolean editable, TableSettings settings) {
         settings.setTableName(name);
         settings.setEditable(editable);
+        addTableSettings(settings);
+    }
+
+    public void addTableSettings(TableSettings settings) {
         tableSettingsList.add(settings);
 
         // Take the first registered settings as the default one
         if (super.getDisplayerSettings() == null) {
             init(settings);
         }
-    }
-
-    public void addTableSettings(TableSettings settings) {
-        tableSettingsList.add(settings);
     }
 
     public void removeTableSettings(TableSettings settings) {
@@ -186,6 +184,11 @@ public abstract class BaseTableDisplayer<T> extends TableDisplayer {
      */
     protected abstract void onItemSelected(T item);
 
+    /**
+     * Get the popup title to show when creating a brand new table settings
+     */
+    protected abstract String getNewTableSettingsTitle();
+
 
     // TableDisplayer overrides
 
@@ -211,7 +214,10 @@ public abstract class BaseTableDisplayer<T> extends TableDisplayer {
             public void onChange(ChangeEvent event) {
                 int idx = listBox.getSelectedIndex();
                 if (isTableCreationEnabled() && idx == tableSettingsList.size()) {
-                    showNewTableSettingsEditor();
+                    TableSettings prototype = createTableSettingsPrototype();
+                    prototype.setTableName("- New Task list - ");
+                    prototype.setTableDescription("- New Task list -");
+                    showTableSettingsEditor(prototype, getNewTableSettingsTitle());
                 } else {
                     draw(listBox.getSelectedIndex());
                 }
@@ -244,18 +250,21 @@ public abstract class BaseTableDisplayer<T> extends TableDisplayer {
         return refresh;
     }
 
-    DisplayerEditorPopup displayerEditor = new DisplayerEditorPopup();
+    TableDisplayerEditorPopup tableDisplayerEditor = new TableDisplayerEditorPopup();
 
-    protected void showNewTableSettingsEditor() {
-        TableSettings prototype = createTableSettingsPrototype();
-        displayerEditor.init(prototype, new DisplayerEditor.Listener() {
+    protected void showTableSettingsEditor(TableSettings tableSettings, String popupTitle) {
+        TableSettings clone = tableSettings.cloneInstance();
+        tableDisplayerEditor.setTitle(popupTitle);
+        tableDisplayerEditor.init(clone, new TableDisplayerEditor.Listener() {
 
-            public void onClose(DisplayerEditor editor) {
+            public void onClose(TableDisplayerEditor editor) {
             }
-            public void onSave(DisplayerEditor editor) {
-                TableSettings tableSettings = TableSettings.create("filter" + tableSettingsList.size(), editor.getDisplayerSettings());
-                updateTableSettings(tableSettings);
+
+            public void onSave(TableDisplayerEditor editor) {
+                TableSettings modifiedSettings = editor.getTableSettings();
+                updateTableSettings(modifiedSettings);
                 populateTableSelector();
+                draw(modifiedSettings);
             }
         });
     }

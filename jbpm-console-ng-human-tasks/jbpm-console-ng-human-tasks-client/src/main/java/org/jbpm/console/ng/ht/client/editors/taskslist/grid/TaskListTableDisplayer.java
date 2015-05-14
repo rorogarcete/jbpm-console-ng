@@ -140,27 +140,17 @@ public class TaskListTableDisplayer extends BaseTableDisplayer<TaskSummary> {
                         .buildSettings());
     }
 
-    // TODO: load & register tableSettings defined by user
     protected void loadUserTables() {
 
-        // Mock up example
-        super.addTableSettings("Custom", true,
-                (TableSettings) TableSettingsBuilder.init()
-                        .dataset("jbpmHumanTasks")
-                        .filter(COLUMN_CREATEDON, timeFrame("begin[year march] till now +1day"))
-                        .filter(COLUMN_ACTUALOWNER, equalsTo(identity.getIdentifier()))
-                        .filter(COLUMN_ACTUALOWNER, equalsTo(identity.getIdentifier()))
-                        .column(COLUMN_TASKID).format(constants.Id())
-                        .column(COLUMN_NAME).format(constants.Task())
-                        .column(COLUMN_ACTUALOWNER).format("Owner")
-                        .column(COLUMN_CREATEDON).format("Created on", "MMM dd E, yyyy")
-                        .column(COLUMN_STATUS).format(constants.Status()).expression("value.toUpperCase()")
-                        .expression("value.toUpperCase().substring(0,3)")
-                        .filterOn(true, true, true)
-                        .tableWidth(800)
-                        .tableOrderEnabled(true)
-                        .tableOrderDefault(COLUMN_CREATEDON, DESCENDING)
-                        .buildSettings());
+        // TODO: Get the json definitions from the backend services
+/*
+        List<String> jsonList = ...
+        for (String json : jsonList) {
+            TableSettingsJSONMarshaller jsonMarshaller = new TableSettingsJSONMarshaller();
+            TableSettings userDefinedTable = jsonMarshaller.fromJsonString(json);
+            super.addTableSettings(userDefinedTable);
+        }
+*/
     }
 
     // TableDisplayer overrides
@@ -176,10 +166,7 @@ public class TaskListTableDisplayer extends BaseTableDisplayer<TaskSummary> {
                 .setColumnsTitle("Columns");
 
         return new DisplayerConstraints(lookupConstraints)
-                .supportsAttribute(DisplayerAttributeGroupDef.GENERAL_GROUP)
                 .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
-                .supportsAttribute(DisplayerAttributeGroupDef.FILTER_GROUP)
-                .supportsAttribute(DisplayerAttributeGroupDef.REFRESH_GROUP)
                 .supportsAttribute(DisplayerAttributeGroupDef.TABLE_GROUP);
     }
 
@@ -275,5 +262,10 @@ public class TaskListTableDisplayer extends BaseTableDisplayer<TaskSummary> {
     @Override
     public TableSettings createTableSettingsPrototype() {
         return buildTablePrototype();
+    }
+
+    @Override
+    protected String getNewTableSettingsTitle() {
+        return Constants.INSTANCE.New_TaskList();
     }
 }

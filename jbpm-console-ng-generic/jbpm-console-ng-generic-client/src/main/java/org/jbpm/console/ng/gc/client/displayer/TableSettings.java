@@ -15,6 +15,10 @@
  */
 package org.jbpm.console.ng.gc.client.displayer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
 
@@ -24,6 +28,7 @@ import org.dashbuilder.displayer.DisplayerType;
 public class TableSettings extends DisplayerSettings {
 
     protected String tableName;
+    protected String tableDescription;
     protected boolean editable;
 
     public TableSettings() {
@@ -36,6 +41,14 @@ public class TableSettings extends DisplayerSettings {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    public String getTableDescription() {
+        return tableDescription;
+    }
+
+    public void setTableDescription(String tableDescription) {
+        this.tableDescription = tableDescription;
     }
 
     public boolean isEditable() {
@@ -57,9 +70,9 @@ public class TableSettings extends DisplayerSettings {
         }
     }
 
-    public static TableSettings create(String name, DisplayerSettings settings) {
+
+    public static TableSettings cloneFrom(DisplayerSettings settings) {
         TableSettings tableSettings = new TableSettings();
-        tableSettings.setTableName(name);
         tableSettings.setType(DisplayerType.TABLE);
         tableSettings.setUUID(settings.getUUID());
         tableSettings.setDataSet(settings.getDataSet());
@@ -67,5 +80,20 @@ public class TableSettings extends DisplayerSettings {
         tableSettings.setColumnSettingsList(settings.getColumnSettingsList());
         tableSettings.getSettingsFlatMap().putAll(settings.getSettingsFlatMap());
         return tableSettings;
+    }
+
+    public TableSettings cloneInstance() {
+        TableSettings clone = new TableSettings();
+        clone.UUID = UUID;
+        clone.tableName = tableName;
+        clone.tableDescription = tableDescription;
+        clone.settings = new HashMap(settings);
+        clone.columnSettingsList = new ArrayList();
+        for (ColumnSettings columnSettings : columnSettingsList) {
+            clone.columnSettingsList.add(columnSettings.cloneInstance());
+        }
+        if (dataSet != null) clone.dataSet = dataSet.cloneInstance();
+        if (dataSetLookup != null) clone.dataSetLookup = dataSetLookup.cloneInstance();
+        return clone;
     }
 }
