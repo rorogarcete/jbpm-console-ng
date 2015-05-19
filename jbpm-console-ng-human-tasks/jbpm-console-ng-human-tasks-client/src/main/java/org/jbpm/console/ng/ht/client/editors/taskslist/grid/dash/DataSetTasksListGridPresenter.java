@@ -15,47 +15,46 @@
  */
 package org.jbpm.console.ng.ht.client.editors.taskslist.grid.dash;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.ColumnSortList;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
-import java.util.ArrayList;
-
+import org.dashbuilder.dataset.DataSet;
+import org.dashbuilder.dataset.DataSetFactory;
+import org.dashbuilder.dataset.DataSetLookup;
 import org.dashbuilder.dataset.client.DataSetClientServiceError;
+import org.dashbuilder.dataset.client.DataSetReadyCallback;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jbpm.console.ng.ga.model.PortableQueryFilter;
-import org.jbpm.console.ng.gc.client.list.base.AbstractListView.ListView;
+import org.jbpm.console.ng.gc.client.displayer.TableSettings;
+
+import org.jbpm.console.ng.gc.client.list.base.AbstractListView;
 import org.jbpm.console.ng.gc.client.list.base.AbstractScreenListPresenter;
 import org.jbpm.console.ng.gc.client.util.TaskUtils;
 import org.jbpm.console.ng.gc.client.util.TaskUtils.TaskType;
+import org.jbpm.console.ng.ht.client.editors.taskslist.grid.TaskListTableDisplayer;
 import org.jbpm.console.ng.ht.client.i18n.Constants;
 import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.ht.service.TaskLifeCycleService;
 import org.jbpm.console.ng.ht.service.TaskQueryService;
-import org.uberfire.client.annotations.WorkbenchScreen;
-
-import java.util.Date;
-import java.util.List;
-import org.dashbuilder.dataset.DataColumn;
-import org.dashbuilder.dataset.DataSet;
-import org.dashbuilder.dataset.DataSetFactory;
-import org.dashbuilder.dataset.DataSetLookup;
-import org.dashbuilder.dataset.client.DataSetClientServices;
-import org.dashbuilder.dataset.client.DataSetReadyCallback;
-import static org.jbpm.console.ng.ht.util.TaskRoleDefinition.TASK_ROLE_ADMINISTRATOR;
-import static org.jbpm.console.ng.ht.util.TaskRoleDefinition.TASK_ROLE_POTENTIALOWNER;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
+import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.UberView;
-
 import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
+
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.jbpm.console.ng.ht.util.TaskRoleDefinition.TASK_ROLE_ADMINISTRATOR;
+import static org.jbpm.console.ng.ht.util.TaskRoleDefinition.TASK_ROLE_POTENTIALOWNER;
 
 @Dependent
 @WorkbenchScreen(identifier = "DataSet Tasks List")
@@ -64,13 +63,12 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
     public static String FILTER_STATUSES_PARAM_NAME = "statuses";
     public static String FILTER_CURRENT_ROLE_PARAM_NAME = "filter";
 
-    public interface DataSetTaskListView extends ListView<TaskSummary, DataSetTasksListGridPresenter> {
+    public interface DataSetTaskListView extends AbstractListView.ListView<TaskSummary, DataSetTasksListGridPresenter> {
 
     }
 
     @Inject
     private DataSetTaskListView view;
-
     private Constants constants = GWT.create(Constants.class);
 
     @Inject
@@ -85,20 +83,26 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
 
     private TaskType currentStatusFilter = TaskUtils.TaskType.ACTIVE;
 
+    private TableSettings currentTableSetting;
+
+
+    @Inject
+    private TaskListTableDisplayer taskListTableDisplayer;
+
     public DataSetTasksListGridPresenter() {
 
         final DataSetLookup lookup = DataSetFactory.newDataSetLookupBuilder()
                 .dataset("jbpmHumanTasks")
-                //            .filter(ClusterMetricsGenerator.COLUMN_TIMESTAMP, timeFrame("-1second"))
-                //            .group(ClusterMetricsGenerator.COLUMN_SERVER)
-                //            .column(ClusterMetricsGenerator.COLUMN_SERVER)
+                        //            .filter(ClusterMetricsGenerator.COLUMN_TIMESTAMP, timeFrame("-1second"))
+                        //            .group(ClusterMetricsGenerator.COLUMN_SERVER)
+                        //            .column(ClusterMetricsGenerator.COLUMN_SERVER)
                 .column("taskId")
                 .column("name")
                 .column("actualOwner")
                 .column("createdOn")
                 .column("status")
                 .column("description")
-                
+
                 .buildLookup();
 
         dataProvider = new AsyncDataProvider<TaskSummary>() {
@@ -132,7 +136,7 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
                 }
 
                 if (currentStatusFilter == null) {
-                    currentFilter.getParams().put("statuses", TaskUtils.getStatusByType(currentStatusFilter));
+                    currentFilter.getParams().put("statuses", TaskUtils.getStatusByType( currentStatusFilter ));
                 } else {
                     currentFilter.getParams().put("statuses", currentStatuses);
                 }
@@ -145,6 +149,53 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
                         .isAscending() : true);
 
                 try {
+                    if(currentTableSetting==null) {
+                        currentTableSetting = taskListTableDisplayer.createTableSettingsPrototype();
+                    }
+                    currentTableSetting.setTablePageSize( view.getListGrid().getPageSize() );
+
+                    taskListTableDisplayer.setDisplayerSettings( currentTableSetting );
+                    taskListTableDisplayer.init( currentTableSetting );
+
+                    taskListTableDisplayer.lookupDataSet(visibleRange.getStart(), new DataSetReadyCallback() {
+                        @Override
+                        public void callback(DataSet dataSet) {
+                            if (dataSet != null && dataSet.getRowCount() > 0) {
+                                List<TaskSummary> myTasksFromDataSet = new ArrayList<TaskSummary>();
+
+                                for (int i = 0;i <  dataSet.getRowCount(); i ++) {
+                                    myTasksFromDataSet.add( new TaskSummary(
+                                                    (Long)dataSet.getColumnByIndex(0).getValues().get(i),
+                                                    (String) dataSet.getColumnByIndex(1).getValues().get(i),
+                                                    (String) dataSet.getColumnByIndex(5).getValues().get(i),
+                                                    (String) dataSet.getColumnByIndex(4).getValues().get(i),
+                                                    0,(String) dataSet.getColumnByIndex(2).getValues().get(i),
+                                                    "",(Date) dataSet.getColumnByIndex(3).getValues().get(i),null,null,"",-1,-1,"",-1)
+                                    );
+                                }
+
+                                dataProvider.updateRowCount(dataSet.getRowCount(),
+                                        true); // true ??
+                                dataProvider.updateRowData(0,///dataSet.getStartRowIndex() ???
+                                        myTasksFromDataSet);
+                            }
+                            view.hideBusyIndicator();
+                        }
+                        @Override
+                        public void notFound() {
+                            GWT.log("DataSet with UUID [  jbpmHumanTasks ] not found.");
+                        }
+
+                        @Override
+                        public boolean onError(DataSetClientServiceError error) {
+                            GWT.log("DataSet with UUID [  jbpmHumanTasks ] error: ", error.getThrowable());
+                            return false;
+                        }
+                    }  );
+
+
+                   /*
+
                     lookup.setNumberOfRows(view.getListGrid().getPageSize());
                     lookup.setRowOffset(visibleRange.getStart());
                     lookup.setNumberOfRows(visibleRange.getLength());
@@ -182,7 +233,7 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
                             GWT.log("DataSet with UUID [  jbpmHumanTasks ] error: ", error.getThrowable());
                             return false;
                         }
-                    });
+                    });*/
 
                 } catch (Exception e) {
                     GWT.log("Error looking up dataset with UUID [ jbpmHumanTasks ]");
@@ -213,6 +264,11 @@ public class DataSetTasksListGridPresenter extends AbstractScreenListPresenter<T
     public void filterGrid(String currentRole, List<String> currentStatuses) {
         this.currentRole = currentRole;
         this.currentStatuses = currentStatuses;
+        refreshGrid();
+
+    }
+    public void filterGrid(TableSettings tableSettings) {
+        this.currentTableSetting = tableSettings;
         refreshGrid();
 
     }

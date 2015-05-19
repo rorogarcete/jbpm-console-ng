@@ -21,7 +21,7 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 
-  <ui:with field="i18n" type="org.jbpm.console.ng.gc.client.resources.i18n.TableDisplayerConstants"/>
+  <ui:with field="i18n" type="org.jbpm.console.ng.gc.client.i18n.TableDisplayerConstants"/>
 
   <ui:style>
     .leftPanel {

@@ -15,13 +15,6 @@
  */
 package org.jbpm.console.ng.ht.client.editors.taskslist.grid;
 
-import java.util.Date;
-import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
@@ -42,8 +35,15 @@ import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.PlaceStatus;
 import org.uberfire.ext.widgets.common.client.tables.PagedTable;
 
-import static org.dashbuilder.dataset.filter.FilterFactory.*;
-import static org.dashbuilder.dataset.sort.SortOrder.*;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import java.util.Date;
+import java.util.Map;
+
+import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
+import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
 
 /**
  * Task list table displayer
@@ -89,7 +89,7 @@ public class TaskListTableDisplayer extends BaseTableDisplayer<TaskSummary> {
     }
 
     protected TableSettings buildTablePrototype() {
-        return (TableSettings) TableSettingsBuilder.init()
+        return (TableSettings ) TableSettingsBuilder.init()
                 .dataset("jbpmHumanTasks")
                 .column(COLUMN_TASKID).format(constants.Id())
                 .column(COLUMN_NAME).format(constants.Task())
@@ -108,7 +108,7 @@ public class TaskListTableDisplayer extends BaseTableDisplayer<TaskSummary> {
 
         // All
         super.addTableSettings("All", false,
-                (TableSettings) TableSettingsBuilder.init()
+                (TableSettings ) TableSettingsBuilder.init()
                         .dataset("jbpmHumanTasks")
                         .column(COLUMN_TASKID).format(constants.Id())
                         .column(COLUMN_NAME).format(constants.Task())
@@ -124,7 +124,7 @@ public class TaskListTableDisplayer extends BaseTableDisplayer<TaskSummary> {
 
         // Active
         super.addTableSettings("Active", false,
-                (TableSettings) TableSettingsBuilder.init()
+                (TableSettings ) TableSettingsBuilder.init()
                         .dataset("jbpmHumanTasks")
                         .filter(COLUMN_ACTUALOWNER, equalsTo(identity.getIdentifier()))
                         .column(COLUMN_TASKID).format(constants.Id())
@@ -166,8 +166,8 @@ public class TaskListTableDisplayer extends BaseTableDisplayer<TaskSummary> {
                 .setColumnsTitle("Columns");
 
         return new DisplayerConstraints(lookupConstraints)
-                .supportsAttribute(DisplayerAttributeGroupDef.COLUMNS_GROUP)
-                .supportsAttribute(DisplayerAttributeGroupDef.TABLE_GROUP);
+                .supportsAttribute( DisplayerAttributeGroupDef.COLUMNS_GROUP)
+                .supportsAttribute( DisplayerAttributeGroupDef.TABLE_GROUP);
     }
 
     @Override

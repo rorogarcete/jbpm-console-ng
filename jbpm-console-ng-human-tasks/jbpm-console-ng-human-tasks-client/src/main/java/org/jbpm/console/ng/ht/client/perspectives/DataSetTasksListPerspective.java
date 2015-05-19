@@ -47,8 +47,8 @@ public class DataSetTasksListPerspective {
     @Perspective
     public PerspectiveDefinition getPerspective() {
         final PerspectiveDefinition p = new PerspectiveDefinitionImpl( SimpleWorkbenchPanelPresenter.class.getName() );
-        p.setName( "DataSet Tasks" );
-        p.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "DataSet Tasks List" ) ) );
+        p.setName( "DataSet Tasks test" );
+        p.getRoot().addPart( new PartDefinitionImpl( new DefaultPlaceRequest( "Tasks List DataSet test" ) ) );
         return p;
     }
 

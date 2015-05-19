@@ -22,6 +22,7 @@ import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
+
 public class TableDisplayerEditor extends DisplayerEditor {
 
     public interface Listener {

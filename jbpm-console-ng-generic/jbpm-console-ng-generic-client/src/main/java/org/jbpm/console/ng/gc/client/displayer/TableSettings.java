@@ -15,17 +15,19 @@
  */
 package org.jbpm.console.ng.gc.client.displayer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.dashbuilder.displayer.ColumnSettings;
 import org.dashbuilder.displayer.DisplayerSettings;
 import org.dashbuilder.displayer.DisplayerType;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Custom settings class holding the configuration of any jBPM table displayer
  */
 public class TableSettings extends DisplayerSettings {
+
+    protected String key;
 
     protected String tableName;
     protected String tableDescription;
@@ -59,9 +61,17 @@ public class TableSettings extends DisplayerSettings {
         this.editable = editable;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey( String key ) {
+        this.key = key;
+    }
+
     public boolean equals(Object obj) {
         try {
-            TableSettings other = (TableSettings) obj;
+            TableSettings other = (TableSettings ) obj;
             if (tableName == null || other.tableName == null) return false;
             if (!tableName.equals(other.tableName)) return false;
             return true;

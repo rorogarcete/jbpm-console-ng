@@ -22,14 +22,11 @@
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:my="urn:import:org.jbpm.console.ng.gc.client.displayer">
 
-  <ui:with field="i18n" type="org.jbpm.console.ng.gc.client.resources.i18n.TableDisplayerConstants"/>
+
+  <!--my:TableDisplayerEditor ui:field="editor" /-->
 
   <g:FlowPanel>
-    <my:TableDisplayerEditor ui:field="editor" />
-    <b:ModalFooter>
-      <b:Button ui:field="okButton" icon="PLUS_SIGN" type="PRIMARY" text="{i18n.ok}"></b:Button>
-      <b:Button ui:field="cancelButton" type="DEFAULT" text="{i18n.cancel}"></b:Button>
-    </b:ModalFooter>
+    <g:HTML>FILTER POPUP</g:HTML>
   </g:FlowPanel>
 
 </ui:UiBinder>

@@ -18,6 +18,8 @@ package org.jbpm.console.ng.gc.client.displayer;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.github.gwtbootstrap.client.ui.constants.ButtonType;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -26,7 +28,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.jbpm.console.ng.gc.client.i18n.Constants;
+import org.jbpm.console.ng.gc.client.i18n.TableDisplayerConstants;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
+import org.uberfire.ext.widgets.common.client.common.popups.footers.GenericModalFooter;
+import org.uberfire.mvp.Command;
 
 @Dependent
 public class TableDisplayerEditorPopup extends BaseModal {
@@ -34,36 +39,65 @@ public class TableDisplayerEditorPopup extends BaseModal {
     interface Binder extends UiBinder<Widget, TableDisplayerEditorPopup> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
-    @UiField(provided = true)
-    TableDisplayerEditor editor;
+    //@UiField(provided = true)
+    //TableDisplayerEditor editor;
 
+    //public TableDisplayerEditorPopup() {
+    //    this(new TableDisplayerEditor());
+    //}
+
+
+    //public TableDisplayerEditorPopup(TableDisplayerEditor editor) {
     public TableDisplayerEditorPopup() {
-        this(new TableDisplayerEditor());
+       // this.editor = editor;
+        add( uiBinder.createAndBindUi( this ) );
+        //init();
+        final GenericModalFooter footer = new GenericModalFooter();
+        footer.addButton( TableDisplayerConstants.INSTANCE.ok(),
+                new Command() {
+                    @Override
+                    public void execute() {
+                        ok();
+                    }
+                }, IconType.PLUS_SIGN,
+                ButtonType.PRIMARY );
+        footer.addButton( TableDisplayerConstants.INSTANCE.cancel(),
+                new Command() {
+                    @Override
+                    public void execute() {
+                        cancel();
+                    }
+                }, IconType.PLUS_SIGN,
+                ButtonType.PRIMARY );
+
+        add( footer );
+        setMaxHeigth("550px");
+        setWidth(950);
     }
 
-    @Inject
+ /*   @Inject
     public TableDisplayerEditorPopup(TableDisplayerEditor editor) {
         this.editor = editor;
         add(uiBinder.createAndBindUi(this));
         setMaxHeigth("550px");
         setWidth(950);
     }
-
-    public void init(TableSettings settings, TableDisplayerEditor.Listener editorListener) {
-        editor.init(settings, editorListener);
-        show();
+*/
+    public void show(TableSettings settings, TableDisplayerEditor.Listener editorListener) {
+ //       editor.init(settings, editorListener);
+        super.show();
     }
 
-    @UiHandler("cancelButton")
-    void cancel(final ClickEvent event) {
+   // @UiHandler("cancelButton")
+    void cancel() {
         hide();
-        editor.close();
+    //    editor.close();
     }
 
-    @UiHandler("okButton")
-    void ok(final ClickEvent event) {
+  //  @UiHandler("okButton")
+    void ok() {
         hide();
-        editor.save();
+     //   editor.save();
     }
 }
 

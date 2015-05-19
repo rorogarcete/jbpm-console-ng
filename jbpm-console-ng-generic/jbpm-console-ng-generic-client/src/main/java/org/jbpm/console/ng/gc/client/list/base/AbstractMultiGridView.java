@@ -29,6 +29,9 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jbpm.console.ng.ga.model.GenericSummary;
+import org.jbpm.console.ng.gc.client.displayer.TableDisplayerEditor;
+import org.jbpm.console.ng.gc.client.displayer.TableDisplayerEditorPopup;
+import org.jbpm.console.ng.gc.client.displayer.TableSettings;
 import org.jbpm.console.ng.gc.client.experimental.grid.base.ExtendedPagedTable;
 import org.jbpm.console.ng.gc.client.i18n.Constants;
 import org.uberfire.client.mvp.PlaceManager;
@@ -38,6 +41,7 @@ import org.uberfire.ext.services.shared.preferences.*;
 import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 import org.uberfire.ext.widgets.common.client.tables.FilterPagedTable;
 
+import org.uberfire.ext.widgets.common.client.tables.popup.NewTabFilterPopup;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -70,6 +74,7 @@ public abstract class AbstractMultiGridView<T extends GenericSummary, V extends 
     protected FilterPagedTable<T> filterPagedTable;
     protected ExtendedPagedTable<T> currentListGrid;
 
+    public HashMap<String, TableSettings> tableSettingsHashMap = new HashMap<String, TableSettings>(  );
 
     protected RowStyles<T> selectedStyles = new RowStyles<T>() {
 
@@ -93,6 +98,7 @@ public abstract class AbstractMultiGridView<T extends GenericSummary, V extends 
 
     protected DefaultSelectionEventManager<T> noActionColumnManager;
 
+   // TableDisplayerEditorPopup tableDisplayerEditor = new TableDisplayerEditorPopup();
 
     public void init( final V presenter,
                       final GridGlobalPreferences preferences,
@@ -240,6 +246,65 @@ public abstract class AbstractMultiGridView<T extends GenericSummary, V extends 
     }
 
     public void applyFilterOnPresenter( String key ) {
+    }
+
+
+
+    protected void showTableSettingsEditor(TableSettings tableSettings) {
+ /*       TableSettings clone = tableSettings.cloneInstance();
+        tableDisplayerEditor.setTitle(getNewTableSettingsTitle());
+        tableDisplayerEditor.init(clone, new TableDisplayerEditor.Listener() {
+
+            public void onClose(TableDisplayerEditor editor) {
+            }
+
+            public void onSave(TableDisplayerEditor editor) {
+                TableSettings modifiedSettings = editor.getTableSettings();
+                updateTableSettings(modifiedSettings);
+                //populateTableSelector();
+                applyFilterOnPresenter( modifiedSettings.getKey() );
+            }
+        }); */
+    }
+
+    public void showTableSettingsEditor(TableSettings tableSettings, final FilterPagedTable<T> filterPagedTable) {
+       /* TableSettings clone = tableSettings.cloneInstance();
+        tableDisplayerEditor.setTitle(getNewTableSettingsTitle());
+        tableDisplayerEditor.init(clone, new TableDisplayerEditor.Listener() {
+
+            public void onClose(TableDisplayerEditor editor) {
+            }
+
+            public void onSave(TableDisplayerEditor editor) {
+                TableSettings modifiedSettings = editor.getTableSettings();
+                updateTableSettings(modifiedSettings);
+                HashMap<String, Object> tabSettingsValues = new HashMap<String, Object>(  );
+
+                tabSettingsValues.put( NewTabFilterPopup.FILTER_TAB_NAME_PARAM,modifiedSettings.getTableName());
+                tabSettingsValues.put( NewTabFilterPopup.FILTER_TAB_DESC_PARAM, modifiedSettings.getTableName());
+
+                filterPagedTable.saveNewTabSettings( modifiedSettings.getKey(), new HashMap<String, Object>() );
+                //TODO store tablesettings
+                applyFilterOnPresenter( modifiedSettings.getKey() );
+            }
+        });*/
+    }
+
+    public String getNewTableSettingsTitle(){
+        return "Datagrid filters definition";
+    }
+
+    public void addTableSettings(TableSettings settings) {
+        tableSettingsHashMap.put(settings.getKey(),settings);
+    }
+    public void updateTableSettings(TableSettings tableSettings) {
+        tableSettingsHashMap.put( tableSettings.getKey(),tableSettings);
+    }
+    public void removeTableSettings(String key) {
+        tableSettingsHashMap.remove( key );
+    }
+    public TableSettings getTableSettings(String key){
+        return tableSettingsHashMap.get( key );
     }
 
 

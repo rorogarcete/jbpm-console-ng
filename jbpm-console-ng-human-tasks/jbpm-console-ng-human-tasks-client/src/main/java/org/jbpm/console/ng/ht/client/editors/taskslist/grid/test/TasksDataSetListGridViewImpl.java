@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jbpm.console.ng.ht.client.editors.taskslist.grid.dash;
+package org.jbpm.console.ng.ht.client.editors.taskslist.grid.test;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -39,7 +39,6 @@ import org.jbpm.console.ng.gc.client.list.base.AbstractMultiGridView;
 import org.jbpm.console.ng.gc.client.util.TaskUtils;
 import org.jbpm.console.ng.ht.client.editors.quicknewtask.QuickNewTaskPopup;
 import org.jbpm.console.ng.ht.client.editors.taskslist.grid.TaskListTableDisplayer;
-import org.jbpm.console.ng.ht.client.editors.taskslist.grid.TasksListGridPresenter;
 import org.jbpm.console.ng.ht.client.i18n.Constants;
 import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.ht.model.events.NewTaskEvent;
@@ -63,16 +62,16 @@ import static org.jbpm.console.ng.ht.util.TaskRoleDefinition.TASK_ROLE_ADMINISTR
 import static org.jbpm.console.ng.ht.util.TaskRoleDefinition.TASK_ROLE_POTENTIALOWNER;
 
 @Dependent
-public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSummary, DataSetTasksListGridPresenter>
-        implements DataSetTasksListGridPresenter.DataSetTaskListView {
+public class TasksDataSetListGridViewImpl extends AbstractMultiGridView<TaskSummary, TasksDataSetListGridPresenter>
+        implements TasksDataSetListGridPresenter.TaskDataSetListView {
+
 
     interface Binder
             extends
-            UiBinder<Widget, DataSetTasksListGridViewImpl> {
+            UiBinder<Widget, TasksDataSetListGridViewImpl> {
 
     }
 
-    private static Binder uiBinder = GWT.create(Binder.class);
 
     private final Constants constants = GWT.create(Constants.class);
 
@@ -82,20 +81,19 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
     @Inject
     private QuickNewTaskPopup quickNewTaskPopup;
 
-    @Inject
-    private NewTabFilterPopup newTabFilterPopup;
+    //@Inject
+    //private NewTabFilterPopup newTabFilterPopup;
 
-  //  @Inject
-  //  private TaskListTableDisplayer taskListTableDisplayer;
+    private TaskListTableDisplayer taskListTableDisplayer = new TaskListTableDisplayer();
 
     @Override
-    public void init(final DataSetTasksListGridPresenter presenter) {
-
+    public void init(final TasksDataSetListGridPresenter presenter) {
         final List<String> bannedColumns = new ArrayList<String>();
         bannedColumns.add(constants.Task());
         final List<String> initColumns = new ArrayList<String>();
         initColumns.add(constants.Task());
-        initColumns.add( constants.Description() );
+        initColumns.add(constants.Description());
+
         final Button button = new Button();
         button.setText( "+" );
         button.addClickHandler( new ClickHandler() {
@@ -123,17 +121,18 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
 
                     }
                 };
-              //  TableSettings tableSettings = taskListTableDisplayer.createTableSettingsPrototype();
-              //  tableSettings.setKey( key );
-              //  taskListTableDisplayer.showTableSettingsEditor( tableSettings, addNewGrid, filterPagedTable );
+                 TableSettings tableSettings = taskListTableDisplayer.createTableSettingsPrototype();
+                 tableSettings.setKey( key );
+                 taskListTableDisplayer.showTableSettingsEditor( tableSettings, addNewGrid, filterPagedTable );
+                //showTableSettingsEditor( tableSettings, filterPagedTable );
 
-                //newTabFilterPopup.show( addNewGrid, getMultiGridPreferencesStore() );
 
             }
         } );
-        super.init( presenter, new GridGlobalPreferences( "DataSetTaskListGrid", initColumns, bannedColumns ), button );
+        super.init(presenter, new GridGlobalPreferences("TaskDataSetListGrid", initColumns, bannedColumns),button);
 
     }
+
 
     public void initSelectionModel (){
         final ExtendedPagedTable<TaskSummary> extendedPagedTable = getListGrid();
@@ -165,19 +164,19 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
             }
         };
 
-        extendedPagedTable.setEmptyTableCaption( constants.No_Tasks_Found() );
+        extendedPagedTable.setEmptyTableCaption(constants.No_Tasks_Found());
 
         selectionModel = new NoSelectionModel<TaskSummary>();
-        selectionModel.addSelectionChangeHandler( new SelectionChangeEvent.Handler() {
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
-            public void onSelectionChange( SelectionChangeEvent event ) {
+            public void onSelectionChange(SelectionChangeEvent event) {
                 boolean close = false;
-                if ( selectedRow == -1 ) {
+                if (selectedRow == -1) {
                     selectedRow = extendedPagedTable.getKeyboardSelectedRow();
                     extendedPagedTable.setRowStyles( selectedStyles );
                     extendedPagedTable.redraw();
 
-                } else if ( extendedPagedTable.getKeyboardSelectedRow() != selectedRow ) {
+                } else if (extendedPagedTable.getKeyboardSelectedRow() != selectedRow) {
                     extendedPagedTable.setRowStyles( selectedStyles );
                     selectedRow = extendedPagedTable.getKeyboardSelectedRow();
                     extendedPagedTable.redraw();
@@ -187,23 +186,23 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
 
                 selectedItem = selectionModel.getLastSelectedObject();
 
-                DefaultPlaceRequest defaultPlaceRequest = new DefaultPlaceRequest( "Task Details Multi" );
-                PlaceStatus status = placeManager.getStatus( defaultPlaceRequest );
+                DefaultPlaceRequest defaultPlaceRequest = new DefaultPlaceRequest("Task Details Multi");
+                PlaceStatus status = placeManager.getStatus(defaultPlaceRequest);
                 boolean logOnly = false;
-                if ( selectedItem.getStatus().equals( "Completed" ) && selectedItem.isLogOnly() ) {
+                if(selectedItem.getStatus().equals("Completed") && selectedItem.isLogOnly()){
                     logOnly = true;
                 }
-                if ( status == PlaceStatus.CLOSE ) {
-                    placeManager.goTo( defaultPlaceRequest );
-                    taskSelected.fire( new TaskSelectionEvent( selectedItem.getTaskId(), selectedItem.getTaskName(), selectedItem.isForAdmin(), logOnly ) );
-                } else if ( status == PlaceStatus.OPEN && !close ) {
-                    taskSelected.fire( new TaskSelectionEvent( selectedItem.getTaskId(), selectedItem.getTaskName(), selectedItem.isForAdmin(), logOnly ) );
-                } else if ( status == PlaceStatus.OPEN && close ) {
-                    placeManager.closePlace( "Task Details Multi" );
+                if (status == PlaceStatus.CLOSE) {
+                    placeManager.goTo(defaultPlaceRequest);
+                    taskSelected.fire(new TaskSelectionEvent(selectedItem.getTaskId(), selectedItem.getTaskName(), selectedItem.isForAdmin(), logOnly));
+                } else if (status == PlaceStatus.OPEN && !close) {
+                    taskSelected.fire(new TaskSelectionEvent(selectedItem.getTaskId(), selectedItem.getTaskName(), selectedItem.isForAdmin(), logOnly));
+                } else if (status == PlaceStatus.OPEN && close) {
+                    placeManager.closePlace("Task Details Multi");
                 }
 
             }
-        } );
+        });
 
         noActionColumnManager = DefaultSelectionEventManager
                 .createCustomManager(new DefaultSelectionEventManager.EventTranslator<TaskSummary>() {
@@ -225,7 +224,7 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
                         return DefaultSelectionEventManager.SelectAction.DEFAULT;
                     }
                 });
-        extendedPagedTable.setSelectionModel( selectionModel, noActionColumnManager );
+        extendedPagedTable.setSelectionModel(selectionModel, noActionColumnManager);
         extendedPagedTable.setRowStyles( selectedStyles );
 
     }
@@ -261,46 +260,19 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
         actionsColumn = initActionsColumn(extendedPagedTable);
 
         List<ColumnMeta<TaskSummary>> columnMetas = new ArrayList<ColumnMeta<TaskSummary>>();
-        columnMetas.add( new ColumnMeta<TaskSummary>( taskIdColumn, constants.Id() ) );
+        columnMetas.add(new ColumnMeta<TaskSummary>(taskIdColumn, constants.Id()));
         columnMetas.add(new ColumnMeta<TaskSummary>(taskNameColumn, constants.Task()));
-        columnMetas.add( new ColumnMeta<TaskSummary>( descriptionColumn, constants.Description() ) );
-        columnMetas.add( new ColumnMeta<TaskSummary>( taskPriorityColumn, constants.Priority() ) );
-        columnMetas.add( new ColumnMeta<TaskSummary>( statusColumn, constants.Status() ) );
-        columnMetas.add( new ColumnMeta<TaskSummary>( createdOnDateColumn, "CreatedOn" ) );
-        columnMetas.add( new ColumnMeta<TaskSummary>( dueDateColumn, "DueOn" ) );
-        columnMetas.add( new ColumnMeta<TaskSummary>( actionsColumn, constants.Actions() ) );
-        extendedPagedTable.addColumns( columnMetas );
+        columnMetas.add(new ColumnMeta<TaskSummary>(descriptionColumn, constants.Description()));
+        columnMetas.add(new ColumnMeta<TaskSummary>(taskPriorityColumn, constants.Priority()));
+        columnMetas.add(new ColumnMeta<TaskSummary>(statusColumn, constants.Status()));
+        columnMetas.add(new ColumnMeta<TaskSummary>(createdOnDateColumn, "CreatedOn"));
+        columnMetas.add(new ColumnMeta<TaskSummary>(dueDateColumn, "DueOn"));
+        columnMetas.add(new ColumnMeta<TaskSummary>(actionsColumn, constants.Actions()));
+        extendedPagedTable.addColumns(columnMetas);
     }
 
 
-    private void createFilterForm(){
-        HashMap<String,String> stateListBoxInfo = new HashMap<String, String>(  );
 
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_CREATED, Constants.INSTANCE.Created() );
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_READY, Constants.INSTANCE.Ready() );
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_RESERVED, Constants.INSTANCE.Reserved() );
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_INPROGRESS, Constants.INSTANCE.InProgress() );
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_SUSPENDED, Constants.INSTANCE.Suspended() );
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_FAILED, Constants.INSTANCE.Failed());
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_ERROR, Constants.INSTANCE.Error() );
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_EXITED, Constants.INSTANCE.Exited());
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_OBSOLETE, Constants.INSTANCE.Obsolete() );
-        stateListBoxInfo.put( TaskUtils.TASK_STATUS_COMPLETED, Constants.INSTANCE.Completed());
-
-        HashMap<String,String> currentRoleListBoxInfo = new HashMap<String, String>(  );
-
-        currentRoleListBoxInfo.put( TaskRoleDefinition.TASK_ROLE_INITIATOR, Constants.INSTANCE.Initiator() );
-        currentRoleListBoxInfo.put( TaskRoleDefinition.TASK_ROLE_STAKEHOLDER, Constants.INSTANCE.Stakeholder() );
-        currentRoleListBoxInfo.put( TaskRoleDefinition.TASK_ROLE_POTENTIALOWNER, Constants.INSTANCE.Potential_Owner() );
-        currentRoleListBoxInfo.put( TaskRoleDefinition.TASK_ROLE_ACTUALOWNER, Constants.INSTANCE.Actual_Owner() );
-        currentRoleListBoxInfo.put( TaskRoleDefinition.TASK_ROLE_ADMINISTRATOR, Constants.INSTANCE.Administrator() );
-
-
-        newTabFilterPopup.init();
-        newTabFilterPopup.addListBoxToFilter( Constants.INSTANCE.Status(), TasksListGridPresenter.FILTER_STATUSES_PARAM_NAME, true, stateListBoxInfo );
-        newTabFilterPopup.addListBoxToFilter( Constants.INSTANCE.TaskRole(), TasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME, false, currentRoleListBoxInfo );
-
-    }
     private void initCellPreview(final ExtendedPagedTable extendedPagedTable) {
         extendedPagedTable.addCellPreviewHandler(new CellPreviewEvent.Handler<TaskSummary>() {
 
@@ -418,7 +390,6 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
         return dueDateColumn;
     }
 
-
     public void onTaskRefreshedEvent(@Observes TaskRefreshedEvent event) {
         presenter.refreshGrid();
     }
@@ -445,17 +416,17 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
             }
         }));
 
-        cells.add( new CompleteActionHasCell( constants.Complete(), new ActionCell.Delegate<TaskSummary>() {
+        cells.add(new CompleteActionHasCell(constants.Complete(), new ActionCell.Delegate<TaskSummary>() {
             @Override
-            public void execute( TaskSummary task ) {
-                placeManager.goTo( "Task Details Multi" );
+            public void execute(TaskSummary task) {
+                placeManager.goTo("Task Details Multi");
                 boolean logOnly = false;
-                if ( task.getStatus().equals( "Completed" ) && task.isLogOnly() ) {
+                if(task.getStatus().equals("Completed") && task.isLogOnly()){
                     logOnly = true;
                 }
-                taskSelected.fire( new TaskSelectionEvent( task.getTaskId(), task.getName(), task.isForAdmin(), logOnly ) );
+                taskSelected.fire(new TaskSelectionEvent(task.getTaskId(), task.getName(), task.isForAdmin(), logOnly));
             }
-        } ) );
+        }));
 
         CompositeCell<TaskSummary> cell = new CompositeCell<TaskSummary>(cells);
         Column<TaskSummary, TaskSummary> actionsColumn = new Column<TaskSummary, TaskSummary>(cell) {
@@ -595,33 +566,34 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
 
     public void initDefaultFilters(GridGlobalPreferences preferences ,Button createTabButton){
 
+
         List<String> states;
 
         //Filter status Active
-        states= TaskUtils.getStatusByType( TaskUtils.TaskType.ACTIVE );
-        initTabFilter( preferences, "TaskListGrid_0", Constants.INSTANCE.Active(), "Filter " + Constants.INSTANCE.Active(), states, TASK_ROLE_POTENTIALOWNER );
+        states=TaskUtils.getStatusByType(TaskUtils.TaskType.ACTIVE  );
+        initTabFilter( preferences, "TaskDataSetListGrid_0", Constants.INSTANCE.Active(), "Filter " + Constants.INSTANCE.Active(), states,TASK_ROLE_POTENTIALOWNER );
 
 
         //Filter status Personal
-        states= TaskUtils.getStatusByType( TaskUtils.TaskType.PERSONAL );
-        initTabFilter( preferences, "TaskListGrid_1", Constants.INSTANCE.Personal(), "Filter " + Constants.INSTANCE.Personal(), states, TASK_ROLE_POTENTIALOWNER );
+        states=TaskUtils.getStatusByType(TaskUtils.TaskType.PERSONAL );
+        initTabFilter( preferences, "TaskDataSetListGrid_1", Constants.INSTANCE.Personal(), "Filter " + Constants.INSTANCE.Personal(), states, TASK_ROLE_POTENTIALOWNER );
 
         //Filter status Group
-        states= TaskUtils.getStatusByType( TaskUtils.TaskType.GROUP );
-        initTabFilter( preferences, "TaskListGrid_2", Constants.INSTANCE.Group(), "Filter " + Constants.INSTANCE.Group(), states, TASK_ROLE_POTENTIALOWNER );
+        states=TaskUtils.getStatusByType(TaskUtils.TaskType.GROUP );
+        initTabFilter( preferences, "TaskDataSetListGrid_2", Constants.INSTANCE.Group(), "Filter " + Constants.INSTANCE.Group(), states, TASK_ROLE_POTENTIALOWNER );
 
         //Filter status All
-        states= TaskUtils.getStatusByType( TaskUtils.TaskType.ALL );
-        initTabFilter( preferences, "TaskListGrid_3", Constants.INSTANCE.All(), "Filter " + Constants.INSTANCE.All(), states,TASK_ROLE_POTENTIALOWNER );
+        states=TaskUtils.getStatusByType(TaskUtils.TaskType.ALL );
+        initTabFilter( preferences, "TaskDataSetListGrid_3", Constants.INSTANCE.All(), "Filter " + Constants.INSTANCE.All(), states,TASK_ROLE_POTENTIALOWNER );
 
         //Filter status Admin
-        states= TaskUtils.getStatusByType( TaskUtils.TaskType.ADMIN );
-        initTabFilter( preferences, "TaskListGrid_4", Constants.INSTANCE.Task_Admin(), "Filter " + Constants.INSTANCE.Task_Admin(), states, TASK_ROLE_ADMINISTRATOR );
+        states=TaskUtils.getStatusByType(TaskUtils.TaskType.ADMIN );
+        initTabFilter( preferences, "TaskDataSetListGrid_4", Constants.INSTANCE.Task_Admin(), "Filter " + Constants.INSTANCE.Task_Admin(), states, TASK_ROLE_ADMINISTRATOR );
 
         filterPagedTable.addAddTableButton( createTabButton );
 
         filterPagedTable.setSelectedTab();
-        applyFilterOnPresenter( "TaskListGrid_4" );
+        applyFilterOnPresenter( "TaskDataSetListGrid_4" );
 
     }
     private void initTabFilter(GridGlobalPreferences preferences, final String key, String tabName,
@@ -631,8 +603,8 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
 
         tabSettingsValues.put( NewTabFilterPopup.FILTER_TAB_NAME_PARAM,tabName);
         tabSettingsValues.put( NewTabFilterPopup.FILTER_TAB_DESC_PARAM, tabDesc);
-        tabSettingsValues.put( TasksListGridPresenter.FILTER_STATUSES_PARAM_NAME, states );
-        tabSettingsValues.put( TasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME, role );
+        tabSettingsValues.put( TasksDataSetListGridPresenter.FILTER_STATUSES_PARAM_NAME, states );
+        tabSettingsValues.put( TasksDataSetListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME, role );
 
         filterPagedTable.saveNewTabSettings( key, tabSettingsValues );
         final ExtendedPagedTable<TaskSummary> extendedPagedTable = createGridInstance(  preferences, key );
@@ -650,16 +622,20 @@ public class DataSetTasksListGridViewImpl extends AbstractMultiGridView<TaskSumm
     }
 
     public void applyFilterOnPresenter(HashMap<String, Object> params){
-        List<String> states = (List) params.get( TasksListGridPresenter.FILTER_STATUSES_PARAM_NAME);
-        String currentRole = (String) params.get( TasksListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME);
+        List<String> states = (List) params.get( TasksDataSetListGridPresenter.FILTER_STATUSES_PARAM_NAME);
+        String currentRole = (String) params.get( TasksDataSetListGridPresenter.FILTER_CURRENT_ROLE_PARAM_NAME);
 
         presenter.filterGrid( currentRole ,states);
 
     }
-    public void applyFilterOnPresenter(String key) {
+    public void applyFilterOnPresenter(String key ) {
         initSelectionModel();
-       // presenter.filterGrid( taskListTableDisplayer.getTableSettingsByKey( key ));
+        presenter.filterGrid(  getTableSettings( key ));
+        //filterPagedTable.getMultiGridPreferencesStore().getGridSettings( key ) );
     }
 
+    public String getNewTableSettingsTitle(){
+        return "Task List configuration";
+    }
 
 }

@@ -35,9 +35,18 @@ public class TableDisplayerEditorView  extends DisplayerEditorView
     protected TableSettings settings;
 
     public TableDisplayerEditorView() {
+        //initWidget( uiBinder.createAndBindUi( this ) );
+    }
+
+    public void makeWidged(){
         initWidget(uiBinder.createAndBindUi(this));
     }
 
+   /* public TableDisplayerEditorView(boolean initWidget) {
+        if(initWidget) {
+            initWidget( uiBinder.createAndBindUi( this ) );
+        }
+    }*/
     public TableDisplayerEditorView(DataSetLookupEditor lookupEditor, DisplayerSettingsEditor settingsEditor) {
         this();
         this.lookupEditor = lookupEditor;
@@ -51,6 +60,17 @@ public class TableDisplayerEditorView  extends DisplayerEditorView
         this.presenter = presenter;
         disableTypeSelection();
         gotoDataSetConf();
+    }
+    public void gotoTypeSelection() {
+        optionsPanel.selectTab(0);
+
+       // typeSelector.init(presenter);
+       // typeSelector.select(settings.getRenderer(), settings.getType(), settings.getSubtype());
+        leftPanel.clear();
+        leftPanel.add(typeSelector);
+
+        dataTablePanel.setVisible(false);
+        showDisplayer();
     }
 }
 

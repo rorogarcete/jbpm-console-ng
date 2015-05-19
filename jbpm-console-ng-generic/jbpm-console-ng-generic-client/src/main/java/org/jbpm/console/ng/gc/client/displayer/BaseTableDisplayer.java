@@ -15,11 +15,6 @@
  */
 package org.jbpm.console.ng.gc.client.displayer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,7 +25,15 @@ import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.dataset.DataColumn;
 import org.dashbuilder.displayer.client.DataSetHandlerImpl;
 import org.dashbuilder.renderer.client.table.TableDisplayer;
+import org.uberfire.ext.widgets.common.client.tables.FilterPagedTable;
 import org.uberfire.ext.widgets.common.client.tables.PagedTable;
+import org.uberfire.ext.widgets.common.client.tables.popup.NewTabFilterPopup;
+import org.uberfire.mvp.Command;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Base implementation for all the table displayers within the jBPM console
@@ -38,6 +41,8 @@ import org.uberfire.ext.widgets.common.client.tables.PagedTable;
 public abstract class BaseTableDisplayer<T> extends TableDisplayer {
 
     List<TableSettings> tableSettingsList = new ArrayList<TableSettings>();
+    HashMap<String, TableSettings> tableSettingsHashMap = new HashMap<String, TableSettings>(  );
+
     protected boolean tableRefreshEnabled = false;
     protected boolean tableSelectorEnabled = false;
     protected boolean tableCreationEnabled = false;
@@ -68,7 +73,7 @@ public abstract class BaseTableDisplayer<T> extends TableDisplayer {
     }
 
     public TableSettings createTableSettingsPrototype() {
-        return (TableSettings) TableSettingsBuilder.init()
+        return (TableSettings ) TableSettingsBuilder.init()
                 .tableWidth(1000)
                 .buildSettings();
     }
@@ -77,23 +82,28 @@ public abstract class BaseTableDisplayer<T> extends TableDisplayer {
         return tableSettingsList;
     }
 
+    public TableSettings getTableSettingsByKey(String key) {
+        return tableSettingsHashMap.get( key );
+    }
+
     public void addTableSettings(String name, boolean editable, TableSettings settings) {
         settings.setTableName(name);
         settings.setEditable(editable);
-        addTableSettings(settings);
+        addTableSettings( settings );
     }
 
     public void addTableSettings(TableSettings settings) {
         tableSettingsList.add(settings);
+        tableSettingsHashMap.put(settings.getKey(),settings);
 
         // Take the first registered settings as the default one
         if (super.getDisplayerSettings() == null) {
-            init(settings);
+            init( settings );
         }
     }
 
     public void removeTableSettings(TableSettings settings) {
-        tableSettingsList.remove(settings);
+        tableSettingsList.remove( settings );
     }
 
     public void updateTableSettings(TableSettings tableSettings) {
@@ -104,10 +114,12 @@ public abstract class BaseTableDisplayer<T> extends TableDisplayer {
             tableSettingsList.remove(idx);
             tableSettingsList.add(idx, tableSettings);
         }
+        tableSettingsHashMap.put( tableSettings.getKey(),tableSettings);
     }
 
     public void clearTableSettingsList() {
         tableSettingsList.clear();
+        tableSettingsHashMap.clear();
     }
 
     public void init(TableSettings settings) {
@@ -203,26 +215,26 @@ public abstract class BaseTableDisplayer<T> extends TableDisplayer {
         }
         if (isTableRefreshEnabled()) {
             Widget refreshWidget = createRefreshWidget();
-            pagedTable.getRightToolbar().add(refreshWidget);
+            pagedTable.getRightToolbar().add( refreshWidget );
         }
         return pagedTable;
     }
 
     protected ListBox createTableSelector() {
         final ListBox listBox = new ListBox();
-        listBox.addChangeHandler(new ChangeHandler() {
-            public void onChange(ChangeEvent event) {
+        listBox.addChangeHandler( new ChangeHandler() {
+            public void onChange( ChangeEvent event ) {
                 int idx = listBox.getSelectedIndex();
-                if (isTableCreationEnabled() && idx == tableSettingsList.size()) {
+                if ( isTableCreationEnabled() && idx == tableSettingsList.size() ) {
                     TableSettings prototype = createTableSettingsPrototype();
-                    prototype.setTableName("- New Task list - ");
-                    prototype.setTableDescription("- New Task list -");
-                    showTableSettingsEditor(prototype, getNewTableSettingsTitle());
+                    //prototype.setTableName("- New Task list - ");
+                    //prototype.setTableDescription("- New Task list -");
+                    //showTableSettingsEditor( prototype );
                 } else {
-                    draw(listBox.getSelectedIndex());
+                    draw( listBox.getSelectedIndex() );
                 }
             }
-        });
+        } );
         return listBox;
     }
 
@@ -250,23 +262,46 @@ public abstract class BaseTableDisplayer<T> extends TableDisplayer {
         return refresh;
     }
 
-    TableDisplayerEditorPopup tableDisplayerEditor = new TableDisplayerEditorPopup();
+    TableDisplayerEditorPopup tableDisplayerEditorPopup = new TableDisplayerEditorPopup();
 
-    protected void showTableSettingsEditor(TableSettings tableSettings, String popupTitle) {
+    protected void showTableSettingsEditor(TableSettings tableSettings) {
         TableSettings clone = tableSettings.cloneInstance();
-        tableDisplayerEditor.setTitle(popupTitle);
-        tableDisplayerEditor.init(clone, new TableDisplayerEditor.Listener() {
+        tableDisplayerEditorPopup.setTitle( getNewTableSettingsTitle() );
+        tableDisplayerEditorPopup.show( clone, new TableDisplayerEditor.Listener() {
 
-            public void onClose(TableDisplayerEditor editor) {
+            public void onClose( TableDisplayerEditor editor ) {
             }
 
-            public void onSave(TableDisplayerEditor editor) {
+            public void onSave( TableDisplayerEditor editor ) {
                 TableSettings modifiedSettings = editor.getTableSettings();
-                updateTableSettings(modifiedSettings);
-                populateTableSelector();
-                draw(modifiedSettings);
+                updateTableSettings( modifiedSettings );
+                //populateTableSelector();
+                draw( modifiedSettings );
             }
-        });
+        } );
+    }
+
+    public void showTableSettingsEditor(TableSettings tableSettings,final Command drawCommand, final FilterPagedTable<T> filterPagedTable) {
+        TableSettings clone = tableSettings.cloneInstance();
+        tableDisplayerEditorPopup.setTitle( getNewTableSettingsTitle() );
+        tableDisplayerEditorPopup.show( clone, new TableDisplayerEditor.Listener() {
+
+            public void onClose( TableDisplayerEditor editor ) {
+            }
+
+            public void onSave( TableDisplayerEditor editor ) {
+                TableSettings modifiedSettings = editor.getTableSettings();
+                updateTableSettings( modifiedSettings );
+                HashMap<String, Object> tabSettingsValues = new HashMap<String, Object>();
+
+                tabSettingsValues.put( NewTabFilterPopup.FILTER_TAB_NAME_PARAM, modifiedSettings.getTableName() );
+                tabSettingsValues.put( NewTabFilterPopup.FILTER_TAB_DESC_PARAM, modifiedSettings.getTableName() );
+
+                filterPagedTable.saveNewTabSettings( modifiedSettings.getKey(), new HashMap<String, Object>() );
+                populateTableSelector();
+                drawCommand.execute();
+            }
+        } );
     }
 
     @Override
