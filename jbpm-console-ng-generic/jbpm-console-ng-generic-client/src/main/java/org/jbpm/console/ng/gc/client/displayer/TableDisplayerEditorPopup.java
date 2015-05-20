@@ -25,6 +25,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import org.dashbuilder.displayer.client.resources.i18n.CommonConstants;
 import org.jbpm.console.ng.gc.client.i18n.Constants;
@@ -39,19 +41,23 @@ public class TableDisplayerEditorPopup extends BaseModal {
     interface Binder extends UiBinder<Widget, TableDisplayerEditorPopup> {}
     private static Binder uiBinder = GWT.create(Binder.class);
 
-    //@UiField(provided = true)
-    //TableDisplayerEditor editor;
+    @UiField
+    public FlowPanel editorPanel;
 
-    //public TableDisplayerEditorPopup() {
-    //    this(new TableDisplayerEditor());
-    //}
+ /*   TableDisplayerEditor editor;
 
-
-    //public TableDisplayerEditorPopup(TableDisplayerEditor editor) {
     public TableDisplayerEditorPopup() {
-       // this.editor = editor;
+        this(new TableDisplayerEditor());
+    }
+
+*/
+ public TableDisplayerEditorPopup() {
+    //public TableDisplayerEditorPopup(TableDisplayerEditor editor) {
+    //public TableDisplayerEditorPopup() {
+        //this.editor = editor;
         add( uiBinder.createAndBindUi( this ) );
-        //init();
+        //editorPanel.add(editor.asWidget());//init();
+        editorPanel.add( new HTML( "HELLO" ) );
         final GenericModalFooter footer = new GenericModalFooter();
         footer.addButton( TableDisplayerConstants.INSTANCE.ok(),
                 new Command() {
@@ -84,20 +90,20 @@ public class TableDisplayerEditorPopup extends BaseModal {
     }
 */
     public void show(TableSettings settings, TableDisplayerEditor.Listener editorListener) {
- //       editor.init(settings, editorListener);
+        //editor.init(settings, editorListener);
         super.show();
     }
 
    // @UiHandler("cancelButton")
     void cancel() {
         hide();
-    //    editor.close();
+        //editor.close();
     }
 
   //  @UiHandler("okButton")
     void ok() {
         hide();
-     //   editor.save();
+        //editor.save();
     }
 }
 

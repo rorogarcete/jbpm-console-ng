@@ -35,11 +35,7 @@ public class TableDisplayerEditorView  extends DisplayerEditorView
     protected TableSettings settings;
 
     public TableDisplayerEditorView() {
-        //initWidget( uiBinder.createAndBindUi( this ) );
-    }
-
-    public void makeWidged(){
-        initWidget(uiBinder.createAndBindUi(this));
+        initWidget( uiBinder.createAndBindUi( this ) );
     }
 
    /* public TableDisplayerEditorView(boolean initWidget) {

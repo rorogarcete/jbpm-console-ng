@@ -138,6 +138,7 @@ public class TasksDataSetListGridPresenter extends AbstractScreenListPresenter<T
 
             @Override
             public boolean onError(DataSetClientServiceError error) {
+              view.hideBusyIndicator();
               GWT.log("DataSet with UUID [  jbpmHumanTasks ] error: ", error.getThrowable());
               return false;
             }
@@ -148,68 +149,6 @@ public class TasksDataSetListGridPresenter extends AbstractScreenListPresenter<T
         } catch (Exception e) {
           GWT.log("Error looking up dataset with UUID [ jbpmHumanTasks ]");
         }
-
-
-
-
-
-
-
-
-        if (currentFilter == null) {
-          currentFilter = new PortableQueryFilter(visibleRange.getStart(),
-                  visibleRange.getLength(),
-                  false, "",
-                  (columnSortList.size() > 0) ? columnSortList.get(0)
-                          .getColumn().getDataStoreName() : "",
-                  (columnSortList.size() > 0) ? columnSortList.get(0)
-                          .isAscending() : true);
-
-        }
-        // If we are refreshing after a search action, we need to go back to offset 0
-        if (currentFilter.getParams() == null || currentFilter.getParams().isEmpty()
-                || currentFilter.getParams().get("textSearch") == null || currentFilter.getParams().get("textSearch").equals("")) {
-          currentFilter.setOffset(visibleRange.getStart());
-          currentFilter.setCount(visibleRange.getLength());
-          currentFilter.setFilterParams("");
-        } else {
-          currentFilter.setFilterParams("(LOWER(t.name) like '"+currentFilter.getParams().get("textSearch")
-                  +"' or LOWER(t.description) like '"+currentFilter.getParams().get("textSearch")+"') ");
-          currentFilter.setOffset(0);
-          currentFilter.setCount(view.getListGrid().getPageSize());
-        }
-
-        if(currentStatusFilter==null) {
-          currentFilter.getParams().put( "statuses", TaskUtils.getStatusByType( currentStatusFilter ) );
-        } else {
-          currentFilter.getParams().put( "statuses",  currentStatuses  );
-        }
-        currentFilter.getParams().put("filter", currentStatusFilter.toString());
-        currentFilter.getParams().put("userId", identity.getIdentifier());
-        currentFilter.getParams().put("taskRole",currentRole);
-        currentFilter.setOrderBy((columnSortList.size() > 0) ? columnSortList.get(0)
-                .getColumn().getDataStoreName() : "");
-        currentFilter.setIsAscending((columnSortList.size() > 0) ? columnSortList.get(0)
-                .isAscending() : true);
-
-        taskQueryService.call(new RemoteCallback<PageResponse<TaskSummary>>() {
-          @Override
-          public void callback(PageResponse<TaskSummary> response) {
-            view.hideBusyIndicator();
-            dataProvider.updateRowCount(response.getTotalRowSize(),
-                    response.isTotalRowSizeExact());
-            dataProvider.updateRowData(response.getStartRowIndex(),
-                    response.getPageRowList());
-          }
-        }, new ErrorCallback<Message>() {
-          @Override
-          public boolean error(Message message, Throwable throwable) {
-            view.hideBusyIndicator();
-            view.displayNotification("Error: Getting Tasks: " + throwable.toString());
-            GWT.log(message.toString());
-            return true;
-          }
-        }).getData(currentFilter);
 
       }
     };

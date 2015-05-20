@@ -21,12 +21,10 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
              xmlns:my="urn:import:org.jbpm.console.ng.gc.client.displayer">
+  <g:FlowPanel ui:field="editorPanel">
 
-
-  <!--my:TableDisplayerEditor ui:field="editor" /-->
-
-  <g:FlowPanel>
-    <g:HTML>FILTER POPUP</g:HTML>
   </g:FlowPanel>
+
+
 
 </ui:UiBinder>
