@@ -30,6 +30,7 @@
       <artifactId>uberfire-client-api</artifactId>
       <type>jar</type>
     </dependency>
+    
   </dependencies>
   
   <build>
