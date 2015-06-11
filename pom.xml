@@ -53,6 +53,7 @@
     <module>jbpm-console-ng-documents</module>
     <module>jbpm-console-ng-rest</module>	
     <module>jbpm-console-ng-ht-showcase</module>
+    <module>jbpm-console-ng-mobile</module>
     <module>jbpm-console-ng-showcase</module>
   </modules>
 
