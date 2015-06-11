@@ -16,10 +16,11 @@
 package org.jbpm.console.ng.mobile.pr.client.instance.details;
 
 import com.google.gwt.user.client.ui.HasText;
-import com.google.inject.Inject;
 import com.googlecode.mgwt.ui.client.widget.button.Button;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
