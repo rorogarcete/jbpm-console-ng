@@ -24,7 +24,6 @@
     <dependency>
       <groupId>com.googlecode.mgwt</groupId>
       <artifactId>mgwt</artifactId>
-      <version>${mgwt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>

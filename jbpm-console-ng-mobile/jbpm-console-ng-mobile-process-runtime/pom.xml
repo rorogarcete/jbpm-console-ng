@@ -17,7 +17,6 @@
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-console-ng-mobile-core</artifactId>
-            <version>6.3.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <!-- Errai UI -->
@@ -41,7 +40,6 @@
         <dependency>
             <groupId>com.googlecode.mgwt</groupId>
             <artifactId>mgwt</artifactId>
-            <version>${mgwt.version}</version>
         </dependency>
     
         <!-- jBPM -->
