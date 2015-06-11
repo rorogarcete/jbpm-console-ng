@@ -29,11 +29,15 @@ import com.googlecode.mgwt.ui.client.widget.animation.Animations;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.jbpm.console.ng.ht.client.editors.taskdetails.TaskDetailsPresenter;
-import org.jbpm.console.ng.ht.client.editors.taskslist.grid.TasksListGridPresenter.TaskListView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
 import org.jbpm.console.ng.mobile.core.client.home.HomePresenter;
 import org.jbpm.console.ng.mobile.core.client.home.HomePresenter.HomeView;
+import org.jbpm.console.ng.mobile.ht.client.newtask.NewTaskPresenter;
+import org.jbpm.console.ng.mobile.ht.client.newtask.NewTaskPresenter.NewTaskView;
+import org.jbpm.console.ng.mobile.ht.client.taskdetails.TaskDetailsPresenter;
+import org.jbpm.console.ng.mobile.ht.client.taskdetails.TaskDetailsPresenter.TaskDetailsView;
+import org.jbpm.console.ng.mobile.ht.client.tasklist.TaskListPresenter;
+import org.jbpm.console.ng.mobile.ht.client.tasklist.TaskListPresenter.TaskListView;
 import org.jbpm.console.ng.mobile.pr.client.definition.details.ProcessDefinitionDetailsPresenter;
 import org.jbpm.console.ng.mobile.pr.client.definition.details.ProcessDefinitionDetailsPresenter.ProcessDefinitionDetailsView;
 import org.jbpm.console.ng.mobile.pr.client.definition.list.ProcessDefinitionsListPresenter;
@@ -69,9 +73,9 @@ public class MobileWorkBenchPresenter {
     
     private TaskListView taskListView;
     
-//    private NewTaskView newTaskView;
-//    
-//    private TaskDetailsView taskDetailsView;
+    private NewTaskView newTaskView;
+    
+    private TaskDetailsView taskDetailsView;
     
     @Inject
     private HomePresenter homePresenter;
@@ -88,14 +92,14 @@ public class MobileWorkBenchPresenter {
     @Inject
     private ProcessInstanceDetailsPresenter processInstanceDetailsPresenter;
     
-//    @Inject    
-//    private TaskListPresenter taskListPresenter;
+    @Inject    
+    private TaskListPresenter taskListPresenter;
     
     @Inject
     private TaskDetailsPresenter taskDetailsPresenter;
     
-//    @Inject
-//    private NewTaskPresenter newTaskPresenter;
+    @Inject
+    private NewTaskPresenter newTaskPresenter;
     
     private VerticalPanel widgets;
     
@@ -162,17 +166,17 @@ public class MobileWorkBenchPresenter {
         placeManager.addScreen("Process Instance Details", processInstanceDetailsView);
         processInstanceDetailsView.init(processInstanceDetailsPresenter);
         
-//        taskListView = taskListPresenter.getView();
-//        placeManager.addScreen("Tasks List", taskListView);
-//        taskListView.init(taskListPresenter);
-//        
-//        newTaskView = newTaskPresenter.getView();
-//        placeManager.addScreen("New Task", newTaskView);
-//        newTaskView.init(newTaskPresenter);
-//        
-//        taskDetailsView = taskDetailsPresenter.getView();
-//        placeManager.addScreen("Task Details", taskDetailsView);
-//        taskDetailsView.init(taskDetailsPresenter);
+        taskListView = taskListPresenter.getView();
+        placeManager.addScreen("Tasks List", taskListView);
+        taskListView.init(taskListPresenter);
+        
+        newTaskView = newTaskPresenter.getView();
+        placeManager.addScreen("New Task", newTaskView);
+        newTaskView.init(newTaskPresenter);
+        
+        taskDetailsView = taskDetailsPresenter.getView();
+        placeManager.addScreen("Task Details", taskDetailsView);
+        taskDetailsView.init(taskDetailsPresenter);
 
         placeManager.goTo("Home", Animations.SLIDE);
     }
