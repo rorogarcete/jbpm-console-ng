@@ -22,11 +22,16 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
+import org.jbpm.console.ng.ga.model.PortableQueryFilter;
+import org.jbpm.console.ng.ga.model.QueryFilter;
 import org.jbpm.console.ng.ht.model.TaskSummary;
+import org.jbpm.console.ng.ht.service.TaskQueryService;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 import org.jbpm.console.ng.mobile.ht.client.utils.TaskStatus;
-import org.kie.internal.task.api.TaskQueryService;
+
+import com.google.gwt.core.client.GWT;
 
 /**
  *
@@ -46,10 +51,14 @@ public class TaskListPresenter {
     private TaskListView view;
 
     @Inject
-    private Caller<TaskQueryService> taskServices;
+    private Caller<TaskQueryService> taskQueryService;
 
     @Inject
     private User identity;
+    
+    private QueryFilter currentFilter;
+    
+    private List<String> statuses;
 
     public TaskListPresenter() {
 
@@ -60,16 +69,26 @@ public class TaskListPresenter {
     }
 
     public void refresh() {
-        List<String> statuses = new ArrayList<String>();
+        statuses = new ArrayList<String>();
         for (TaskStatus status : TaskStatus.values()) {
             statuses.add(status.toString());
         }
-//        taskServices.call(new RemoteCallback<List<TaskSummary>>() {
-//            @Override
-//            public void callback(List<TaskSummary> tasks) {
-//                view.render(tasks);
-//            }
-//        }).getTasksAssignedAsPotentialOwnerByExpirationDateOptional(identity.getName(), statuses, null, "en-UK");
+        
+        if(currentFilter == null) {
+    		currentFilter = new PortableQueryFilter(0, 10, false, "", "taskname", true);
+    	}
+        
+        if(currentFilter.getParams() != null) {
+    		currentFilter.getParams().put("statuses", statuses);
+    		currentFilter.getParams().put("userId", identity.getIdentifier());
+    	}
+        
+        taskQueryService.call(new RemoteCallback<List<TaskSummary>>() {
+            @Override
+            public void callback(List<TaskSummary> tasks) {
+                view.render(tasks);
+            }
+        }).getData(currentFilter);
     }
 
 }
