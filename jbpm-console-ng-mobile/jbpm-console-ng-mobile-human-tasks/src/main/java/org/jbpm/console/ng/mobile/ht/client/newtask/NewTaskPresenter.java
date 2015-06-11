@@ -16,14 +16,15 @@
 package org.jbpm.console.ng.mobile.ht.client.newtask;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
-//import org.jbpm.console.ng.ht.service.TaskServiceEntryPoint;
+import org.jboss.errai.security.shared.api.identity.User;
+import org.jbpm.console.ng.ht.service.TaskOperationsService;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 
 /**
@@ -42,9 +43,12 @@ public class NewTaskPresenter {
 
     @Inject
     private NewTaskView view;
+    
+    @Inject
+    private User identity;
 
-    //@Inject
-    //private Caller<TaskServiceEntryPoint> taskServices;
+    @Inject
+    private Caller<TaskOperationsService> taskServices;
 
     public NewTaskPresenter() {
     }
@@ -55,38 +59,14 @@ public class NewTaskPresenter {
 
     public void addTask(final List<String> users, List<String> groups, final String taskName, int priority,
             boolean isAssignToMe, long dueDate, long dueDateTime) {
-        Map<String, Object> templateVars = new HashMap<String, Object>();
-        Date due = new Date(dueDate + dueDateTime);
-        templateVars.put("due", due);
-        templateVars.put("now", new Date());
 
-        String str = "(with (new Task()) { priority = " + priority
-                + ", taskData = (with( new TaskData()) { createdOn = now, expirationTime = due } ), ";
-        str += "peopleAssignments = (with ( new PeopleAssignments() ) { potentialOwners = ";
-        str += " [";
-        if (users != null && !users.isEmpty()) {
-
-            for (String user : users) {
-                str += "new User('" + user + "'), ";
+        taskServices.call(new RemoteCallback<Long>() {
+            @Override
+            public void callback(Long taskId) {
+                view.goBackToTaskList();
             }
-
-        }
-        if (groups != null && !groups.isEmpty()) {
-
-            for (String group : groups) {
-                str += "new Group('" + group + "'), ";
-            }
-
-        }
-        str += "], businessAdministrators = [ new Group('Administrators') ],}),";
-        str += "names = [ new I18NText( 'en-UK', '" + taskName + "')]})";
-
-//        taskServices.call(new RemoteCallback<Long>() {
-//            @Override
-//            public void callback(Long taskId) {
-//                view.goBackToTaskList();
-//            }
-//        }).addTask(str, null, templateVars);
+        }).addQuickTask(taskName, priority, new Date(dueDate+dueDateTime), users, groups, 
+        		identity.getIdentifier(), isAssignToMe, isAssignToMe, taskName, "", -1L);
     }
 
 }
