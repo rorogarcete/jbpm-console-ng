@@ -51,7 +51,8 @@ public class ProcessDefinitionsListPresenter {
             public void callback(List<ProcessSummary> definitions) {
                 view.render(definitions);
             }
-        }).getProcesses();
+        });
+        //.getProcesses();
     }
 
 }

@@ -75,7 +75,7 @@ public class ProcessDefinitionDetailsPresenter {
         dataServices.call(new RemoteCallback<ProcessSummary>() {
             @Override
             public void callback(ProcessSummary process) {
-                view.getDefinitionIdText().setText(process.getId());
+                //view.getDefinitionIdText().setText(process.getId());
                 view.getDefinitionNameText().setText(process.getName());
                 view.getDeploymentText().setText(process.getDeploymentId());
             }
@@ -108,7 +108,8 @@ public class ProcessDefinitionDetailsPresenter {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
                 return true;
             }
-        }).getAllTasksDef(processId);
+        });
+        //.getAllTasksDef(processId);
 
         // Users and Groups
         dataServices.call(new RemoteCallback<Map<String, String>>() {
@@ -133,7 +134,8 @@ public class ProcessDefinitionDetailsPresenter {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
                 return true;
             }
-        }).getAssociatedEntities(processId);
+        });
+        //.getAssociatedEntities(processId);
 
         // Subprocesses
         dataServices.call(new RemoteCallback<Collection<String>>() {
@@ -156,7 +158,8 @@ public class ProcessDefinitionDetailsPresenter {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
                 return true;
             }
-        }).getReusableSubProcesses(processId);
+        });
+        //.getReusableSubProcesses(processId);
 
         // Process Variables
         dataServices.call(new RemoteCallback<Map<String, String>>() {
@@ -181,7 +184,8 @@ public class ProcessDefinitionDetailsPresenter {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
                 return true;
             }
-        }).getRequiredInputData(processId);
+        });
+        //.getRequiredInputData(processId);
 
         // Services
         dataServices.call(new RemoteCallback<Map<String, String>>() {
@@ -206,7 +210,8 @@ public class ProcessDefinitionDetailsPresenter {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
                 return true;
             }
-        }).getServiceTasks(processId);
+        });
+        //.getServiceTasks(processId);
     }
 
     public void startProcess(final String deploymentId, final String processId) {

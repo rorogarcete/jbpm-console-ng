@@ -23,7 +23,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.jbpm.console.ng.ht.service.TaskServiceEntryPoint;
+//import org.jbpm.console.ng.ht.service.TaskServiceEntryPoint;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 
 /**
@@ -43,8 +43,8 @@ public class NewTaskPresenter {
     @Inject
     private NewTaskView view;
 
-    @Inject
-    private Caller<TaskServiceEntryPoint> taskServices;
+    //@Inject
+    //private Caller<TaskServiceEntryPoint> taskServices;
 
     public NewTaskPresenter() {
     }
@@ -81,12 +81,12 @@ public class NewTaskPresenter {
         str += "], businessAdministrators = [ new Group('Administrators') ],}),";
         str += "names = [ new I18NText( 'en-UK', '" + taskName + "')]})";
 
-        taskServices.call(new RemoteCallback<Long>() {
-            @Override
-            public void callback(Long taskId) {
-                view.goBackToTaskList();
-            }
-        }).addTask(str, null, templateVars);
+//        taskServices.call(new RemoteCallback<Long>() {
+//            @Override
+//            public void callback(Long taskId) {
+//                view.goBackToTaskList();
+//            }
+//        }).addTask(str, null, templateVars);
     }
 
 }

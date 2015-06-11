@@ -17,15 +17,16 @@ package org.jbpm.console.ng.mobile.ht.client.tasklist;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.RemoteCallback;
+import org.jboss.errai.security.shared.api.identity.User;
 import org.jbpm.console.ng.ht.model.TaskSummary;
-import org.jbpm.console.ng.ht.service.TaskServiceEntryPoint;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 import org.jbpm.console.ng.mobile.ht.client.utils.TaskStatus;
-import org.uberfire.security.Identity;
+import org.kie.internal.task.api.TaskQueryService;
 
 /**
  *
@@ -45,10 +46,10 @@ public class TaskListPresenter {
     private TaskListView view;
 
     @Inject
-    private Caller<TaskServiceEntryPoint> taskServices;
+    private Caller<TaskQueryService> taskServices;
 
     @Inject
-    private Identity identity;
+    private User identity;
 
     public TaskListPresenter() {
 
@@ -63,12 +64,12 @@ public class TaskListPresenter {
         for (TaskStatus status : TaskStatus.values()) {
             statuses.add(status.toString());
         }
-        taskServices.call(new RemoteCallback<List<TaskSummary>>() {
-            @Override
-            public void callback(List<TaskSummary> tasks) {
-                view.render(tasks);
-            }
-        }).getTasksAssignedAsPotentialOwnerByExpirationDateOptional(identity.getName(), statuses, null, "en-UK");
+//        taskServices.call(new RemoteCallback<List<TaskSummary>>() {
+//            @Override
+//            public void callback(List<TaskSummary> tasks) {
+//                view.render(tasks);
+//            }
+//        }).getTasksAssignedAsPotentialOwnerByExpirationDateOptional(identity.getName(), statuses, null, "en-UK");
     }
 
 }
