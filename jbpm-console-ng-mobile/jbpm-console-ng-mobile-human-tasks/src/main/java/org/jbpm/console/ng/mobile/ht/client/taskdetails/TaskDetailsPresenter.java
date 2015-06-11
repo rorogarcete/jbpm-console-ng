@@ -67,13 +67,13 @@ public class TaskDetailsPresenter {
     }
 
     public void refresh(final long taskId) {
-        taskServices.call(new RemoteCallback<TaskSummary>() {
-            @Override
-            public void callback(TaskSummary task) {
-                view.refreshTask(task, task.getActualOwner().equals(identity.getIdentifier()));
-                refreshPotentialOwners(taskId);
-            }
-        }).getTaskDetails(taskId);
+//        taskServices.call(new RemoteCallback<TaskSummary>() {
+//            @Override
+//            public void callback(TaskSummary task) {
+//                view.refreshTask(task, task.getActualOwner().equals(identity.getIdentifier()));
+//                refreshPotentialOwners(taskId);
+//            }
+//        }).getTaskDetails(taskId);
     }
 
     public void refreshPotentialOwners(final long taskId) {
