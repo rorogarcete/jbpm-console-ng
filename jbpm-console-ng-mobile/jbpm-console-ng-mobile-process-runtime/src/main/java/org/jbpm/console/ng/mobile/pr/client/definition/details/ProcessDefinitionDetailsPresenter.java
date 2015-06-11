@@ -16,10 +16,13 @@
 package org.jbpm.console.ng.mobile.pr.client.definition.details;
 
 import com.google.gwt.user.client.ui.HasText;
-import com.google.inject.Inject;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;

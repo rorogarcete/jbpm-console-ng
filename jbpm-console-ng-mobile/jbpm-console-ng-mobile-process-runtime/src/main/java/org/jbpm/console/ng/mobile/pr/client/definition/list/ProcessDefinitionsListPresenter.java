@@ -15,8 +15,10 @@
  */
 package org.jbpm.console.ng.mobile.pr.client.definition.list;
 
-import com.google.inject.Inject;
 import java.util.List;
+
+import javax.inject.Inject;
+
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jbpm.console.ng.bd.service.DataServiceEntryPoint;
