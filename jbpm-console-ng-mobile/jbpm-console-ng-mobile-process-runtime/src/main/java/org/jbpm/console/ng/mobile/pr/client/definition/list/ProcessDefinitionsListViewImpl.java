@@ -20,17 +20,19 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
-import com.googlecode.mgwt.mvp.client.Animation;
-import com.googlecode.mgwt.ui.client.widget.CellList;
-import com.googlecode.mgwt.ui.client.widget.base.PullArrowHeader;
-import com.googlecode.mgwt.ui.client.widget.base.PullArrowStandardHandler;
-import com.googlecode.mgwt.ui.client.widget.base.PullPanel;
-import com.googlecode.mgwt.ui.client.widget.celllist.BasicCell;
-import com.googlecode.mgwt.ui.client.widget.celllist.CellSelectedEvent;
-import com.googlecode.mgwt.ui.client.widget.celllist.CellSelectedHandler;
+import com.googlecode.mgwt.ui.client.widget.animation.Animations;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.BasicCell;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.CellList;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.CellSelectedEvent;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.CellSelectedHandler;
+import com.googlecode.mgwt.ui.client.widget.panel.pull.PullArrowHeader;
+import com.googlecode.mgwt.ui.client.widget.panel.pull.PullArrowStandardHandler;
+import com.googlecode.mgwt.ui.client.widget.panel.pull.PullPanel;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
 import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.pr.model.ProcessSummary;
@@ -56,12 +58,12 @@ public class ProcessDefinitionsListViewImpl extends AbstractView implements
     private MGWTPlaceManager placeManager;
 
     public ProcessDefinitionsListViewImpl() {
-        title.setHTML("Process Definitions");
+        title.setTitle("Process Definitions");
 
         pullPanel = new PullPanel();
         pullArrowHeader = new PullArrowHeader();
         pullPanel.setHeader(pullArrowHeader);
-        layoutPanel.add(pullPanel);
+        rootFlexPanel.add(pullPanel);
 
         cellList = new CellList<ProcessSummary>(new BasicCell<ProcessSummary>() {
             @Override
@@ -74,7 +76,7 @@ public class ProcessDefinitionsListViewImpl extends AbstractView implements
         getBackButton().addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
-                placeManager.goTo("Home", Animation.SLIDE_REVERSE);
+                placeManager.goTo("Home", Animations.SLIDE_REVERSE);
             }
         });
     }
@@ -110,7 +112,7 @@ public class ProcessDefinitionsListViewImpl extends AbstractView implements
 
             }
         });
-        pullPanel.setHeaderPullhandler(headerHandler);
+        pullPanel.setHeaderPullHandler(headerHandler);
 
         cellList.addCellSelectedHandler(new CellSelectedHandler() {
             @Override
@@ -119,7 +121,7 @@ public class ProcessDefinitionsListViewImpl extends AbstractView implements
                 ProcessSummary process = definitionsList.get(event.getIndex());
                 params.put("processId", process.getId());
                 params.put("deploymentId", process.getDeploymentId());
-                placeManager.goTo("Process Definition Details", Animation.SLIDE, params);
+                placeManager.goTo("Process Definition Details", Animations.SLIDE, params);
             }
         });
 

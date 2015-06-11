@@ -19,20 +19,23 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
-import com.googlecode.mgwt.mvp.client.Animation;
-import com.googlecode.mgwt.ui.client.widget.CellList;
-import com.googlecode.mgwt.ui.client.widget.HeaderButton;
-import com.googlecode.mgwt.ui.client.widget.base.PullArrowHeader;
-import com.googlecode.mgwt.ui.client.widget.base.PullArrowStandardHandler;
-import com.googlecode.mgwt.ui.client.widget.base.PullPanel;
-import com.googlecode.mgwt.ui.client.widget.celllist.BasicCell;
-import com.googlecode.mgwt.ui.client.widget.celllist.CellSelectedEvent;
-import com.googlecode.mgwt.ui.client.widget.celllist.CellSelectedHandler;
+import com.googlecode.mgwt.ui.client.widget.animation.Animations;
+import com.googlecode.mgwt.ui.client.widget.button.ImageButton;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.BasicCell;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.CellList;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.CellSelectedEvent;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.CellSelectedHandler;
+import com.googlecode.mgwt.ui.client.widget.panel.pull.PullArrowHeader;
+import com.googlecode.mgwt.ui.client.widget.panel.pull.PullArrowStandardHandler;
+import com.googlecode.mgwt.ui.client.widget.panel.pull.PullPanel;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+
 import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
@@ -45,7 +48,7 @@ import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
 @Dependent
 public class TaskListViewGwtImpl extends AbstractView implements TaskListPresenter.TaskListView {
 
-    private final HeaderButton newTaskButton;
+    private final ImageButton newTaskButton;
 
     private PullPanel pullPanel;
     private PullArrowHeader pullArrowHeader;
@@ -60,16 +63,17 @@ public class TaskListViewGwtImpl extends AbstractView implements TaskListPresent
     private TaskListPresenter presenter;
 
     public TaskListViewGwtImpl() {
-        title.setHTML("Task List");
+        title.setTitle("Task List");
 
-        newTaskButton = new HeaderButton();
+        newTaskButton = new ImageButton();
         newTaskButton.setText("New task");
-        headerPanel.setRightWidget(newTaskButton);
+        //headerPanel.setRightWidget(newTaskButton);
+        headerPanel.add(newTaskButton);
 
         pullPanel = new PullPanel();
         pullArrowHeader = new PullArrowHeader();
         pullPanel.setHeader(pullArrowHeader);
-        layoutPanel.add(pullPanel);
+        rootFlexPanel.add(pullPanel);
 
         cellList = new CellList<TaskSummary>(new BasicCell<TaskSummary>() {
             @Override
@@ -87,14 +91,14 @@ public class TaskListViewGwtImpl extends AbstractView implements TaskListPresent
         newTaskButton.addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
-                placeManager.goTo("New Task", Animation.SLIDE);
+                placeManager.goTo("New Task", Animations.SLIDE);
             }
         });
 
         getBackButton().addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
-                placeManager.goTo("Home", Animation.SLIDE_REVERSE);
+                placeManager.goTo("Home", Animations.SLIDE_REVERSE);
             }
         });
 
@@ -118,14 +122,14 @@ public class TaskListViewGwtImpl extends AbstractView implements TaskListPresent
 
             }
         });
-        pullPanel.setHeaderPullhandler(headerHandler);
+        pullPanel.setHeaderPullHandler(headerHandler);
 
         cellList.addCellSelectedHandler(new CellSelectedHandler() {
             @Override
             public void onCellSelected(CellSelectedEvent event) {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("taskId", tasksList.get(event.getIndex()).getId());
-                placeManager.goTo("Task Details", Animation.SLIDE, params);
+                placeManager.goTo("Task Details", Animations.SLIDE, params);
             }
         });
 

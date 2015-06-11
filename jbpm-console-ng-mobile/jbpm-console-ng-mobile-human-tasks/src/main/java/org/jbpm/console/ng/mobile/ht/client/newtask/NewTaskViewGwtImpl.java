@@ -18,28 +18,26 @@ package org.jbpm.console.ng.mobile.ht.client.newtask;
 import com.google.gwt.core.shared.GWT;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
-import com.googlecode.mgwt.mvp.client.Animation;
-import com.googlecode.mgwt.ui.client.widget.Button;
-import com.googlecode.mgwt.ui.client.widget.FormListEntry;
-import com.googlecode.mgwt.ui.client.widget.MCheckBox;
-import com.googlecode.mgwt.ui.client.widget.MDateBox;
-import com.googlecode.mgwt.ui.client.widget.MDateBox.DateParser;
-import com.googlecode.mgwt.ui.client.widget.MDateBox.DateRenderer;
-import com.googlecode.mgwt.ui.client.widget.MListBox;
-import com.googlecode.mgwt.ui.client.widget.MTextBox;
-import com.googlecode.mgwt.ui.client.widget.RoundPanel;
-import com.googlecode.mgwt.ui.client.widget.ScrollPanel;
-import com.googlecode.mgwt.ui.client.widget.WidgetList;
-import java.text.ParseException;
+import com.googlecode.mgwt.ui.client.widget.animation.Animations;
+import com.googlecode.mgwt.ui.client.widget.button.Button;
+import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
+import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
+import com.googlecode.mgwt.ui.client.widget.input.checkbox.MCheckBox;
+import com.googlecode.mgwt.ui.client.widget.input.listbox.MListBox;
+import com.googlecode.mgwt.ui.client.widget.list.widgetlist.WidgetList;
+import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
+import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+
+import org.jboss.errai.security.shared.api.identity.User;
 import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
-import org.uberfire.security.Identity;
 
 /**
  *
@@ -62,17 +60,17 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
     private MGWTPlaceManager placeManager;
 
     @Inject
-    protected Identity identity;
+    protected User identity;
 
     public NewTaskViewGwtImpl() {
         GWT.log("NEW NewTaskViewGwtImpl " + this.hashCode());
 
-        title.setHTML("New Task");
+        title.setTitle("New Task");
 
         ScrollPanel scrollPanel = new ScrollPanel();
-        layoutPanel.add(scrollPanel);
+        rootFlexPanel.add(scrollPanel);
 
-        RoundPanel newTaskPanel = new RoundPanel();
+        FlexPanel newTaskPanel = new FlexPanel();
 
         for (String priority : priorities) {
             priorityListBox.addItem(priority);
@@ -80,11 +78,11 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
 
         WidgetList newTaskForm = new WidgetList();
         newTaskForm.setRound(true);
-        newTaskForm.add(new FormListEntry("Task Name", taskNameTextBox));
-        newTaskForm.add(new FormListEntry("Auto Assign To Me", assignToMeCheckBox));
+        newTaskForm.add(new FormEntry("Task Name", taskNameTextBox));
+        newTaskForm.add(new FormEntry("Auto Assign To Me", assignToMeCheckBox));
         //newTaskForm.add(new FormListEntry("Due On", dueOnDateBox));
-        newTaskForm.add(new FormListEntry("Priority", priorityListBox));
-        newTaskForm.add(new FormListEntry("User", userTextBox));
+        newTaskForm.add(new FormEntry("Priority", priorityListBox));
+        newTaskForm.add(new FormEntry("User", userTextBox));
         newTaskPanel.add(newTaskForm);
 
         addTaskButton = new Button("Add");
@@ -99,7 +97,7 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
         this.presenter = presenter;
         assignToMeCheckBox.setValue(false);
       //  dueOnDateBox.setText(new DateRenderer().render(new Date()));
-        userTextBox.setText(identity.getName());
+        userTextBox.setText(identity.getIdentifier());
 
         addTaskButton.addTapHandler(new TapHandler() {
             @Override
@@ -121,7 +119,7 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
                     assignToMeCheckBox.setValue(false);
                  //   dueOnDateBox.setText(new DateRenderer().render(new Date()));
 
-                    placeManager.goTo("New Task", Animation.SLIDE);
+                    placeManager.goTo("New Task", Animations.SLIDE);
 //                } catch (ParseException ex) {
 //                    displayNotification("Wrong date format", "Enter the date in the correct format!");
 //                }
@@ -132,14 +130,14 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
             @Override
             public void onTap(TapEvent event) {
                 taskNameTextBox.setText("");
-                placeManager.goTo("Tasks List", Animation.SLIDE_REVERSE);
+                placeManager.goTo("Tasks List", Animations.SLIDE_REVERSE);
             }
         });
     }
 
     @Override
     public void goBackToTaskList() {
-        placeManager.goTo("Tasks List", Animation.SLIDE_REVERSE);
+        placeManager.goTo("Tasks List", Animations.SLIDE_REVERSE);
     }
 
     @Override

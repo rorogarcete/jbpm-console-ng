@@ -20,24 +20,26 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Label;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
-import com.googlecode.mgwt.mvp.client.Animation;
 import com.googlecode.mgwt.ui.client.MGWT;
-import com.googlecode.mgwt.ui.client.widget.Button;
-import com.googlecode.mgwt.ui.client.widget.FormListEntry;
-import com.googlecode.mgwt.ui.client.widget.MDateBox;
-import com.googlecode.mgwt.ui.client.widget.MDateBox.DateRenderer;
-import com.googlecode.mgwt.ui.client.widget.MListBox;
-import com.googlecode.mgwt.ui.client.widget.MTextArea;
-import com.googlecode.mgwt.ui.client.widget.MTextBox;
-import com.googlecode.mgwt.ui.client.widget.ScrollPanel;
-import com.googlecode.mgwt.ui.client.widget.WidgetList;
+import com.googlecode.mgwt.ui.client.widget.animation.Animations;
+import com.googlecode.mgwt.ui.client.widget.button.Button;
+import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
+import com.googlecode.mgwt.ui.client.widget.input.MDateBox;
+import com.googlecode.mgwt.ui.client.widget.input.MTextArea;
+import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
+import com.googlecode.mgwt.ui.client.widget.input.listbox.MListBox;
+import com.googlecode.mgwt.ui.client.widget.list.widgetlist.WidgetList;
+import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 import com.googlecode.mgwt.ui.client.widget.tabbar.TabBarButton;
 import com.googlecode.mgwt.ui.client.widget.tabbar.TabPanel;
+
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+
 import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
@@ -76,11 +78,11 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
     private MGWTPlaceManager placeManager;
 
     public TaskDetailsViewGwtImpl() {
-        title.setHTML("Task Details");
+        title.setTitle("Task Details");
 
         TabPanel tabPanel = new TabPanel();
-        tabPanel.setDisplayTabBarOnTop(true);
-        layoutPanel.add(tabPanel);
+        //tabPanel.setDisplayTabBarOnTop(true);
+        rootFlexPanel.add(tabPanel);
 
         // Work tab
         ScrollPanel workScrollPanel = new ScrollPanel();
@@ -125,11 +127,11 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
         WidgetList detailsForm = new WidgetList();
         detailsForm.setRound(true);
-        detailsForm.add(new FormListEntry("Description", descriptionTextArea));
-        detailsForm.add(new FormListEntry("Status", statusTextBox));
-        detailsForm.add(new FormListEntry("Due On", dueOnDateBox));
-        detailsForm.add(new FormListEntry("Priority", priorityListBox));
-        detailsForm.add(new FormListEntry("User", userTextBox));
+        detailsForm.add(new FormEntry("Description", descriptionTextArea));
+        detailsForm.add(new FormEntry("Status", statusTextBox));
+        detailsForm.add(new FormEntry("Due On", dueOnDateBox));
+        detailsForm.add(new FormEntry("Priority", priorityListBox));
+        detailsForm.add(new FormEntry("User", userTextBox));
         detailsFlowPanel.add(detailsForm);
 
         processInstanceIdTextBox.setReadOnly(true);
@@ -138,9 +140,9 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
         WidgetList processContextForm = new WidgetList();
         processContextForm.setRound(true);
-        processContextForm.add(new FormListEntry("Process Instance Id", processInstanceIdTextBox));
-        processContextForm.add(new FormListEntry("Process Definition Id", processDefinitionIdTextBox));
-        processContextForm.add(new FormListEntry("Process Instance Details", processInstanceDetailsButton));
+        processContextForm.add(new FormEntry("Process Instance Id", processInstanceIdTextBox));
+        processContextForm.add(new FormEntry("Process Definition Id", processDefinitionIdTextBox));
+        processContextForm.add(new FormEntry("Process Instance Details", processInstanceDetailsButton));
         detailsFlowPanel.add(processContextForm);
 
         updateButton = new Button("Update");
@@ -162,8 +164,8 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
         WidgetList assignmentsForm = new WidgetList();
         assignmentsForm.setRound(true);
-        assignmentsForm.add(new FormListEntry("Potential Owners", potentialOwnersLabel));
-        assignmentsForm.add(new FormListEntry("User or Group", delegateTextBox));
+        assignmentsForm.add(new FormEntry("Potential Owners", potentialOwnersLabel));
+        assignmentsForm.add(new FormEntry("User or Group", delegateTextBox));
         assignmentsFlowPanel.add(assignmentsForm);
 
         delegateButton = new Button("Delegate");
@@ -189,7 +191,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
         getBackButton().addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
-                placeManager.goTo("Tasks List", Animation.SLIDE_REVERSE);
+                placeManager.goTo("Tasks List", Animations.SLIDE_REVERSE);
             }
         });
 
@@ -284,7 +286,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
         descriptionTextArea.setText(task.getDescription());
         statusTextBox.setText(task.getStatus());
-        dueOnDateBox.setText(new DateRenderer().render(task.getExpirationTime()));
+        //dueOnDateBox.setText(new DateRenderer().render(task.getExpirationTime()));
         priorityListBox.setSelectedIndex(task.getPriority());
         userTextBox.setText(task.getActualOwner());
 
@@ -317,7 +319,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
                     Map<String, Object> params = new HashMap<String, Object>();
                     params.put("instanceId", instanceId);
                     params.put("definitionId", definitionId);
-                    placeManager.goTo("Process Instance Details", Animation.SLIDE, params);
+                    placeManager.goTo("Process Instance Details", Animations.SLIDE, params);
                 }
             }
         });
@@ -339,7 +341,8 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
     @Override
     public HasText getDelegateTextBox() {
-        return delegateTextBox;
+        return null;
+    	//return delegateTextBox;
     }
 
     public void setTaskId(long taskId) {
