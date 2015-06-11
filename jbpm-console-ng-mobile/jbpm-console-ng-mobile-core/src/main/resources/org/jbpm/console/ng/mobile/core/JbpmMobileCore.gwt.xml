@@ -4,7 +4,7 @@
 <module>
   <inherits name="com.google.gwt.xml.XML" />
     
-  <inherits name="com.googlecode.mgwt.MGWT"/>
+  <inherits name='com.googlecode.mgwt.MGWT'/>
   <inherits name="com.googlecode.mgwt.linker.Linker" />
 
   <!-- Uberfire dependencies -->
@@ -15,8 +15,8 @@
   <inherits name="org.jbpm.console.ng.mobile.pr.JbpmMobileProcessRuntimeClient"/>
 
   <!-- Specify the application specific style sheet. -->
-  <set-property name="user.agent" value="safari, gecko1_8" />
-  <set-property name="mgwt.os" value="iphone,retina,ipad,ipad_retina,desktop,android,android_tablet,blackberry" />  
+  <set-property name="user.agent" value="safari" />
+<!--   <set-property name="mgwt.os" value="iphone,retina,ipad,ipad_retina,desktop,android,android_tablet,blackberry" />   -->
   <!-- Specify the paths for translatable code -->
   <source path='client'/>
 

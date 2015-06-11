@@ -342,14 +342,17 @@
 	<dependency>
        	<groupId>org.jbpm</groupId>
        	<artifactId>jbpm-console-ng-mobile-core</artifactId>
+       	<scope>provided</scope>
 	</dependency>
     <dependency>
      	<groupId>org.jbpm</groupId>
         <artifactId>jbpm-console-ng-mobile-human-tasks</artifactId>
+        <scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>org.jbpm</groupId>
     	<artifactId>jbpm-console-ng-mobile-process-runtime</artifactId>
+    	<scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>com.googlecode.mgwt</groupId>

@@ -88,12 +88,29 @@
     
     <dependency>
       <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-api</artifactId>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
       <artifactId>uberfire-client-api</artifactId>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-console-ng-mobile-core</artifactId>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+     <groupId>org.jbpm</groupId>
+      <artifactId>jbpm-console-ng-generic-api</artifactId>
+      <scope>provided</scope>
+      <type>jar</type>
+   	</dependency>
+   	<dependency>
+      <groupId>org.jbpm</groupId>
+      <artifactId>jbpm-console-ng-generic-client</artifactId>
+      <scope>provided</scope>
       <type>jar</type>
     </dependency>
   </dependencies>

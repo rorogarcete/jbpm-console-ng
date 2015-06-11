@@ -63,6 +63,14 @@
   <inherits name="org.jbpm.console.ng.gc.JbpmConsoleNGGenericClient"/>
   <inherits name="org.jbpm.console.ng.dm.JbpmConsoleNGDocumentsClient"/>
   <inherits name="org.jbpm.console.ng.wi.JbpmConsoleNGWorkbenchIntegrationClient"/>
+  
+  <!-- jBPM Mobile --> 
+  <inherits name="com.googlecode.mgwt.MGWT"/>
+  <inherits name="com.googlecode.mgwt.linker.Linker" />
+
+  <inherits name="org.jbpm.console.ng.mobile.ht.JbpmMobileHumanTasksClient"/>
+  <inherits name="org.jbpm.console.ng.mobile.pr.JbpmMobileProcessRuntimeClient"/>
+  <inherits name="org.jbpm.console.ng.mobile.core.JbpmMobileCore"/>
 
   <!-- asset mgmt -->
 
