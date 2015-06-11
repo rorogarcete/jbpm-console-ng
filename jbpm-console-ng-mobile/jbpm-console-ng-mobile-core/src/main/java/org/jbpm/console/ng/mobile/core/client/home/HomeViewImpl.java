@@ -15,19 +15,22 @@
  */
 package org.jbpm.console.ng.mobile.core.client.home;
 
-import com.googlecode.mgwt.mvp.client.Animation;
-import com.googlecode.mgwt.ui.client.widget.CellList;
-import com.googlecode.mgwt.ui.client.widget.ScrollPanel;
-import com.googlecode.mgwt.ui.client.widget.celllist.BasicCell;
-import com.googlecode.mgwt.ui.client.widget.celllist.CellSelectedEvent;
-import com.googlecode.mgwt.ui.client.widget.celllist.CellSelectedHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+
 import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
+
+import com.googlecode.mgwt.ui.client.widget.animation.Animations;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.BasicCell;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.CellList;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.CellSelectedEvent;
+import com.googlecode.mgwt.ui.client.widget.list.celllist.CellSelectedHandler;
+import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 
 /**
  *
@@ -44,7 +47,7 @@ public class HomeViewImpl extends AbstractView implements HomePresenter.HomeView
     private MGWTPlaceManager placeManager;
 
     public HomeViewImpl() {
-        title.setHTML("jBPM Mobile");
+        title.setTitle("jBPM Mobile");
         headerBackButton.setVisible(false);
 
         cellList = new CellList<String>(new BasicCell<String>() {
@@ -53,12 +56,12 @@ public class HomeViewImpl extends AbstractView implements HomePresenter.HomeView
                 return model;
             }
         });
-        cellList.setRound(true);
+        //cellList.setRound(true);
 
         ScrollPanel scrollPanel = new ScrollPanel();
         scrollPanel.setWidget(cellList);
         scrollPanel.setScrollingEnabledX(false);
-        layoutPanel.add(scrollPanel);
+        rootFlexPanel.add(scrollPanel);
     }
 
     @Override
@@ -82,7 +85,7 @@ public class HomeViewImpl extends AbstractView implements HomePresenter.HomeView
                     default:
                         return;
                 }
-                placeManager.goTo(nextScreen, Animation.SLIDE, null);
+                placeManager.goTo(nextScreen, Animations.SLIDE, null);
             }
         });
 

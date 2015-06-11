@@ -16,12 +16,15 @@
 package org.jbpm.console.ng.mobile.core.client;
 
 import com.google.gwt.user.client.ui.RootPanel;
-import com.googlecode.mgwt.mvp.client.Animation;
 import com.googlecode.mgwt.ui.client.animation.AnimationHelper;
+import com.googlecode.mgwt.ui.client.widget.animation.Animation;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import javax.enterprise.context.ApplicationScoped;
+
 import org.uberfire.client.mvp.UberView;
 
 /**

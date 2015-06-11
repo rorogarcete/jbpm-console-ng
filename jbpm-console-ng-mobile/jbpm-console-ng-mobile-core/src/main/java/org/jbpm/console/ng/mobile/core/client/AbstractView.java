@@ -15,14 +15,14 @@
  */
 package org.jbpm.console.ng.mobile.core.client;
 
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.mgwt.dom.client.event.tap.HasTapHandlers;
-import com.googlecode.mgwt.ui.client.dialog.Dialogs;
-import com.googlecode.mgwt.ui.client.widget.HeaderButton;
-import com.googlecode.mgwt.ui.client.widget.HeaderPanel;
-import com.googlecode.mgwt.ui.client.widget.LayoutPanel;
+import com.googlecode.mgwt.ui.client.widget.button.ImageButton;
+import com.googlecode.mgwt.ui.client.widget.dialog.Dialogs;
+import com.googlecode.mgwt.ui.client.widget.header.HeaderPanel;
+import com.googlecode.mgwt.ui.client.widget.header.HeaderTitle;
+import com.googlecode.mgwt.ui.client.widget.panel.flex.RootFlexPanel;
 
 /**
  *
@@ -32,32 +32,33 @@ public abstract class AbstractView implements IsWidget {
 
     protected final String[] priorities = {"0 - High", "1", "2", "3", "4", "5 - Medium", "6", "7", "8", "9", "10 - Low"};
 
-    protected final LayoutPanel layoutPanel;
+    protected final RootFlexPanel rootFlexPanel;
 
     protected final HeaderPanel headerPanel;
 
-    protected final HeaderButton headerBackButton;
+    protected final ImageButton headerBackButton;
 
-    protected final HTML title;
+    protected final HeaderTitle title;
 
     public AbstractView() {
-        layoutPanel = new LayoutPanel();
+        rootFlexPanel = new RootFlexPanel();
         headerPanel = new HeaderPanel();
 
-        title = new HTML();
-        headerPanel.setCenterWidget(title);
+        title = new HeaderTitle();
+        //headerPanel.setCenterWidget(title);
 
-        headerBackButton = new HeaderButton();
-        headerBackButton.setBackButton(true);
+        headerBackButton = new ImageButton();
+        //headerBackButton.setBackButton(true);
         headerBackButton.setText("Back");
-        headerPanel.setLeftWidget(headerBackButton);
+        //headerPanel.setLeftWidget(headerBackButton);
+        headerPanel.add(headerBackButton);
 
-        layoutPanel.add(headerPanel);
+        rootFlexPanel.add(headerPanel);
     }
 
     @Override
     public Widget asWidget() {
-        return layoutPanel;
+        return rootFlexPanel;
     }
 
     public void displayNotification(String title, String text) {
