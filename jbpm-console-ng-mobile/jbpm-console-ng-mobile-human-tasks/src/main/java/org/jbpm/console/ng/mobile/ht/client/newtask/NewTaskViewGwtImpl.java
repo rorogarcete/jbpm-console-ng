@@ -102,7 +102,6 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
         addTaskButton.addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
-//                try {
                     List<String> users = new ArrayList<String>();
                     users.add(userTextBox.getText());
                     List<String> groups = new ArrayList<String>();
@@ -119,10 +118,7 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
                     assignToMeCheckBox.setValue(false);
                  //   dueOnDateBox.setText(new DateRenderer().render(new Date()));
 
-                    placeManager.goTo("New Task", Animations.SLIDE);
-//                } catch (ParseException ex) {
-//                    displayNotification("Wrong date format", "Enter the date in the correct format!");
-//                }
+                    placeManager.goTo("Tasks List", Animations.SLIDE_REVERSE);
             }
         });
 
