@@ -17,8 +17,10 @@ package org.jbpm.console.ng.mobile.pr.client.instance.details;
 
 import com.google.gwt.user.client.ui.HasText;
 import com.google.inject.Inject;
-import com.googlecode.mgwt.ui.client.widget.Button;
+import com.googlecode.mgwt.ui.client.widget.button.Button;
+
 import java.util.List;
+
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
@@ -81,7 +83,7 @@ public class ProcessInstanceDetailsPresenter {
         dataServices.call(new RemoteCallback<ProcessInstanceSummary>() {
             @Override
             public void callback(ProcessInstanceSummary process) {
-                view.getInstanceIdText().setText(Long.toString(process.getId()));
+                //view.getInstanceIdText().setText(Long.toString(process.getId()));
                 view.getDeploymentText().setText(process.getDeploymentId());
                 
                 String status = "Unknown";
@@ -123,7 +125,7 @@ public class ProcessInstanceDetailsPresenter {
         dataServices.call(new RemoteCallback<ProcessSummary>() {
             @Override
             public void callback(ProcessSummary process) {
-                view.getDefinitionIdText().setText(process.getId());
+                //view.getDefinitionIdText().setText(process.getId());
                 view.getDefinitionNameText().setText(process.getName());
                 view.getDefinitionVersionText().setText(process.getVersion());
             }
@@ -133,7 +135,8 @@ public class ProcessInstanceDetailsPresenter {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
                 return true;
             }
-        }).getProcessDesc(definitionId);
+        });
+        //.getProcessDesc(definitionId);
 
         // Current Activities
         dataServices.call(new RemoteCallback<List<NodeInstanceSummary>>() {
