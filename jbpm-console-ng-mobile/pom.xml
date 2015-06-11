@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.jbpm</groupId>
     <artifactId>jbpm-console-ng</artifactId>
-    <version>6.1.0-SNAPSHOT</version>
+    <version>6.3.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>jbpm-console-ng-mobile</artifactId>
@@ -29,7 +29,7 @@
 
   <name>jBPM Console NG - Mobile UI</name>
   <properties>
-          <mgwt.version>1.1.2</mgwt.version>
+          <mgwt.version>2.0.0</mgwt.version>
   </properties>
   <modules>
     <module>jbpm-console-ng-mobile-core</module>
