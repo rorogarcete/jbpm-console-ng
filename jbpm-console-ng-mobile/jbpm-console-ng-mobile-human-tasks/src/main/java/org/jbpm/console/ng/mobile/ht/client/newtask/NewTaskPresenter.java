@@ -15,13 +15,16 @@
  */
 package org.jbpm.console.ng.mobile.ht.client.newtask;
 
+import com.google.gwt.core.shared.GWT;
 import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import org.jboss.errai.bus.client.api.messaging.Message;
 
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jbpm.console.ng.ht.service.TaskOperationsService;
@@ -65,8 +68,14 @@ public class NewTaskPresenter {
             public void callback(Long taskId) {
                 view.goBackToTaskList();
             }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error( Message message, Throwable throwable ) {
+                GWT.log("Error creating new task: "+ message);
+                return true;
+            }
         }).addQuickTask(taskName, priority, new Date(dueDate+dueDateTime), users, groups, 
-        		identity.getIdentifier(), isAssignToMe, isAssignToMe, taskName, "", -1L);
+        		identity.getIdentifier(), true, false, taskName, "", -1L);
     }
 
 }

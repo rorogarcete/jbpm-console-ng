@@ -75,7 +75,7 @@ public class TaskListPresenter {
         }
         
         if(currentFilter == null) {
-    		currentFilter = new PortableQueryFilter(0, 10, false, "", "taskname", true);
+    		currentFilter = new PortableQueryFilter(0, 100, false, "", "t.name", true);
     	}
         
         if(currentFilter.getParams() != null) {
@@ -88,7 +88,7 @@ public class TaskListPresenter {
             public void callback(List<TaskSummary> tasks) {
                 view.render(tasks);
             }
-        }).getData(currentFilter);
+        }).getAll(currentFilter);
     }
 
 }
