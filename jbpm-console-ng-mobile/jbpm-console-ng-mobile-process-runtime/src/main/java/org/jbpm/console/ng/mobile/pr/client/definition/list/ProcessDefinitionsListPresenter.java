@@ -19,11 +19,18 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.jbpm.console.ng.bd.service.DataServiceEntryPoint;
+import org.jboss.errai.security.shared.api.identity.User;
+import org.jbpm.console.ng.ga.model.PortableQueryFilter;
+import org.jbpm.console.ng.ga.model.QueryFilter;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 import org.jbpm.console.ng.pr.model.ProcessSummary;
+import org.jbpm.console.ng.pr.service.ProcessDefinitionService;
+
+import com.google.gwt.core.client.GWT;
 
 /**
  *
@@ -38,23 +45,45 @@ public class ProcessDefinitionsListPresenter {
     }
 
     @Inject
-    private Caller<DataServiceEntryPoint> dataServices;
+    private Caller<ProcessDefinitionService> processDefinitionService;
 
     @Inject
     private ProcessDefinitionsListView view;
+    
+    @Inject
+    private User identity;
+    
+    private QueryFilter currentFilter;
 
     public ProcessDefinitionsListView getView() {
         return view;
     }
 
-    public void refresh() {
-        dataServices.call(new RemoteCallback<List<ProcessSummary>>() {
-            @Override
+    public void refresh() {   	
+    	if (currentFilter == null) {
+			currentFilter = new PortableQueryFilter(0, 100, false, "", "", true);
+		}
+    	
+    	if(currentFilter.getParams() != null) {
+    		currentFilter.getParams().put("userId", identity.getIdentifier());
+    		currentFilter.setFilterParams("");
+    		currentFilter.getParams().put("filter", "");
+    		currentFilter.getParams().put("taskRole", "");
+    	}
+   
+    	processDefinitionService.call(new RemoteCallback<List<ProcessSummary>>() {
+           @Override
             public void callback(List<ProcessSummary> definitions) {
-                view.render(definitions);
+               view.render(definitions);
+           }
+    	}, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                GWT.log("Error definition list: "+ message.toString());
+                GWT.log("Error definition list Throwable: "+ throwable.toString());
+                return true;
             }
-        });
-        //.getProcesses();
+       }).getAll(currentFilter);
     }
 
 }

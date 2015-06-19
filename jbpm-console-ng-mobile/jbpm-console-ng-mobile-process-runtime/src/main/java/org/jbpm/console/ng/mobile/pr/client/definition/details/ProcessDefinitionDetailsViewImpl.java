@@ -17,6 +17,7 @@ package org.jbpm.console.ng.mobile.pr.client.definition.details;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
+
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.MGWT;
@@ -144,90 +145,42 @@ public class ProcessDefinitionDetailsViewImpl extends AbstractView implements
 
 	@Override
 	public HasText getDefinitionIdText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) definitionIdText;
 	}
 
 	@Override
 	public HasText getDefinitionNameText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) definitionNameText;
 	}
 
 	@Override
 	public HasText getDeploymentText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) deploymentText;
 	}
 
 	@Override
 	public HasText getHumanTasksText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) humanTasksText;
 	}
 
 	@Override
 	public HasText getUsersAndGroupsText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) usersAndGroupsText;
 	}
 
 	@Override
 	public HasText getSubprocessesText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) subprocessesText;
 	}
 
 	@Override
 	public HasText getProcessVariablesText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) processVariablesText;
 	}
 
 	@Override
 	public HasText getServicesText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) servicesText;
 	}
-
-//    @Override
-//    public MTextBox getDefinitionIdText() {
-//        return definitionIdText;
-//    }
-//
-//    @Override
-//    public MTextBox getDefinitionNameText() {
-//        return definitionNameText;
-//    }
-//
-//    @Override
-//    public MTextBox getDeploymentText() {
-//        return deploymentText;
-//    }
-//
-//    @Override
-//    public MTextArea getHumanTasksText() {
-//        return humanTasksText;
-//    }
-//
-//    @Override
-//    public MTextArea getUsersAndGroupsText() {
-//        return usersAndGroupsText;
-//    }
-//
-//    @Override
-//    public MTextArea getSubprocessesText() {
-//        return subprocessesText;
-//    }
-//
-//    @Override
-//    public MTextArea getProcessVariablesText() {
-//        return processVariablesText;
-//    }
-//
-//    @Override
-//    public MTextArea getServicesText() {
-//        return servicesText;
-//    }
 
 }

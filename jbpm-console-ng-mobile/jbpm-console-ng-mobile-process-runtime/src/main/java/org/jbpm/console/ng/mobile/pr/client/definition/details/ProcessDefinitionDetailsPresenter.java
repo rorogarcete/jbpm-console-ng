@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.mobile.pr.client.definition.details;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasText;
 
 import java.util.Collection;
@@ -27,11 +28,14 @@ import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
+
 import org.jbpm.console.ng.bd.service.DataServiceEntryPoint;
 import org.jbpm.console.ng.bd.service.KieSessionEntryPoint;
 import org.jbpm.console.ng.ht.model.TaskDefSummary;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
+import org.jbpm.console.ng.pr.model.ProcessDefinitionKey;
 import org.jbpm.console.ng.pr.model.ProcessSummary;
+import org.jbpm.console.ng.pr.service.ProcessDefinitionService;
 
 /**
  *
@@ -63,6 +67,9 @@ public class ProcessDefinitionDetailsPresenter {
 
     @Inject
     private Caller<DataServiceEntryPoint> dataServices;
+    
+    @Inject
+    private Caller<ProcessDefinitionService> processDefService;
 
     @Inject
     private Caller<KieSessionEntryPoint> sessionServices;
@@ -75,10 +82,10 @@ public class ProcessDefinitionDetailsPresenter {
     }
 
     public void refresh(String deploymentId, String processId) {
-        dataServices.call(new RemoteCallback<ProcessSummary>() {
+    	processDefService.call(new RemoteCallback<ProcessSummary>() {
             @Override
             public void callback(ProcessSummary process) {
-                //view.getDefinitionIdText().setText(process.getId());
+                view.getDefinitionIdText().setText(String.valueOf(process.getId()));
                 view.getDefinitionNameText().setText(process.getName());
                 view.getDeploymentText().setText(process.getDeploymentId());
             }
@@ -86,9 +93,12 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error refresh: "+ message.toString());
+                GWT.log("Error refresh Throwable: "+ throwable.toString());
                 return true;
             }
-        }).getProcessById(deploymentId, processId);
+        }).getItem(new ProcessDefinitionKey(deploymentId, processId));
+        //getProcessById(deploymentId, processId); //.getItem(key); //getProcessById(deploymentId, processId);
 
         // Human Tasks
         dataServices.call(new RemoteCallback<List<TaskDefSummary>>() {
@@ -109,9 +119,11 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error Human Task refresh: "+ message.toString());
+                GWT.log("Error Human Task refresh Throwable: "+ throwable.toString());
                 return true;
             }
-        });
+        }).getAllTasksDef(deploymentId, processId);
         //.getAllTasksDef(processId);
 
         // Users and Groups
@@ -135,9 +147,11 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error Users and Groups refresh: "+ message.toString());
+                GWT.log("Error Users and Groups refresh Throwable: "+ throwable.toString());
                 return true;
             }
-        });
+        }).getAssociatedEntities(deploymentId, processId);
         //.getAssociatedEntities(processId);
 
         // Subprocesses
@@ -159,9 +173,11 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error subprocess refresh: "+ message.toString());
+                GWT.log("Error subprocess refresh Throwable: "+ throwable.toString());
                 return true;
             }
-        });
+        }).getReusableSubProcesses(deploymentId, processId);
         //.getReusableSubProcesses(processId);
 
         // Process Variables
@@ -185,9 +201,11 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error process variable refresh: "+ message.toString());
+                GWT.log("Error process variable refresh Throwable: "+ throwable.toString());
                 return true;
             }
-        });
+        }).getRequiredInputData(deploymentId, processId);
         //.getRequiredInputData(processId);
 
         // Services
@@ -211,9 +229,11 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error services refresh: "+ message.toString());
+                GWT.log("Error services refresh Throwable: "+ throwable.toString());
                 return true;
             }
-        });
+        }).getServiceTasks(deploymentId, processId);
         //.getServiceTasks(processId);
     }
 
@@ -228,6 +248,8 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error start process: "+ message.toString());
+                GWT.log("Error start process Throwable: "+ throwable.toString());
                 return true;
             }
         }).startProcess(deploymentId, processId);
