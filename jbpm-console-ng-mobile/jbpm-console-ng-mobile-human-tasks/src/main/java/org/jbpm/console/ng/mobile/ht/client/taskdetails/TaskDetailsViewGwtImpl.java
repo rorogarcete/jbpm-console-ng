@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.mobile.ht.client.taskdetails;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Label;
@@ -253,7 +254,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
     @Override
     public void refreshTask(TaskSummary task, boolean owned) {
         TaskStatus status = TaskStatus.valueOf(task.getStatus());
-
+        
         switch (status) {
             case Ready:
                 saveButton.setVisible(false);
@@ -341,8 +342,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
     @Override
     public HasText getDelegateTextBox() {
-        return null;
-    	//return delegateTextBox;
+        return (HasText) delegateTextBox;
     }
 
     public void setTaskId(long taskId) {
@@ -357,6 +357,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
     @Override
     public void setParameters(Map<String, Object> params) {
         taskId = (Long) params.get("taskId");
+        GWT.log("Tas kId setParamters : "+ params.get("taskId"));
     }
 
 }

@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.mobile.ht.client.taskdetails;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasText;
 
 import java.util.ArrayList;
@@ -31,7 +32,11 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
+import org.jbpm.console.ng.ht.model.TaskKey;
 import org.jbpm.console.ng.ht.model.TaskSummary;
+import org.jbpm.console.ng.ht.service.TaskLifeCycleService;
+import org.jbpm.console.ng.ht.service.TaskOperationsService;
+import org.jbpm.console.ng.ht.service.TaskQueryService;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 
 /**
@@ -59,42 +64,57 @@ public class TaskDetailsPresenter {
     @Inject
     private User identity;
 
-    //@Inject
-    //private Caller<TaskServiceEntryPoint> taskServices;
+    @Inject
+    private Caller<TaskOperationsService> taskOperationService;
+    
+    @Inject
+    private Caller<TaskLifeCycleService> taskLifeCycleService;
+    
+    //private Caller<TaskQueryService> taskQueryService;
 
     public TaskDetailsView getView() {
         return view;
     }
 
     public void refresh(final long taskId) {
-//        taskServices.call(new RemoteCallback<TaskSummary>() {
-//            @Override
-//            public void callback(TaskSummary task) {
-//                view.refreshTask(task, task.getActualOwner().equals(identity.getIdentifier()));
-//                refreshPotentialOwners(taskId);
-//            }
-//        }).getTaskDetails(taskId);
+    	taskOperationService.call(new RemoteCallback<TaskSummary>() {
+            @Override
+            public void callback(TaskSummary task) {
+                view.refreshTask(task, task.getActualOwner().equals(identity.getIdentifier()));
+                refreshPotentialOwners(taskId);
+            }
+    	}, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error refresh: "+ message.toString());
+                GWT.log("Error refresh Throwable: "+ throwable.toString());
+                return true;
+            }
+        }).getTaskDetails(taskId); //getItem(new TaskKey(taskId));
     }
 
     public void refreshPotentialOwners(final long taskId) {
         List<Long> taskIds = new ArrayList<Long>(1);
         taskIds.add(taskId);
-//        taskServices.call(new RemoteCallback<Map<Long, List<String>>>() {
-//            @Override
-//            public void callback(Map<Long, List<String>> ids) {
-//                if (ids.isEmpty()) {
-//                    view.getPotentialOwnersText().setText("No potential owners");
-//                } else {
-//                    view.getPotentialOwnersText().setText(ids.get(taskId).toString());
-//                }
-//            }
-//        }, new ErrorCallback<Message>() {
-//            @Override
-//            public boolean error(Message message, Throwable throwable) {
-//                view.displayNotification("Unexpected error encountered", throwable.getMessage());
-//                return true;
-//            }
-//        }).getPotentialOwnersForTaskIds(taskIds);
+        taskOperationService.call(new RemoteCallback<Map<Long, List<String>>>() {
+            @Override
+            public void callback(Map<Long, List<String>> ids) {
+                if (ids.isEmpty()) {
+                    view.getPotentialOwnersText().setText("No potential owners");
+                } else {
+                    view.getPotentialOwnersText().setText(ids.get(taskId).toString());
+                }
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                //view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error refreshPotentialOwners: "+ message.toString());
+                GWT.log("Error refreshPotentialOwners Throwable: "+ throwable.toString());
+                return true;
+            }
+        }).getTaskDetails(taskId);
     }
 
     public void saveTask(final long taskId) {
@@ -102,68 +122,76 @@ public class TaskDetailsPresenter {
     }
 
     public void releaseTask(final long taskId) {
-//        taskServices.call(new RemoteCallback<Void>() {
-//            @Override
-//            public void callback(Void nothing) {
-//                view.displayNotification("Success", "Task with id = " + taskId + " was released!");
-//                refresh(taskId);
-//            }
-//        }, new ErrorCallback<Message>() {
-//            @Override
-//            public boolean error(Message message, Throwable throwable) {
-//                view.displayNotification("Unexpected error encountered", throwable.getMessage());
-//                return true;
-//            }
-//        }).release(taskId, identity.getName());
+    	taskLifeCycleService.call(new RemoteCallback<Void>() {
+            @Override
+            public void callback(Void nothing) {
+                view.displayNotification("Success", "Task with id = " + taskId + " was released!");
+                refresh(taskId);
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error releaseTask: "+ message.toString());
+                GWT.log("Error releaseTask Throwable: "+ throwable.toString());
+                return true;
+            }
+        }).release(taskId, identity.getIdentifier());
     }
 
     public void claimTask(final long taskId) {
-//        taskServices.call(new RemoteCallback<Void>() {
-//            @Override
-//            public void callback(Void nothing) {
-//                view.displayNotification("Success", "Task with id = " + taskId + " was claimed!");
-//                refresh(taskId);
-//            }
-//        }, new ErrorCallback<Message>() {
-//            @Override
-//            public boolean error(Message message, Throwable throwable) {
-//                view.displayNotification("Unexpected error encountered", throwable.getMessage());
-//                return true;
-//            }
-//        }).claim(taskId, identity.getName());
+        taskLifeCycleService.call(new RemoteCallback<Void>() {
+            @Override
+            public void callback(Void nothing) {
+                view.displayNotification("Success", "Task with id = " + taskId + " was claimed!");
+                refresh(taskId);
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error claimTask: "+ message.toString());
+                GWT.log("Error claimTask Throwable: "+ throwable.toString());
+                return true;
+            }
+        }).claim(taskId, identity.getIdentifier(), "");
     }
 
     public void startTask(final long taskId) {
-//        taskServices.call(new RemoteCallback<Void>() {
-//            @Override
-//            public void callback(Void nothing) {
-//                view.displayNotification("Success", "Task with id = " + taskId + " was started!");
-//                refresh(taskId);
-//            }
-//        }, new ErrorCallback<Message>() {
-//            @Override
-//            public boolean error(Message message, Throwable throwable) {
-//                view.displayNotification("Unexpected error encountered", throwable.getMessage());
-//                return true;
-//            }
-//        }).start(taskId, identity.getName());
+        taskLifeCycleService.call(new RemoteCallback<Void>() {
+            @Override
+            public void callback(Void nothing) {
+                view.displayNotification("Success", "Task with id = " + taskId + " was started!");
+                refresh(taskId);
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error startTask: "+ message.toString());
+                GWT.log("Error startTask Throwable: "+ throwable.toString());
+                return true;
+            }
+        }).start(taskId, identity.getIdentifier());
     }
 
     public void completeTask(final long taskId) {
         final Map<String, Object> params = new HashMap<String, Object>();
-//        taskServices.call(new RemoteCallback<Void>() {
-//            @Override
-//            public void callback(Void nothing) {
-//                view.displayNotification("Success", "Task with id = " + taskId + " was completed!");
-//                refresh(taskId);
-//            }
-//        }, new ErrorCallback<Message>() {
-//            @Override
-//            public boolean error(Message message, Throwable throwable) {
-//                view.displayNotification("Unexpected error encountered", throwable.getMessage());
-//                return true;
-//            }
-//        }).complete(taskId, identity.getName(), params);
+        taskLifeCycleService.call(new RemoteCallback<Void>() {
+            @Override
+            public void callback(Void nothing) {
+                view.displayNotification("Success", "Task with id = " + taskId + " was completed!");
+                refresh(taskId);
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error completeTask: "+ message.toString());
+                GWT.log("Error completeTask Throwable: "+ throwable.toString());
+                return true;
+            }
+        }).complete(taskId, identity.getIdentifier(), params);
     }
 
     public void updateTask(final long taskId, String name, String description, Date dueDate, int priority) {
@@ -173,37 +201,41 @@ public class TaskDetailsPresenter {
         List<String> names = new ArrayList<String>();
         names.add(name);
 
-//        taskServices.call(new RemoteCallback<Void>() {
-//            @Override
-//            public void callback(Void response) {
-//                view.displayNotification("Success", "Task details has been updated for the task with id = "
-//                        + taskId);
-//                refresh(taskId);
-//            }
-//        }, new ErrorCallback<Message>() {
-//            @Override
-//            public boolean error(Message message, Throwable throwable) {
-//                view.displayNotification("Unexpected error encountered", throwable.getMessage());
-//                return true;
-//            }
-//        }).updateSimpleTaskDetails(taskId, names, priority, descriptions, dueDate);
+        taskOperationService.call(new RemoteCallback<Void>() {
+            @Override
+            public void callback(Void response) {
+                view.displayNotification("Success", "Task details has been updated for the task with id = "
+                        + taskId);
+                refresh(taskId);
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error updateTask: "+ message.toString());
+                GWT.log("Error updateTask Throwable: "+ throwable.toString());
+                return true;
+            }
+        }).updateTask(taskId, priority, descriptions, dueDate);
     }
 
     public void delegateTask(final long taskId, String entity) {
-//        taskServices.call(new RemoteCallback<Void>() {
-//            @Override
-//            public void callback(Void nothing) {
-//                view.displayNotification("Success", "Task was succesfully delegated");
-//                view.getDelegateTextBox().setText("");
-//                refresh(taskId);
-//            }
-//        }, new ErrorCallback<Message>() {
-//            @Override
-//            public boolean error(Message message, Throwable throwable) {
-//                view.displayNotification("Unexpected error encountered", throwable.getMessage());
-//                return true;
-//            }
-//        }).delegate(taskId, identity.getName(), entity);
+        taskLifeCycleService.call(new RemoteCallback<Void>() {
+            @Override
+            public void callback(Void nothing) {
+                view.displayNotification("Success", "Task was succesfully delegated");
+                view.getDelegateTextBox().setText("");
+                refresh(taskId);
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error delegateTask: "+ message.toString());
+                GWT.log("Error delegateTask Throwable: "+ throwable.toString());
+                return true;
+            }
+        }).delegate(taskId, identity.getIdentifier(), entity);
     }
 
 }
