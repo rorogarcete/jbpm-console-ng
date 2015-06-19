@@ -18,10 +18,12 @@ package org.jbpm.console.ng.mobile.core.client;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.mgwt.dom.client.event.tap.HasTapHandlers;
-import com.googlecode.mgwt.ui.client.widget.button.ImageButton;
+import com.googlecode.mgwt.ui.client.widget.button.image.PreviousitemImageButton;
 import com.googlecode.mgwt.ui.client.widget.dialog.Dialogs;
 import com.googlecode.mgwt.ui.client.widget.header.HeaderPanel;
 import com.googlecode.mgwt.ui.client.widget.header.HeaderTitle;
+import com.googlecode.mgwt.ui.client.widget.panel.flex.FixedSpacer;
+import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexSpacer;
 import com.googlecode.mgwt.ui.client.widget.panel.flex.RootFlexPanel;
 
 /**
@@ -36,7 +38,7 @@ public abstract class AbstractView implements IsWidget {
 
     protected final HeaderPanel headerPanel;
 
-    protected final ImageButton headerBackButton;
+    protected final PreviousitemImageButton headerBackButton;
 
     protected final HeaderTitle title;
 
@@ -44,14 +46,28 @@ public abstract class AbstractView implements IsWidget {
         rootFlexPanel = new RootFlexPanel();
         headerPanel = new HeaderPanel();
 
-        title = new HeaderTitle();
+       
         //headerPanel.setCenterWidget(title);
 
-        headerBackButton = new ImageButton();
+        headerBackButton = new PreviousitemImageButton();
         //headerBackButton.setBackButton(true);
-        headerBackButton.setText("Back");
+        //headerBackButton.setText("Back");
         //headerPanel.setLeftWidget(headerBackButton);
-        headerPanel.add(headerBackButton);
+        //if(!MGWT.getOsDetection().isAndroid() && MGWT.getFormFactor().isPhone()) {
+  		  headerPanel.add(headerBackButton);
+  		//}
+        headerPanel.add(new FlexSpacer());
+        
+        title = new HeaderTitle();
+        headerPanel.add(title);
+        
+        headerPanel.add(new FlexSpacer());
+        
+        //if(!MGWT.getOsDetection().isAndroid() && MGWT.getFormFactor().isPhone()) {
+            headerPanel.add(new FixedSpacer());
+        //}
+        
+        //headerPanel.add(headerBackButton);
 
         rootFlexPanel.add(headerPanel);
     }
