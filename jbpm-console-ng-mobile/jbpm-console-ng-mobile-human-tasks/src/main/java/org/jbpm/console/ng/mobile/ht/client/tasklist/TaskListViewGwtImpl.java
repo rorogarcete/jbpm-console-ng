@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.mobile.ht.client.tasklist;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
@@ -129,6 +130,8 @@ public class TaskListViewGwtImpl extends AbstractView implements TaskListPresent
             public void onCellSelected(CellSelectedEvent event) {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("taskId", tasksList.get(event.getIndex()).getId());
+                GWT.log("TaskId: "+ params.get("taskId"));
+                GWT.log("Evento: "+ event.getIndex());
                 placeManager.goTo("Task Details", Animations.SLIDE, params);
             }
         });
