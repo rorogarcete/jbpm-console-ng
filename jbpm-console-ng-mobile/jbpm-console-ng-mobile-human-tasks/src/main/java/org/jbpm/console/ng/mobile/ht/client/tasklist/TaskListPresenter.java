@@ -21,7 +21,9 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jbpm.console.ng.ga.model.PortableQueryFilter;
@@ -69,7 +71,10 @@ public class TaskListPresenter {
     }
 
     public void refresh() {
-        statuses = new ArrayList<String>();
+    	if (statuses == null) {
+    		statuses = new ArrayList<String>();
+		}
+    	
         for (TaskStatus status : TaskStatus.values()) {
             statuses.add(status.toString());
         }
@@ -81,12 +86,21 @@ public class TaskListPresenter {
         if(currentFilter.getParams() != null) {
     		currentFilter.getParams().put("statuses", statuses);
     		currentFilter.getParams().put("userId", identity.getIdentifier());
+    		currentFilter.setFilterParams("");
+    		currentFilter.getParams().put("filter", "");
+    		currentFilter.getParams().put("taskRole", "");
     	}
-        
+  
         taskQueryService.call(new RemoteCallback<List<TaskSummary>>() {
             @Override
             public void callback(List<TaskSummary> tasks) {
                 view.render(tasks);
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error( Message message, Throwable throwable ) {
+                GWT.log("Error list task: "+ message.toString());                
+                return true;
             }
         }).getAll(currentFilter);
     }

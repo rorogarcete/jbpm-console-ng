@@ -15,6 +15,5 @@ public enum TaskStatus {
     Failed,
     Error,
     Exited,
-    Obsolete;
-
+    Obsolete
 }
