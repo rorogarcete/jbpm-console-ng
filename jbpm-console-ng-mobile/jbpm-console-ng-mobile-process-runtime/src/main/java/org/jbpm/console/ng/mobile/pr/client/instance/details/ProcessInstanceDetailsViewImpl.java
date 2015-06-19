@@ -17,6 +17,7 @@ package org.jbpm.console.ng.mobile.pr.client.instance.details;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
+
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.MGWT;
@@ -133,46 +134,6 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         definitionId = (String) params.get("definitionId");
     }
 
-//    @Override
-//    public MTextBox getInstanceIdText() {
-//        return instanceIdText;
-//    }
-//
-//    @Override
-//    public MTextBox getDefinitionIdText() {
-//        return definitionIdText;
-//    }
-//
-//    @Override
-//    public MTextBox getDefinitionNameText() {
-//        return definitionNameText;
-//    }
-//
-//    @Override
-//    public MTextBox getDefinitionVersionText() {
-//        return definitionVersionText;
-//    }
-//
-//    @Override
-//    public MTextBox getDeploymentText() {
-//        return deploymentText;
-//    }
-//
-//    @Override
-//    public MTextBox getInstanceStateText() {
-//        return instanceStateText;
-//    }
-//
-//    @Override
-//    public MTextArea getCurrentActivitiesText() {
-//        return currentActivitiesText;
-//    }
-//
-//    @Override
-//    public MTextArea getInstanceLogText() {
-//        return instanceLogText;
-//    }
-
     @Override
     public Button getAbortButton() {
         return abortButton;
@@ -180,50 +141,42 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
 
 	@Override
 	public HasText getInstanceIdText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) instanceIdText;
 	}
 
 	@Override
 	public HasText getDefinitionIdText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) definitionIdText;
 	}
 
 	@Override
 	public HasText getDefinitionNameText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) definitionNameText;
 	}
 
 	@Override
 	public HasText getDefinitionVersionText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) definitionVersionText;
 	}
 
 	@Override
 	public HasText getDeploymentText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) deploymentText;
 	}
 
 	@Override
 	public HasText getInstanceStateText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) instanceStateText;
 	}
 
 	@Override
 	public HasText getCurrentActivitiesText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) currentActivitiesText;
 	}
 
 	@Override
 	public HasText getInstanceLogText() {
-		// TODO Auto-generated method stub
-		return null;
+		return (HasText) instanceLogText;
 	}
 
 }

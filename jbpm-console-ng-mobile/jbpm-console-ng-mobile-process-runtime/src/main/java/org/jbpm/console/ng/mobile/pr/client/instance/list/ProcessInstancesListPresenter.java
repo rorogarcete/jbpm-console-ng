@@ -21,11 +21,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
+
 import org.jbpm.console.ng.bd.service.DataServiceEntryPoint;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 import org.jbpm.console.ng.pr.model.ProcessInstanceSummary;
+
+import com.google.gwt.core.client.GWT;
 
 /**
  *
@@ -55,6 +60,13 @@ public class ProcessInstancesListPresenter {
             public void callback(Collection<ProcessInstanceSummary> instances) {
                 view.render(new ArrayList(instances));
             }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                GWT.log("Error refresh instance list: "+ message.toString());
+                GWT.log("Error refresh instance list Throwable: "+ throwable.toString());
+                return true;
+            }
         }).getProcessInstances();
     }
     
@@ -63,6 +75,13 @@ public class ProcessInstancesListPresenter {
             @Override
             public void callback(Collection<ProcessInstanceSummary> instances) {
                 view.render(new ArrayList(instances));
+            }
+        }, new ErrorCallback<Message>() {
+            @Override
+            public boolean error(Message message, Throwable throwable) {
+                GWT.log("Error refresh instance list Process instance: "+ message.toString());
+                GWT.log("Error refresh instance list Process instance Throwable: "+ throwable.toString());
+                return true;
             }
         }).getProcessInstancesByProcessDefinition(definitionId);
     }

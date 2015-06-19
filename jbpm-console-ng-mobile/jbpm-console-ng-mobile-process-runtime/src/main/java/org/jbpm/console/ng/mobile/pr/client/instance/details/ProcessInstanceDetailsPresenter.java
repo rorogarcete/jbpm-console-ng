@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.mobile.pr.client.instance.details;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasText;
 import com.googlecode.mgwt.ui.client.widget.button.Button;
 
@@ -26,12 +27,14 @@ import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
+
 import org.jbpm.console.ng.bd.service.DataServiceEntryPoint;
 import org.jbpm.console.ng.bd.service.KieSessionEntryPoint;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 import org.jbpm.console.ng.pr.model.NodeInstanceSummary;
 import org.jbpm.console.ng.pr.model.ProcessInstanceSummary;
 import org.jbpm.console.ng.pr.model.ProcessSummary;
+
 import org.kie.api.runtime.process.ProcessInstance;
 
 /**
@@ -84,7 +87,7 @@ public class ProcessInstanceDetailsPresenter {
         dataServices.call(new RemoteCallback<ProcessInstanceSummary>() {
             @Override
             public void callback(ProcessInstanceSummary process) {
-                //view.getInstanceIdText().setText(Long.toString(process.getId()));
+                view.getInstanceIdText().setText(String.valueOf((process.getId())));
                 view.getDeploymentText().setText(process.getDeploymentId());
                 
                 String status = "Unknown";
@@ -118,6 +121,8 @@ public class ProcessInstanceDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error refresh process instance details: "+ message.toString());
+                GWT.log("Error refresh process instance details Throwable: "+ throwable.toString());
                 return true;
             }
         }).getProcessInstanceById(instanceId);
@@ -126,7 +131,7 @@ public class ProcessInstanceDetailsPresenter {
         dataServices.call(new RemoteCallback<ProcessSummary>() {
             @Override
             public void callback(ProcessSummary process) {
-                //view.getDefinitionIdText().setText(process.getId());
+                view.getDefinitionIdText().setText(String.valueOf(process.getId()));
                 view.getDefinitionNameText().setText(process.getName());
                 view.getDefinitionVersionText().setText(process.getVersion());
             }
@@ -134,9 +139,12 @@ public class ProcessInstanceDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error definition id, name, version details: "+ message.toString());
+                GWT.log("Error definition id, name, version details Throwable: "+ throwable.toString());
                 return true;
             }
-        });
+        }).getProcessDesc(String.valueOf(instanceId), definitionId);
+        //getItem(new ProcessDefinitionKey(Long.parseLong(instanceId), definitionId);
         //.getProcessDesc(definitionId);
 
         // Current Activities
@@ -160,6 +168,8 @@ public class ProcessInstanceDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error current activity: "+ message.toString());
+                GWT.log("Error current activity Throwable: "+ throwable.toString());
                 return true;
             }
         }).getProcessInstanceActiveNodes(instanceId);
@@ -190,6 +200,8 @@ public class ProcessInstanceDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error instance log: "+ message.toString());
+                GWT.log("Error instance log Throwable: "+ throwable.toString());
                 return true;
             }
         }).getProcessInstanceHistory(instanceId);
@@ -205,6 +217,8 @@ public class ProcessInstanceDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error abort process instance: "+ message.toString());
+                GWT.log("Error abort process instance: "+ throwable.toString());
                 return true;
             }
         }).abortProcessInstance(instanceId);
