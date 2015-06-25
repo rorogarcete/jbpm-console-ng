@@ -1056,7 +1056,7 @@
             <!-- jBPM Mobile --> 
             <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-core</compileSourcesArtifact>
             <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-human-tasks</compileSourcesArtifact>
-            <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-proccess-runtime</compileSourcesArtifact>
+            <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-process-runtime</compileSourcesArtifact>
 
             <!-- jBPM Dashboard integration-->
             <compileSourcesArtifact>org.jbpm:jbpm-console-ng-dashboard-api</compileSourcesArtifact>
