@@ -73,13 +73,16 @@ public class HomeViewImpl extends AbstractView implements HomePresenter.HomeView
             public void onCellSelected(CellSelectedEvent event) {
                 String nextScreen = null;
                 switch (event.getIndex()) {
-                    case 0:
+                	case 0:
+                		nextScreen = "Deployment List";
+                		break;
+                    case 1:
                         nextScreen = "Process Definitions List";
                         break;
-                    case 1:
+                    case 2:
                         nextScreen = "Process Instances List";
                         break;
-                    case 2:
+                    case 3:
                         nextScreen = "Tasks List";
                         break;
                     default:
@@ -90,9 +93,11 @@ public class HomeViewImpl extends AbstractView implements HomePresenter.HomeView
         });
 
         List<String> sections = new ArrayList<String>();
+        sections.add("Deployment");
         sections.add("Process Definitions");
         sections.add("Process Instances");
         sections.add("Tasks List");
+        sections.add("Deployment List");
         cellList.render(sections);
     }
 
