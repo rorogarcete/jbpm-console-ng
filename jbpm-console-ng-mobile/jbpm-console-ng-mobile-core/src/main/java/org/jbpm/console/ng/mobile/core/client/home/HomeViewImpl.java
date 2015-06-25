@@ -93,11 +93,10 @@ public class HomeViewImpl extends AbstractView implements HomePresenter.HomeView
         });
 
         List<String> sections = new ArrayList<String>();
-        sections.add("Deployment");
+        sections.add("Deployment List");
         sections.add("Process Definitions");
         sections.add("Process Instances");
         sections.add("Tasks List");
-        sections.add("Deployment List");
         cellList.render(sections);
     }
 
