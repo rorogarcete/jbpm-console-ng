@@ -42,6 +42,10 @@ import org.jbpm.console.ng.mobile.pr.client.definition.details.ProcessDefinition
 import org.jbpm.console.ng.mobile.pr.client.definition.details.ProcessDefinitionDetailsPresenter.ProcessDefinitionDetailsView;
 import org.jbpm.console.ng.mobile.pr.client.definition.list.ProcessDefinitionsListPresenter;
 import org.jbpm.console.ng.mobile.pr.client.definition.list.ProcessDefinitionsListPresenter.ProcessDefinitionsListView;
+import org.jbpm.console.ng.mobile.pr.client.deployment.list.DeploymentUnitsListPresenter;
+import org.jbpm.console.ng.mobile.pr.client.deployment.list.DeploymentUnitsListPresenter.DeploymentUnitsListView;
+import org.jbpm.console.ng.mobile.pr.client.deployment.newunit.NewDeploymentPresenter;
+import org.jbpm.console.ng.mobile.pr.client.deployment.newunit.NewDeploymentPresenter.NewDeploymentView;
 import org.jbpm.console.ng.mobile.pr.client.instance.details.ProcessInstanceDetailsPresenter;
 import org.jbpm.console.ng.mobile.pr.client.instance.details.ProcessInstanceDetailsPresenter.ProcessInstanceDetailsView;
 import org.jbpm.console.ng.mobile.pr.client.instance.list.ProcessInstancesListPresenter;
@@ -77,6 +81,10 @@ public class MobileWorkBenchPresenter {
     
     private TaskDetailsView taskDetailsView;
     
+    private NewDeploymentView newDeploymentView;
+    
+    private DeploymentUnitsListView deploymentUnitsListView;
+    
     @Inject
     private HomePresenter homePresenter;
     
@@ -100,6 +108,12 @@ public class MobileWorkBenchPresenter {
     
     @Inject
     private NewTaskPresenter newTaskPresenter;
+    
+    @Inject
+    private NewDeploymentPresenter newDeploymentPresenter;
+    
+    @Inject
+    private DeploymentUnitsListPresenter deploymentUnitsListPresenter;
     
     private VerticalPanel widgets;
     
@@ -177,6 +191,14 @@ public class MobileWorkBenchPresenter {
         taskDetailsView = taskDetailsPresenter.getView();
         placeManager.addScreen("Task Details", taskDetailsView);
         taskDetailsView.init(taskDetailsPresenter);
+        
+        newDeploymentView = newDeploymentPresenter.getView();
+        placeManager.addScreen("Deployment", newDeploymentView);
+        newDeploymentView.init(newDeploymentPresenter);
+        
+        deploymentUnitsListView = deploymentUnitsListPresenter.getView();
+        placeManager.addScreen("Deployment List", deploymentUnitsListView);
+        deploymentUnitsListView.init(deploymentUnitsListPresenter);
 
         placeManager.goTo("Home", Animations.SLIDE);
     }
