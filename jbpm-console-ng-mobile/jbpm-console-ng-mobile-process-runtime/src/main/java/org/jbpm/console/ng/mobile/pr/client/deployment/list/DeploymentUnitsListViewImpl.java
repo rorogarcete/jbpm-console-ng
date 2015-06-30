@@ -21,6 +21,7 @@ import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
 import com.googlecode.mgwt.ui.client.widget.button.ImageButton;
+import com.googlecode.mgwt.ui.client.widget.image.ImageHolder;
 import com.googlecode.mgwt.ui.client.widget.list.celllist.BasicCell;
 import com.googlecode.mgwt.ui.client.widget.list.celllist.CellList;
 import com.googlecode.mgwt.ui.client.widget.list.celllist.CellSelectedEvent;
@@ -64,9 +65,8 @@ public class DeploymentUnitsListViewImpl extends AbstractView implements
     public DeploymentUnitsListViewImpl() {
         title.setTitle("Deployment List");
         
-        newDeployButton = new ImageButton();
+        newDeployButton = new ImageButton(ImageHolder.get().newItem());
         newDeployButton.setText("New Deploy");
-        //headerPanel.setRightWidget(newTaskButton);
         headerPanel.add(newDeployButton);
 
         pullPanel = new PullPanel();

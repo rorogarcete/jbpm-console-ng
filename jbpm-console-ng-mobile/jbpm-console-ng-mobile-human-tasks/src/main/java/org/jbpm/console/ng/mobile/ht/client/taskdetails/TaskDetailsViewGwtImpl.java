@@ -16,7 +16,6 @@
 package org.jbpm.console.ng.mobile.ht.client.taskdetails;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Label;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
@@ -24,13 +23,17 @@ import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.MGWT;
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
 import com.googlecode.mgwt.ui.client.widget.button.Button;
+import com.googlecode.mgwt.ui.client.widget.form.Form;
 import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
 import com.googlecode.mgwt.ui.client.widget.input.MDateBox;
 import com.googlecode.mgwt.ui.client.widget.input.MTextArea;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
 import com.googlecode.mgwt.ui.client.widget.input.listbox.MListBox;
-import com.googlecode.mgwt.ui.client.widget.list.widgetlist.WidgetList;
+import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
+import com.googlecode.mgwt.ui.client.widget.tabbar.ContactsTabBarButton;
+import com.googlecode.mgwt.ui.client.widget.tabbar.HistoryTabBarButton;
+import com.googlecode.mgwt.ui.client.widget.tabbar.MostViewedTabBarButton;
 import com.googlecode.mgwt.ui.client.widget.tabbar.TabBarButton;
 import com.googlecode.mgwt.ui.client.widget.tabbar.TabPanel;
 
@@ -41,6 +44,7 @@ import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.apache.tools.zip.AsiExtraField;
 import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
@@ -82,12 +86,11 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
         title.setTitle("Task Details");
 
         TabPanel tabPanel = new TabPanel();
-        //tabPanel.setDisplayTabBarOnTop(true);
         rootFlexPanel.add(tabPanel);
 
         // Work tab
         ScrollPanel workScrollPanel = new ScrollPanel();
-        FlowPanel workFlowPanel = new FlowPanel();
+        FlexPanel workFlowPanel = new FlexPanel();
 
         saveButton = new Button("Save");
         workFlowPanel.add(saveButton);
@@ -107,7 +110,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
         completeButton.setConfirm(true);
         workFlowPanel.add(completeButton);
 
-        TabBarButton workTabButton = new TabBarButton(null);
+        TabBarButton workTabButton = new HistoryTabBarButton();
         workTabButton.setText("Work");
 
         workScrollPanel.setWidget(workFlowPanel);
@@ -118,7 +121,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
         // Details tab
         ScrollPanel detailsScrollPanel = new ScrollPanel();
-        FlowPanel detailsFlowPanel = new FlowPanel();
+        FlexPanel detailsFlowPanel = new FlexPanel();
 
         for (String priority : priorities) {
             priorityListBox.addItem(priority);
@@ -126,7 +129,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
         statusTextBox.setReadOnly(true);
         userTextBox.setReadOnly(true);
 
-        WidgetList detailsForm = new WidgetList();
+        Form detailsForm = new Form();
         detailsForm.setRound(true);
         detailsForm.add(new FormEntry("Description", descriptionTextArea));
         detailsForm.add(new FormEntry("Status", statusTextBox));
@@ -139,7 +142,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
         processDefinitionIdTextBox.setReadOnly(true);
         processInstanceDetailsButton.setSmall(true);
 
-        WidgetList processContextForm = new WidgetList();
+        Form processContextForm = new Form();
         processContextForm.setRound(true);
         processContextForm.add(new FormEntry("Process Instance Id", processInstanceIdTextBox));
         processContextForm.add(new FormEntry("Process Definition Id", processDefinitionIdTextBox));
@@ -150,7 +153,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
         updateButton.setConfirm(true);
         detailsFlowPanel.add(updateButton);
 
-        TabBarButton detailsTabButton = new TabBarButton(null);
+        TabBarButton detailsTabButton = new MostViewedTabBarButton();
         detailsTabButton.setText("Details");
 
         detailsScrollPanel.setWidget(detailsFlowPanel);
@@ -161,9 +164,9 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
         // Assignments tab
         ScrollPanel assignmentsScrollPanel = new ScrollPanel();
-        FlowPanel assignmentsFlowPanel = new FlowPanel();
+        FlexPanel assignmentsFlowPanel = new FlexPanel();
 
-        WidgetList assignmentsForm = new WidgetList();
+        Form assignmentsForm = new Form();
         assignmentsForm.setRound(true);
         assignmentsForm.add(new FormEntry("Potential Owners", potentialOwnersLabel));
         assignmentsForm.add(new FormEntry("User or Group", delegateTextBox));
@@ -173,7 +176,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
         delegateButton.setConfirm(true);
         assignmentsFlowPanel.add(delegateButton);
 
-        TabBarButton assignmentsTabButton = new TabBarButton(null);
+        TabBarButton assignmentsTabButton = new ContactsTabBarButton();
         assignmentsTabButton.setText("Assignments");
 
         assignmentsScrollPanel.setWidget(assignmentsFlowPanel);

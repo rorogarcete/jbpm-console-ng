@@ -15,16 +15,15 @@
  */
 package org.jbpm.console.ng.mobile.ht.client.newtask;
 
-import com.google.gwt.core.shared.GWT;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
 import com.googlecode.mgwt.ui.client.widget.button.Button;
+import com.googlecode.mgwt.ui.client.widget.form.Form;
 import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
 import com.googlecode.mgwt.ui.client.widget.input.checkbox.MCheckBox;
 import com.googlecode.mgwt.ui.client.widget.input.listbox.MListBox;
-import com.googlecode.mgwt.ui.client.widget.list.widgetlist.WidgetList;
 import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 
@@ -63,8 +62,7 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
     protected User identity;
 
     public NewTaskViewGwtImpl() {
-        GWT.log("NEW NewTaskViewGwtImpl " + this.hashCode());
-
+    	
         title.setTitle("New Task");
 
         ScrollPanel scrollPanel = new ScrollPanel();
@@ -76,8 +74,8 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
             priorityListBox.addItem(priority);
         }
 
-        WidgetList newTaskForm = new WidgetList();
-        newTaskForm.setRound(true);
+        Form newTaskForm = new Form();
+        newTaskForm.setRound(true); 
         newTaskForm.add(new FormEntry("Task Name", taskNameTextBox));
         newTaskForm.add(new FormEntry("Auto Assign To Me", assignToMeCheckBox));
         //newTaskForm.add(new FormListEntry("Due On", dueOnDateBox));
@@ -88,7 +86,6 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
         addTaskButton = new Button("Add");
         addTaskButton.setConfirm(true);
         newTaskPanel.add(addTaskButton);
-
         scrollPanel.add(newTaskPanel);
     }
 
@@ -118,7 +115,7 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
                     assignToMeCheckBox.setValue(false);
                  //   dueOnDateBox.setText(new DateRenderer().render(new Date()));
 
-                    placeManager.goTo("Tasks List", Animations.SLIDE_REVERSE);
+                    placeManager.goTo("Tasks List", Animations.SLIDE);
             }
         });
 

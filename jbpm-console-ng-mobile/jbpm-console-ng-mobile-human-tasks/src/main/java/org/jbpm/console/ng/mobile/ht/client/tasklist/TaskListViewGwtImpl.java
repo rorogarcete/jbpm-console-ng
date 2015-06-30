@@ -22,6 +22,7 @@ import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
 import com.googlecode.mgwt.ui.client.widget.button.ImageButton;
+import com.googlecode.mgwt.ui.client.widget.image.ImageHolder;
 import com.googlecode.mgwt.ui.client.widget.list.celllist.BasicCell;
 import com.googlecode.mgwt.ui.client.widget.list.celllist.CellList;
 import com.googlecode.mgwt.ui.client.widget.list.celllist.CellSelectedEvent;
@@ -66,9 +67,9 @@ public class TaskListViewGwtImpl extends AbstractView implements TaskListPresent
     public TaskListViewGwtImpl() {
         title.setTitle("Task List");
 
-        newTaskButton = new ImageButton();
+        newTaskButton = new ImageButton(ImageHolder.get().newItem());
         newTaskButton.setText("New task");
-        //headerPanel.setRightWidget(newTaskButton);
+
         headerPanel.add(newTaskButton);
 
         pullPanel = new PullPanel();

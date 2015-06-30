@@ -15,9 +15,9 @@
  */
 package org.jbpm.console.ng.mobile.pr.client.definition.list;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
@@ -123,6 +123,8 @@ public class ProcessDefinitionsListViewImpl extends AbstractView implements
                 ProcessSummary process = definitionsList.get(event.getIndex());
                 params.put("processId", process.getId());
                 params.put("deploymentId", process.getDeploymentId());
+                GWT.log("processId: " +  process.getId());
+                GWT.log("deploymentId: " +  process.getDeploymentId());
                 placeManager.goTo("Process Definition Details", Animations.SLIDE, params);
             }
         });
