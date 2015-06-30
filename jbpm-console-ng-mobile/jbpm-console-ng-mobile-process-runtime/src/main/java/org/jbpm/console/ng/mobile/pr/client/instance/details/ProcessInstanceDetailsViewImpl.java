@@ -15,18 +15,17 @@
  */
 package org.jbpm.console.ng.mobile.pr.client.instance.details;
 
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
-
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.MGWT;
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
 import com.googlecode.mgwt.ui.client.widget.button.Button;
+import com.googlecode.mgwt.ui.client.widget.form.Form;
 import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
 import com.googlecode.mgwt.ui.client.widget.input.MTextArea;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
-import com.googlecode.mgwt.ui.client.widget.list.widgetlist.WidgetList;
+import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 
 import java.util.Map;
@@ -44,6 +43,7 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         ProcessInstanceDetailsPresenter.ProcessInstanceDetailsView {
 
     @Inject
+    
     private MGWTPlaceManager placeManager;
 
     private ProcessInstanceDetailsPresenter presenter;
@@ -66,7 +66,7 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         title.setTitle("Instance Details");
 
         ScrollPanel scrollPanel = new ScrollPanel();
-        FlowPanel flowPanel = new FlowPanel();
+        FlexPanel flexPanel = new FlexPanel();
 
         instanceIdText.setReadOnly(true);
         definitionIdText.setReadOnly(true);
@@ -77,7 +77,7 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         currentActivitiesText.setReadOnly(true);
         instanceLogText.setReadOnly(true);
 
-        WidgetList widgetList = new WidgetList();
+        Form widgetList = new Form();
         widgetList.setRound(true);
         widgetList.add(new FormEntry("Instance ID", instanceIdText));
         widgetList.add(new FormEntry("Definition ID", definitionIdText));
@@ -87,13 +87,13 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         widgetList.add(new FormEntry("Instance State", instanceStateText));
         widgetList.add(new FormEntry("Current Activities", currentActivitiesText));
         widgetList.add(new FormEntry("Instance Log", instanceLogText));
-        flowPanel.add(widgetList);
+        flexPanel.add(widgetList);
 
         abortButton = new Button("Abort");
         abortButton.setImportant(true);
-        flowPanel.add(abortButton);
+        flexPanel.add(abortButton);
 
-        scrollPanel.setWidget(flowPanel);
+        scrollPanel.setWidget(flexPanel);
         scrollPanel.setScrollingEnabledX(false);
         scrollPanel.setUsePos(MGWT.getOsDetection().isAndroid());
         rootFlexPanel.add(scrollPanel);
@@ -113,7 +113,7 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         abortButton.addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
-                presenter.abortProcessInstance(instanceId);
+                presenter.abortProcessInstance(instanceId); 
             }
         });
     }

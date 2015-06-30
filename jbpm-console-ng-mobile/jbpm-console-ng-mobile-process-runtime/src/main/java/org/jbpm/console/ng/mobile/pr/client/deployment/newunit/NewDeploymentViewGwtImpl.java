@@ -20,9 +20,11 @@ import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
 import com.googlecode.mgwt.ui.client.widget.button.Button;
+import com.googlecode.mgwt.ui.client.widget.form.Form;
 import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
 import com.googlecode.mgwt.ui.client.widget.list.widgetlist.WidgetList;
+import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 
 import java.util.Map;
@@ -58,10 +60,10 @@ public class NewDeploymentViewGwtImpl extends AbstractView implements NewDeploym
         ScrollPanel scrollPanel = new ScrollPanel();
         rootFlexPanel.add(scrollPanel);
 
-        FlowPanel newDeploymentPanel = new FlowPanel();
+        FlexPanel newDeploymentPanel = new FlexPanel();
 
-        WidgetList newDeploymentForm = new WidgetList();
-        //newTaskForm.setRound(true); 
+        Form newDeploymentForm = new Form();
+        newDeploymentForm.setRound(true); 
         newDeploymentForm.add(new FormEntry("Group", groupTextBox));
         newDeploymentForm.add(new FormEntry("Artifact", artifactTextBox));
         newDeploymentForm.add(new FormEntry("Version", versionTextBox));
