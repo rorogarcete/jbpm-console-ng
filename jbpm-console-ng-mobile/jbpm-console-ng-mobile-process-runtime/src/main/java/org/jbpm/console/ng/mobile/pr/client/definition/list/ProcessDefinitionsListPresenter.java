@@ -64,12 +64,12 @@ public class ProcessDefinitionsListPresenter {
 			currentFilter = new PortableQueryFilter(0, 100, false, "", "", true);
 		}
     	
-    	if(currentFilter.getParams() != null) {
-    		currentFilter.getParams().put("userId", identity.getIdentifier());
-    		currentFilter.setFilterParams("");
-    		currentFilter.getParams().put("filter", "");
-    		currentFilter.getParams().put("taskRole", "");
-    	}
+//    	if(currentFilter.getParams() != null) {
+//    		currentFilter.getParams().put("userId", identity.getIdentifier());
+//    		currentFilter.setFilterParams("");
+//    		currentFilter.getParams().put("filter", "");
+//    		currentFilter.getParams().put("taskRole", "");
+//    	}
    
     	processDefinitionService.call(new RemoteCallback<List<ProcessSummary>>() {
            @Override

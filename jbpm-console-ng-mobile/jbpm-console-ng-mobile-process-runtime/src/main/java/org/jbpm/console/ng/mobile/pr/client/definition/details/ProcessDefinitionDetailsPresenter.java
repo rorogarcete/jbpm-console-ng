@@ -85,7 +85,7 @@ public class ProcessDefinitionDetailsPresenter {
     	processDefService.call(new RemoteCallback<ProcessSummary>() {
             @Override
             public void callback(ProcessSummary process) {
-                view.getDefinitionIdText().setText(String.valueOf(process.getId()));
+            	view.getDefinitionIdText().setText(String.valueOf(process.getId()));
                 view.getDefinitionNameText().setText(process.getName());
                 view.getDeploymentText().setText(process.getDeploymentId());
             }
@@ -98,7 +98,6 @@ public class ProcessDefinitionDetailsPresenter {
                 return true;
             }
         }).getItem(new ProcessDefinitionKey(deploymentId, processId));
-        //getProcessById(deploymentId, processId); //.getItem(key); //getProcessById(deploymentId, processId);
 
         // Human Tasks
         dataServices.call(new RemoteCallback<List<TaskDefSummary>>() {
@@ -124,23 +123,32 @@ public class ProcessDefinitionDetailsPresenter {
                 return true;
             }
         }).getAllTasksDef(deploymentId, processId);
-        //.getAllTasksDef(processId);
 
         // Users and Groups
-        dataServices.call(new RemoteCallback<Map<String, String>>() {
+        dataServices.call(new RemoteCallback<Map<String, Collection<String>>>() {
             @Override
-            public void callback(Map<String, String> entities) {
+            public void callback(Map<String, Collection<String>> entities) {
                 if (entities.keySet().isEmpty()) {
                     view.getUsersAndGroupsText().setText("No user or group used in this process");
                 } else {
-                    StringBuilder usersAndGroupsText = new StringBuilder();
+                	StringBuffer usersAndGroupsText = null;
                     for (String key : entities.keySet()) {
-                        usersAndGroupsText.append(entities.get(key));
+                    	usersAndGroupsText = new StringBuffer();
+                        
+                    	Collection<String> entityNames = entities.get(key);
+                        if (entityNames != null) {
+							for (String entity : entityNames) {
+								usersAndGroupsText.append(entity);
+							}
+						}
+            
+                        usersAndGroupsText.append(usersAndGroupsText);
                         usersAndGroupsText.append(" - ");
                         usersAndGroupsText.append(key);
                         usersAndGroupsText.append('\n');
                     }
                     view.getUsersAndGroupsText().setText(usersAndGroupsText.toString());
+       
                 }
             }
         }, new ErrorCallback<Message>() {
@@ -152,7 +160,6 @@ public class ProcessDefinitionDetailsPresenter {
                 return true;
             }
         }).getAssociatedEntities(deploymentId, processId);
-        //.getAssociatedEntities(processId);
 
         // Subprocesses
         dataServices.call(new RemoteCallback<Collection<String>>() {
@@ -178,7 +185,6 @@ public class ProcessDefinitionDetailsPresenter {
                 return true;
             }
         }).getReusableSubProcesses(deploymentId, processId);
-        //.getReusableSubProcesses(processId);
 
         // Process Variables
         dataServices.call(new RemoteCallback<Map<String, String>>() {
@@ -206,7 +212,6 @@ public class ProcessDefinitionDetailsPresenter {
                 return true;
             }
         }).getRequiredInputData(deploymentId, processId);
-        //.getRequiredInputData(processId);
 
         // Services
         dataServices.call(new RemoteCallback<Map<String, String>>() {
@@ -234,7 +239,6 @@ public class ProcessDefinitionDetailsPresenter {
                 return true;
             }
         }).getServiceTasks(deploymentId, processId);
-        //.getServiceTasks(processId);
     }
 
     public void startProcess(final String deploymentId, final String processId) {
