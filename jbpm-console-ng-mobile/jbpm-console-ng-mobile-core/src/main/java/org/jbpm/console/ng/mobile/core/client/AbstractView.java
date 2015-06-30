@@ -45,30 +45,16 @@ public abstract class AbstractView implements IsWidget {
     public AbstractView() {
         rootFlexPanel = new RootFlexPanel();
         headerPanel = new HeaderPanel();
-
-       
-        //headerPanel.setCenterWidget(title);
+        title = new HeaderTitle();
 
         headerBackButton = new PreviousitemImageButton();
-        //headerBackButton.setBackButton(true);
-        //headerBackButton.setText("Back");
-        //headerPanel.setLeftWidget(headerBackButton);
-        //if(!MGWT.getOsDetection().isAndroid() && MGWT.getFormFactor().isPhone()) {
-  		  headerPanel.add(headerBackButton);
-  		//}
-        headerPanel.add(new FlexSpacer());
-        
-        title = new HeaderTitle();
-        headerPanel.add(title);
-        
-        headerPanel.add(new FlexSpacer());
-        
-        //if(!MGWT.getOsDetection().isAndroid() && MGWT.getFormFactor().isPhone()) {
-            headerPanel.add(new FixedSpacer());
-        //}
-        
-        //headerPanel.add(headerBackButton);
 
+  		headerPanel.add(headerBackButton);
+        headerPanel.add(new FlexSpacer());
+        headerPanel.add(title);
+        headerPanel.add(new FlexSpacer());
+        headerPanel.add(new FixedSpacer());
+        
         rootFlexPanel.add(headerPanel);
     }
 

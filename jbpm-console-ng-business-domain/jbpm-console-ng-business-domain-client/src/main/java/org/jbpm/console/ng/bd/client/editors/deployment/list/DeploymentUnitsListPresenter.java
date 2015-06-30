@@ -97,7 +97,7 @@ public class DeploymentUnitsListPresenter extends AbstractScreenListPresenter<KM
                 .getColumn().getDataStoreName() : "");
         currentFilter.setIsAscending((columnSortList.size() > 0) ? columnSortList.get(0)
                 .isAscending() : true);
-        deploymentManagerService.call(new RemoteCallback<PageResponse<KModuleDeploymentUnitSummary>>() {
+        deploymentManagerService.call(new RemoteCallback<PageResponse<	KModuleDeploymentUnitSummary>>() {
             @Override
             public void callback(PageResponse<KModuleDeploymentUnitSummary> response) {
                 updateDataOnCallback(response);
