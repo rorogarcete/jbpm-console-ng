@@ -63,7 +63,7 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
 
     public NewTaskViewGwtImpl() {
     	
-        title.setTitle("New Task");
+        title.setText("New Task");
 
         ScrollPanel scrollPanel = new ScrollPanel();
         rootFlexPanel.add(scrollPanel);

@@ -60,7 +60,7 @@ public class ProcessDefinitionsListViewImpl extends AbstractView implements
     private MGWTPlaceManager placeManager;
 
     public ProcessDefinitionsListViewImpl() {
-        title.setTitle("Process Definitions");
+        title.setText("Process Definitions");
 
         pullPanel = new PullPanel();
         pullArrowHeader = new PullArrowHeader();

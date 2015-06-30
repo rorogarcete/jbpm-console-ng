@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.mobile.core.client;
 
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.mgwt.dom.client.event.tap.HasTapHandlers;
@@ -40,12 +41,12 @@ public abstract class AbstractView implements IsWidget {
 
     protected final PreviousitemImageButton headerBackButton;
 
-    protected final HeaderTitle title;
+    protected final HTML title;
 
     public AbstractView() {
         rootFlexPanel = new RootFlexPanel();
         headerPanel = new HeaderPanel();
-        title = new HeaderTitle();
+        title = new HTML();
 
         headerBackButton = new PreviousitemImageButton();
 

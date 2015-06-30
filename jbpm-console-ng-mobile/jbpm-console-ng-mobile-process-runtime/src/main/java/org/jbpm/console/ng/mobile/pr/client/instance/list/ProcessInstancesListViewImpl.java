@@ -62,7 +62,7 @@ public class ProcessInstancesListViewImpl extends AbstractView implements
     private List<ProcessInstanceSummary> instancesList;
 
     public ProcessInstancesListViewImpl() {
-        title.setTitle("Process Instances");
+        title.setText("Process Instances");
 
         pullPanel = new PullPanel();
         pullArrowHeader = new PullArrowHeader();

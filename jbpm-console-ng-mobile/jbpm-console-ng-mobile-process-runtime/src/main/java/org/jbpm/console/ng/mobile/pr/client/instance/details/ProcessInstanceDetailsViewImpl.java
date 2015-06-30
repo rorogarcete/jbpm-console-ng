@@ -63,7 +63,7 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
     private final Button abortButton;
 
     public ProcessInstanceDetailsViewImpl() {
-        title.setTitle("Instance Details");
+        title.setText("Instance Details");
 
         ScrollPanel scrollPanel = new ScrollPanel();
         FlexPanel flexPanel = new FlexPanel();

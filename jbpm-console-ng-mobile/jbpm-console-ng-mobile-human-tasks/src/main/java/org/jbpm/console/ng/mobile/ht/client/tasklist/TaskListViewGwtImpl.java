@@ -65,7 +65,7 @@ public class TaskListViewGwtImpl extends AbstractView implements TaskListPresent
     private TaskListPresenter presenter;
 
     public TaskListViewGwtImpl() {
-        title.setTitle("Task List");
+        title.setText("Task List");
 
         newTaskButton = new ImageButton(ImageHolder.get().newItem());
         newTaskButton.setText("New task");

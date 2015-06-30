@@ -47,7 +47,7 @@ public class HomeViewImpl extends AbstractView implements HomePresenter.HomeView
     private MGWTPlaceManager placeManager;
 
     public HomeViewImpl() {
-        title.setTitle("jBPM Mobile");
+        title.setText("jBPM Mobile");
         headerBackButton.setVisible(false);
 
         cellList = new CellList<String>(new BasicCell<String>() {
