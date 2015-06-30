@@ -63,7 +63,7 @@ public class DeploymentUnitsListViewImpl extends AbstractView implements
     private MGWTPlaceManager placeManager;
 
     public DeploymentUnitsListViewImpl() {
-        title.setTitle("Deployment List");
+        title.setText("Deployment List");
         
         newDeployButton = new ImageButton(ImageHolder.get().newItem());
         newDeployButton.setText("New Deploy");

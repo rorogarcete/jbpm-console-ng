@@ -15,7 +15,6 @@
  */
 package org.jbpm.console.ng.mobile.pr.client.deployment.newunit;
 
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
@@ -23,7 +22,6 @@ import com.googlecode.mgwt.ui.client.widget.button.Button;
 import com.googlecode.mgwt.ui.client.widget.form.Form;
 import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
-import com.googlecode.mgwt.ui.client.widget.list.widgetlist.WidgetList;
 import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 
@@ -55,7 +53,7 @@ public class NewDeploymentViewGwtImpl extends AbstractView implements NewDeploym
 
     public NewDeploymentViewGwtImpl() {
 
-        title.setTitle("New Deployment");
+        title.setText("New Deployment");
 
         ScrollPanel scrollPanel = new ScrollPanel();
         rootFlexPanel.add(scrollPanel);

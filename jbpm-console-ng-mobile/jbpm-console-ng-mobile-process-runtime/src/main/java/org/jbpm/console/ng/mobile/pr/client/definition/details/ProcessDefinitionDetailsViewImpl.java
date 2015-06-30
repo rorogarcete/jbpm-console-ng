@@ -64,7 +64,7 @@ public class ProcessDefinitionDetailsViewImpl extends AbstractView implements
     private ProcessDefinitionDetailsPresenter presenter;
 
     public ProcessDefinitionDetailsViewImpl() {
-        title.setTitle("Definition Details");
+        title.setText("Definition Details");
 
         ScrollPanel scrollPanel = new ScrollPanel();
         FlexPanel flexPanel = new FlexPanel();

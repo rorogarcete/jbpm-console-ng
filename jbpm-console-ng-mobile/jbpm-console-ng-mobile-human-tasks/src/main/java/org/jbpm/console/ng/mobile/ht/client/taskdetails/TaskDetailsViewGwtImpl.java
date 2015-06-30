@@ -83,7 +83,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
     private MGWTPlaceManager placeManager;
 
     public TaskDetailsViewGwtImpl() {
-        title.setTitle("Task Details");
+        title.setText("Task Details");
 
         TabPanel tabPanel = new TabPanel();
         rootFlexPanel.add(tabPanel);
