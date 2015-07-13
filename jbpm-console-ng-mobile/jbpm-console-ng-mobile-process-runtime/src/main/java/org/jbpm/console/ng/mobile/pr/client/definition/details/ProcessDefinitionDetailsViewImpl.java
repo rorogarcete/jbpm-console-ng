@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.mobile.pr.client.definition.details;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
@@ -67,7 +68,7 @@ public class ProcessDefinitionDetailsViewImpl extends AbstractView implements
         title.setText("Definition Details");
 
         ScrollPanel scrollPanel = new ScrollPanel();
-        FlexPanel flexPanel = new FlexPanel();
+        FlowPanel flowPanel = new FlowPanel();
 
         definitionIdText.setReadOnly(true);
         definitionNameText.setReadOnly(true);
@@ -78,26 +79,26 @@ public class ProcessDefinitionDetailsViewImpl extends AbstractView implements
         processVariablesText.setReadOnly(true);
         servicesText.setReadOnly(true);
 
-        Form widgetList = new Form();
-        widgetList.setRound(true);
-        widgetList.add(new FormEntry("Definition Id", definitionIdText));
-        widgetList.add(new FormEntry("Definition Name", definitionNameText));
-        widgetList.add(new FormEntry("Deployment", deploymentText));
-        widgetList.add(new FormEntry("Human Tasks", humanTasksText));
-        widgetList.add(new FormEntry("Users and Groups", usersAndGroupsText));
-        widgetList.add(new FormEntry("Subprocesses", subprocessesText));
-        widgetList.add(new FormEntry("Process Variables", processVariablesText));
-        widgetList.add(new FormEntry("Services", servicesText));
-        flexPanel.add(widgetList);
+        Form form = new Form();
+        form.setRound(true);
+        form.add(new FormEntry("Definition Id", definitionIdText));
+        form.add(new FormEntry("Definition Name", definitionNameText));
+        form.add(new FormEntry("Deployment", deploymentText));
+        form.add(new FormEntry("Human Tasks", humanTasksText));
+        form.add(new FormEntry("Users and Groups", usersAndGroupsText));
+        form.add(new FormEntry("Subprocesses", subprocessesText));
+        form.add(new FormEntry("Process Variables", processVariablesText));
+        form.add(new FormEntry("Services", servicesText));
+        flowPanel.add(form);
 
         newInstanceButton = new Button("New Instance");
         newInstanceButton.setConfirm(true);
-        flexPanel.add(newInstanceButton);
+        flowPanel.add(newInstanceButton);
 
         instancesListButton = new Button("View Process Instances");
-        flexPanel.add(instancesListButton);
+        flowPanel.add(instancesListButton);
 
-        scrollPanel.setWidget(flexPanel);
+        scrollPanel.setWidget(flowPanel);
         scrollPanel.setScrollingEnabledX(false);
         scrollPanel.setUsePos(MGWT.getOsDetection().isAndroid());
         rootFlexPanel.add(scrollPanel);

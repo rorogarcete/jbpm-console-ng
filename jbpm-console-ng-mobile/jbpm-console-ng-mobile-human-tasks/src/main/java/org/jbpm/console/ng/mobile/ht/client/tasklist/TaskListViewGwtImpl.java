@@ -82,6 +82,11 @@ public class TaskListViewGwtImpl extends AbstractView implements TaskListPresent
             public String getDisplayString(TaskSummary model) {
                 return model.getId() + " : " + model.getName();
             }
+            
+            @Override
+			public boolean canBeSelected(TaskSummary model) {
+				return true;
+			}
         });
         pullPanel.add(cellList);
     }
@@ -131,8 +136,6 @@ public class TaskListViewGwtImpl extends AbstractView implements TaskListPresent
             public void onCellSelected(CellSelectedEvent event) {
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("taskId", tasksList.get(event.getIndex()).getId());
-                GWT.log("TaskId: "+ params.get("taskId"));
-                GWT.log("Evento: "+ event.getIndex());
                 placeManager.goTo("Task Details", Animations.SLIDE, params);
             }
         });

@@ -16,6 +16,7 @@
 package org.jbpm.console.ng.mobile.ht.client.taskdetails;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Label;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
@@ -90,7 +91,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
         // Work tab
         ScrollPanel workScrollPanel = new ScrollPanel();
-        FlexPanel workFlowPanel = new FlexPanel();
+        FlowPanel workFlowPanel = new FlowPanel();
 
         saveButton = new Button("Save");
         workFlowPanel.add(saveButton);
@@ -121,7 +122,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
         // Details tab
         ScrollPanel detailsScrollPanel = new ScrollPanel();
-        FlexPanel detailsFlowPanel = new FlexPanel();
+        FlowPanel detailsFlowPanel = new FlowPanel();
 
         for (String priority : priorities) {
             priorityListBox.addItem(priority);
@@ -164,7 +165,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
         // Assignments tab
         ScrollPanel assignmentsScrollPanel = new ScrollPanel();
-        FlexPanel assignmentsFlowPanel = new FlexPanel();
+        FlowPanel assignmentsFlowPanel = new FlowPanel();
 
         Form assignmentsForm = new Form();
         assignmentsForm.setRound(true);

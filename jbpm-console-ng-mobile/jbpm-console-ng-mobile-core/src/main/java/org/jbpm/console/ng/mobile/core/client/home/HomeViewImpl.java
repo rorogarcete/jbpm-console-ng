@@ -24,7 +24,6 @@ import javax.inject.Inject;
 
 import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
-
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
 import com.googlecode.mgwt.ui.client.widget.list.celllist.BasicCell;
 import com.googlecode.mgwt.ui.client.widget.list.celllist.CellList;
@@ -55,6 +54,11 @@ public class HomeViewImpl extends AbstractView implements HomePresenter.HomeView
             public String getDisplayString(String model) {
                 return model;
             }
+            
+            @Override
+			public boolean canBeSelected(String model) {
+				return true;
+			}
         });
         //cellList.setRound(true);
 

@@ -72,6 +72,11 @@ public class ProcessDefinitionsListViewImpl extends AbstractView implements
             public String getDisplayString(ProcessSummary model) {
                 return model.getName() + " : " + model.getVersion();
             }
+            
+            @Override
+			public boolean canBeSelected(ProcessSummary model) {
+				return true;
+			}
         });
         pullPanel.add(cellList);
 

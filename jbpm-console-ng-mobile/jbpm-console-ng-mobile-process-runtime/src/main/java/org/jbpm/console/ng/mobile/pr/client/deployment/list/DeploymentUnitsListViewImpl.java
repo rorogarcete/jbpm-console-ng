@@ -80,6 +80,11 @@ public class DeploymentUnitsListViewImpl extends AbstractView implements
                 return deploymentUnitSummary.getGroupId()+ " : " + deploymentUnitSummary.getArtifactId() 
                 		+ " : " + deploymentUnitSummary.getVersion();
             }
+            
+            @Override
+			public boolean canBeSelected(KModuleDeploymentUnitSummary deploymentUnitSummary) {
+				return true;
+			}
         });
         pullPanel.add(cellList);
 
