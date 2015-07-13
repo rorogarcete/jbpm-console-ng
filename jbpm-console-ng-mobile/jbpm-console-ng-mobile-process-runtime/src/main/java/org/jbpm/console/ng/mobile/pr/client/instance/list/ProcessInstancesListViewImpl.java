@@ -17,7 +17,6 @@ package org.jbpm.console.ng.mobile.pr.client.instance.list;
 
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
@@ -74,6 +73,11 @@ public class ProcessInstancesListViewImpl extends AbstractView implements
             public String getDisplayString(ProcessInstanceSummary model) {
                 return model.getId() + " : " + model.getProcessName();
             }
+            
+            @Override
+			public boolean canBeSelected(ProcessInstanceSummary model) {
+				return true;
+			}
         });
         pullPanel.add(cellList);
 

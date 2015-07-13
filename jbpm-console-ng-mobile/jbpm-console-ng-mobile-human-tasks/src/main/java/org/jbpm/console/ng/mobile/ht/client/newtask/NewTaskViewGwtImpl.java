@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.mobile.ht.client.newtask;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.widget.animation.Animations;
@@ -24,7 +25,6 @@ import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
 import com.googlecode.mgwt.ui.client.widget.input.checkbox.MCheckBox;
 import com.googlecode.mgwt.ui.client.widget.input.listbox.MListBox;
-import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
         ScrollPanel scrollPanel = new ScrollPanel();
         rootFlexPanel.add(scrollPanel);
 
-        FlexPanel newTaskPanel = new FlexPanel();
+        FlowPanel newTaskPanel = new FlowPanel();
 
         for (String priority : priorities) {
             priorityListBox.addItem(priority);

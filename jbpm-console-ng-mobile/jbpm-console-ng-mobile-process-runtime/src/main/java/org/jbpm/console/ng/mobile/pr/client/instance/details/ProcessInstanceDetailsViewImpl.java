@@ -15,6 +15,7 @@
  */
 package org.jbpm.console.ng.mobile.pr.client.instance.details;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
@@ -25,7 +26,6 @@ import com.googlecode.mgwt.ui.client.widget.form.Form;
 import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
 import com.googlecode.mgwt.ui.client.widget.input.MTextArea;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
-import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 
 import java.util.Map;
@@ -66,7 +66,7 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         title.setText("Instance Details");
 
         ScrollPanel scrollPanel = new ScrollPanel();
-        FlexPanel flexPanel = new FlexPanel();
+        FlowPanel flowPanel = new FlowPanel();
 
         instanceIdText.setReadOnly(true);
         definitionIdText.setReadOnly(true);
@@ -77,23 +77,23 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         currentActivitiesText.setReadOnly(true);
         instanceLogText.setReadOnly(true);
 
-        Form widgetList = new Form();
-        widgetList.setRound(true);
-        widgetList.add(new FormEntry("Instance ID", instanceIdText));
-        widgetList.add(new FormEntry("Definition ID", definitionIdText));
-        widgetList.add(new FormEntry("Definition Name", definitionNameText));
-        widgetList.add(new FormEntry("Definition Version", definitionVersionText));
-        widgetList.add(new FormEntry("Deployment", deploymentText));
-        widgetList.add(new FormEntry("Instance State", instanceStateText));
-        widgetList.add(new FormEntry("Current Activities", currentActivitiesText));
-        widgetList.add(new FormEntry("Instance Log", instanceLogText));
-        flexPanel.add(widgetList);
+        Form form = new Form();
+        form.setRound(true);
+        form.add(new FormEntry("Instance ID", instanceIdText));
+        form.add(new FormEntry("Definition ID", definitionIdText));
+        form.add(new FormEntry("Definition Name", definitionNameText));
+        form.add(new FormEntry("Definition Version", definitionVersionText));
+        form.add(new FormEntry("Deployment", deploymentText));
+        form.add(new FormEntry("Instance State", instanceStateText));
+        form.add(new FormEntry("Current Activities", currentActivitiesText));
+        form.add(new FormEntry("Instance Log", instanceLogText));
+        flowPanel.add(form);
 
         abortButton = new Button("Abort");
         abortButton.setImportant(true);
-        flexPanel.add(abortButton);
+        flowPanel.add(abortButton);
 
-        scrollPanel.setWidget(flexPanel);
+        scrollPanel.setWidget(flowPanel);
         scrollPanel.setScrollingEnabledX(false);
         scrollPanel.setUsePos(MGWT.getOsDetection().isAndroid());
         rootFlexPanel.add(scrollPanel);
