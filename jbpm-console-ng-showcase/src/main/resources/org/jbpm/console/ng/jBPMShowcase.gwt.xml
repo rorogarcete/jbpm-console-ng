@@ -64,7 +64,6 @@
   <inherits name="org.jbpm.console.ng.dm.JbpmConsoleNGDocumentsAPI"/>
   <inherits name="org.jbpm.console.ng.wi.JbpmConsoleNGWorkbenchIntegrationClient"/>
   <inherits name="org.jbpm.console.ng.df.JbpmConsoleNGDataFiltersClient"/>
-
   
   <!-- jBPM Mobile --> 
   <inherits name="com.googlecode.mgwt.MGWT"/>
