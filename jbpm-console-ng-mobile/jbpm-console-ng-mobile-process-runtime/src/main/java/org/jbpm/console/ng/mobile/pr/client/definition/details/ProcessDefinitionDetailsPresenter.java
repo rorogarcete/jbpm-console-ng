@@ -132,15 +132,14 @@ public class ProcessDefinitionDetailsPresenter {
                 if (entities.keySet().isEmpty()) {
                     view.setUsersAndGroupsText("No user or group used in this process");
                 } else {
-                	StringBuffer usersAndGroupsText = null;
-                    for (String key : entities.keySet()) {
-                    	usersAndGroupsText = new StringBuffer();
-                        
+                	StringBuilder usersAndGroupsText = new StringBuilder();
+                    for (String key : entities.keySet()) {    
                     	Collection<String> entityNames = entities.get(key);
                         if (entityNames != null) {
 							for (String entity : entityNames) {
 								usersAndGroupsText.append(entity);
-							}
+								usersAndGroupsText.append( " " + entity + " " );
+							}	
 						}
             
                         usersAndGroupsText.append(usersAndGroupsText);

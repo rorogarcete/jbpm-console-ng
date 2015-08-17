@@ -15,7 +15,6 @@
  */
 package org.jbpm.console.ng.mobile.ht.client.tasklist;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
