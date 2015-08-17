@@ -16,7 +16,6 @@
 package org.jbpm.console.ng.mobile.ht.client.taskdetails;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.HasText;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,11 +31,9 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
-import org.jbpm.console.ng.ht.model.TaskKey;
 import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.ht.service.TaskLifeCycleService;
 import org.jbpm.console.ng.ht.service.TaskOperationsService;
-import org.jbpm.console.ng.ht.service.TaskQueryService;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 
 /**
@@ -50,9 +47,9 @@ public class TaskDetailsPresenter {
 
         void refreshTask(TaskSummary task, boolean owned);
 
-        HasText getPotentialOwnersText();
+        void setPotentialOwnersText(String text);
 
-        HasText getDelegateTextBox();
+        void setDelegateTextBox(String text);
 
         void displayNotification(String title, String message);
 
@@ -101,9 +98,9 @@ public class TaskDetailsPresenter {
             @Override
             public void callback(Map<Long, List<String>> ids) {
                 if (ids.isEmpty()) {
-                    view.getPotentialOwnersText().setText("No potential owners");
+                    view.setPotentialOwnersText("No potential owners");
                 } else {
-                    view.getPotentialOwnersText().setText(ids.get(taskId).toString());
+                    view.setPotentialOwnersText(ids.get(taskId).toString());
                 }
             }
         }, new ErrorCallback<Message>() {
@@ -224,7 +221,7 @@ public class TaskDetailsPresenter {
             @Override
             public void callback(Void nothing) {
                 view.displayNotification("Success", "Task was succesfully delegated");
-                view.getDelegateTextBox().setText("");
+                view.setDelegateTextBox("");
                 refresh(taskId);
             }
         }, new ErrorCallback<Message>() {

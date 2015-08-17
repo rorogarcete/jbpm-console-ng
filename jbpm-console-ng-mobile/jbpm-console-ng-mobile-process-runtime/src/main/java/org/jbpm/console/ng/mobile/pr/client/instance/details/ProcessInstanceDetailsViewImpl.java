@@ -140,43 +140,43 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
     }
 
 	@Override
-	public HasText getInstanceIdText() {
-		return (HasText) instanceIdText;
+	public void setInstanceIdText(String text) {
+		instanceIdText.setText(text);
 	}
 
 	@Override
-	public HasText getDefinitionIdText() {
-		return (HasText) definitionIdText;
+	public void setDefinitionIdText(String text) {
+		 definitionIdText.setText(text);
 	}
 
 	@Override
-	public HasText getDefinitionNameText() {
-		return (HasText) definitionNameText;
+	public void setDefinitionNameText(String text) {
+		definitionNameText.setText(text);
 	}
 
 	@Override
-	public HasText getDefinitionVersionText() {
-		return (HasText) definitionVersionText;
+	public void setDefinitionVersionText(String text) {
+		 definitionVersionText.setText(text);
 	}
 
 	@Override
-	public HasText getDeploymentText() {
-		return (HasText) deploymentText;
+	public void setDeploymentText(String text) {
+		deploymentText.setText(text);
 	}
 
 	@Override
-	public HasText getInstanceStateText() {
-		return (HasText) instanceStateText;
+	public void setInstanceStateText(String text) {
+		instanceStateText.setText(text);
 	}
 
 	@Override
-	public HasText getCurrentActivitiesText() {
-		return (HasText) currentActivitiesText;
+	public void setCurrentActivitiesText(String text) {
+		currentActivitiesText.setText(text);
 	}
 
 	@Override
-	public HasText getInstanceLogText() {
-		return (HasText) instanceLogText;
+	public void setInstanceLogText(String text) {
+		instanceLogText.setText(text);
 	}
 
 }

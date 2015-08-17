@@ -26,7 +26,6 @@ import com.googlecode.mgwt.ui.client.widget.form.Form;
 import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
 import com.googlecode.mgwt.ui.client.widget.input.MTextArea;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
-import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 
 import java.util.HashMap;
@@ -143,44 +142,44 @@ public class ProcessDefinitionDetailsViewImpl extends AbstractView implements
         deploymentId = (String) params.get("deploymentId");
     }
 
-	@Override
-	public HasText getDefinitionIdText() {
-		return (HasText) definitionIdText;
-	}
+    @Override
+    public void setDefinitionIdText(String text) {
+         definitionIdText.setText(text);
+    }
 
-	@Override
-	public HasText getDefinitionNameText() {
-		return (HasText) definitionNameText;
-	}
+    @Override
+    public void setDefinitionNameText(String text) {
+         definitionNameText.setText(text);
+    }
 
-	@Override
-	public HasText getDeploymentText() {
-		return (HasText) deploymentText;
-	}
+    @Override
+    public void setDeploymentText(String text) {
+         deploymentText.setText(text);
+    }
 
-	@Override
-	public HasText getHumanTasksText() {
-		return (HasText) humanTasksText;
-	}
+    @Override
+    public void setHumanTasksText(String text) {
+         humanTasksText.setText(text);
+    }
 
-	@Override
-	public HasText getUsersAndGroupsText() {
-		return (HasText) usersAndGroupsText;
-	}
+    @Override
+    public void setUsersAndGroupsText(String text) {
+         usersAndGroupsText.setText(text);
+    }
 
-	@Override
-	public HasText getSubprocessesText() {
-		return (HasText) subprocessesText;
-	}
+    @Override
+    public void setSubprocessesText(String text) {
+         subprocessesText.setText(text);
+    }
 
-	@Override
-	public HasText getProcessVariablesText() {
-		return (HasText) processVariablesText;
-	}
+    @Override
+    public void setProcessVariablesText(String text) {
+         processVariablesText.setText(text);
+    }
 
-	@Override
-	public HasText getServicesText() {
-		return (HasText) servicesText;
-	}
+    @Override
+    public void setServicesText(String text) {
+         servicesText.setText(text);
+    }
 
 }

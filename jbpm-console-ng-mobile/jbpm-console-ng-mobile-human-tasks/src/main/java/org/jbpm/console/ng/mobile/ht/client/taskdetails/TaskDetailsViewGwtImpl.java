@@ -17,7 +17,6 @@ package org.jbpm.console.ng.mobile.ht.client.taskdetails;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Label;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
@@ -30,7 +29,6 @@ import com.googlecode.mgwt.ui.client.widget.input.MDateBox;
 import com.googlecode.mgwt.ui.client.widget.input.MTextArea;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
 import com.googlecode.mgwt.ui.client.widget.input.listbox.MListBox;
-import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 import com.googlecode.mgwt.ui.client.widget.tabbar.ContactsTabBarButton;
 import com.googlecode.mgwt.ui.client.widget.tabbar.HistoryTabBarButton;
@@ -45,7 +43,6 @@ import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.apache.tools.zip.AsiExtraField;
 import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
@@ -258,7 +255,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
     @Override
     public void refreshTask(TaskSummary task, boolean owned) {
         TaskStatus status = TaskStatus.valueOf(task.getStatus());
-        
+
         switch (status) {
             case Ready:
                 saveButton.setVisible(false);
@@ -340,13 +337,13 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
     }
 
     @Override
-    public HasText getPotentialOwnersText() {
-        return potentialOwnersLabel;
+    public void setPotentialOwnersText(String text) {
+        potentialOwnersLabel.setText(text);
     }
 
     @Override
-    public HasText getDelegateTextBox() {
-        return (HasText) delegateTextBox;
+    public void setDelegateTextBox(String text) {
+        delegateTextBox.setText(text);
     }
 
     public void setTaskId(long taskId) {
@@ -361,7 +358,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
     @Override
     public void setParameters(Map<String, Object> params) {
         taskId = (Long) params.get("taskId");
-        GWT.log("Tas kId setParamters : "+ params.get("taskId"));
+        GWT.log("Tas kId setParamters : " + params.get("taskId"));
     }
 
 }

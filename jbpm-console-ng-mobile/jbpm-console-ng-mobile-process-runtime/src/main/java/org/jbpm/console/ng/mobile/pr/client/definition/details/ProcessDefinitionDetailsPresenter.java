@@ -37,6 +37,7 @@ import org.jbpm.console.ng.pr.model.ProcessDefinitionKey;
 import org.jbpm.console.ng.pr.model.ProcessSummary;
 import org.jbpm.console.ng.pr.service.ProcessDefinitionService;
 
+
 /**
  *
  * @author livthomas
@@ -45,21 +46,21 @@ public class ProcessDefinitionDetailsPresenter {
 
     public interface ProcessDefinitionDetailsView extends MGWTUberView<ProcessDefinitionDetailsPresenter> {
 
-        HasText getDefinitionIdText();
+        void setDefinitionIdText(String text);
 
-        HasText getDefinitionNameText();
+        void setDefinitionNameText(String text);
 
-        HasText getDeploymentText();
+        void setDeploymentText(String text);
 
-        HasText getHumanTasksText();
+        void setHumanTasksText(String text);
 
-        HasText getUsersAndGroupsText();
+        void setUsersAndGroupsText(String text);
 
-        HasText getSubprocessesText();
+        void setSubprocessesText(String text);
 
-        HasText getProcessVariablesText();
+        void setProcessVariablesText(String text);
 
-        HasText getServicesText();
+        void setServicesText(String text);
 
         void displayNotification(String title, String message);
 
@@ -85,9 +86,9 @@ public class ProcessDefinitionDetailsPresenter {
     	processDefService.call(new RemoteCallback<ProcessSummary>() {
             @Override
             public void callback(ProcessSummary process) {
-            	view.getDefinitionIdText().setText(String.valueOf(process.getId()));
-                view.getDefinitionNameText().setText(process.getName());
-                view.getDeploymentText().setText(process.getDeploymentId());
+            	view.setDefinitionIdText(String.valueOf(process.getId()));
+                view.setDefinitionNameText(process.getName());
+                view.setDeploymentText(process.getDeploymentId());
             }
         }, new ErrorCallback<Message>() {
             @Override
@@ -104,14 +105,14 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public void callback(List<TaskDefSummary> tasks) {
                 if (tasks.isEmpty()) {
-                    view.getHumanTasksText().setText("No User Tasks defined in this process");
+                    view.setHumanTasksText("No User Tasks defined in this process");
                 } else {
                     StringBuilder humanTasksText = new StringBuilder();
                     for (TaskDefSummary task : tasks) {
                         humanTasksText.append(task.getName());
                         humanTasksText.append('\n');
                     }
-                    view.getHumanTasksText().setText(humanTasksText.toString());
+                    view.setHumanTasksText(humanTasksText.toString());
                 }
             }
         }, new ErrorCallback<Message>() {
@@ -129,7 +130,7 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public void callback(Map<String, Collection<String>> entities) {
                 if (entities.keySet().isEmpty()) {
-                    view.getUsersAndGroupsText().setText("No user or group used in this process");
+                    view.setUsersAndGroupsText("No user or group used in this process");
                 } else {
                 	StringBuffer usersAndGroupsText = null;
                     for (String key : entities.keySet()) {
@@ -147,7 +148,7 @@ public class ProcessDefinitionDetailsPresenter {
                         usersAndGroupsText.append(key);
                         usersAndGroupsText.append('\n');
                     }
-                    view.getUsersAndGroupsText().setText(usersAndGroupsText.toString());
+                    view.setUsersAndGroupsText(usersAndGroupsText.toString());
        
                 }
             }
@@ -166,14 +167,14 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public void callback(Collection<String> subprocesses) {
                 if (subprocesses.isEmpty()) {
-                    view.getSubprocessesText().setText("No subproceses required by this process");
+                    view.setSubprocessesText("No subproceses required by this process");
                 } else {
                     StringBuilder subprocessesText = new StringBuilder();
                     for (String key : subprocesses) {
                         subprocessesText.append(key);
                         subprocessesText.append('\n');
                     }
-                    view.getSubprocessesText().setText(subprocessesText.toString());
+                    view.setSubprocessesText(subprocessesText.toString());
                 }
             }
         }, new ErrorCallback<Message>() {
@@ -191,7 +192,7 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public void callback(Map<String, String> inputs) {
                 if (inputs.keySet().isEmpty()) {
-                    view.getProcessVariablesText().setText("No process variables defined for this process");
+                    view.setProcessVariablesText("No process variables defined for this process");
                 } else {
                     StringBuilder processVariablesText = new StringBuilder();
                     for (String key : inputs.keySet()) {
@@ -200,7 +201,7 @@ public class ProcessDefinitionDetailsPresenter {
                         processVariablesText.append(inputs.get(key));
                         processVariablesText.append('\n');
                     }
-                    view.getProcessVariablesText().setText(processVariablesText.toString());
+                    view.setProcessVariablesText(processVariablesText.toString());
                 }
             }
         }, new ErrorCallback<Message>() {
@@ -218,7 +219,7 @@ public class ProcessDefinitionDetailsPresenter {
             @Override
             public void callback(Map<String, String> services) {
                 if (services.keySet().isEmpty()) {
-                    view.getServicesText().setText("No services required for this process");
+                    view.setServicesText("No services required for this process");
                 } else {
                     StringBuilder servicesText = new StringBuilder();
                     for (String key : services.keySet()) {
@@ -227,7 +228,7 @@ public class ProcessDefinitionDetailsPresenter {
                         servicesText.append(services.get(key));
                         servicesText.append('\n');
                     }
-                    view.getServicesText().setText(servicesText.toString());
+                    view.setServicesText(servicesText.toString());
                 }
             }
         }, new ErrorCallback<Message>() {

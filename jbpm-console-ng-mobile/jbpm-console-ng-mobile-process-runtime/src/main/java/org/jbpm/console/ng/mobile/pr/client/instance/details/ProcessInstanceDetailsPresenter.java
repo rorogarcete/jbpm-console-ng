@@ -45,21 +45,21 @@ public class ProcessInstanceDetailsPresenter {
     
     public interface ProcessInstanceDetailsView extends MGWTUberView<ProcessInstanceDetailsPresenter> {
         
-        HasText getInstanceIdText();
+        void setInstanceIdText(String text);
         
-        HasText getDefinitionIdText();
+        void setDefinitionIdText(String text);
         
-        HasText getDefinitionNameText();
+        void setDefinitionNameText(String text);
         
-        HasText getDefinitionVersionText();
+        void setDefinitionVersionText(String text);
         
-        HasText getDeploymentText();
+        void setDeploymentText(String text);
         
-        HasText getInstanceStateText();
+        void setInstanceStateText(String text);
         
-        HasText getCurrentActivitiesText();
+        void setCurrentActivitiesText(String text);
         
-        HasText getInstanceLogText();
+        void setInstanceLogText(String text);
         
         Button getAbortButton();
         
@@ -87,8 +87,8 @@ public class ProcessInstanceDetailsPresenter {
         dataServices.call(new RemoteCallback<ProcessInstanceSummary>() {
             @Override
             public void callback(ProcessInstanceSummary process) {
-                view.getInstanceIdText().setText(String.valueOf((process.getId())));
-                view.getDeploymentText().setText(process.getDeploymentId());
+                view.setInstanceIdText(String.valueOf((process.getId())));
+                view.setDeploymentText(process.getDeploymentId());
                 
                 String status = "Unknown";
                 boolean showAbortButton = true;
@@ -114,7 +114,7 @@ public class ProcessInstanceDetailsPresenter {
                         break;
                 }
                 
-                view.getInstanceStateText().setText(status);
+                view.setInstanceStateText(status);
                 view.getAbortButton().setVisible(showAbortButton);
             }
         }, new ErrorCallback<Message>() {
@@ -131,9 +131,9 @@ public class ProcessInstanceDetailsPresenter {
         dataServices.call(new RemoteCallback<ProcessSummary>() {
             @Override
             public void callback(ProcessSummary process) {
-                view.getDefinitionIdText().setText(String.valueOf(process.getId()));
-                view.getDefinitionNameText().setText(process.getName());
-                view.getDefinitionVersionText().setText(process.getVersion());
+                view.setDefinitionIdText(String.valueOf(process.getId()));
+                view.setDefinitionNameText(process.getName());
+                view.setDefinitionVersionText(process.getVersion());
             }
         }, new ErrorCallback<Message>() {
             @Override
@@ -162,7 +162,7 @@ public class ProcessInstanceDetailsPresenter {
                     casb.append(nis.getType());
                     casb.append(" ) \n");
                 }
-                view.getCurrentActivitiesText().setText(casb.toString());
+                view.setCurrentActivitiesText(casb.toString());
             }
         }, new ErrorCallback<Message>() {
             @Override
@@ -194,7 +194,7 @@ public class ProcessInstanceDetailsPresenter {
                         ilsb.append('\n');
                     }
                 }
-                view.getInstanceLogText().setText(ilsb.toString());
+                view.setInstanceLogText(ilsb.toString());
             }
         }, new ErrorCallback<Message>() {
             @Override
