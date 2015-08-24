@@ -50,6 +50,9 @@ import org.jbpm.console.ng.mobile.pr.client.instance.details.ProcessInstanceDeta
 import org.jbpm.console.ng.mobile.pr.client.instance.details.ProcessInstanceDetailsPresenter.ProcessInstanceDetailsView;
 import org.jbpm.console.ng.mobile.pr.client.instance.list.ProcessInstancesListPresenter;
 import org.jbpm.console.ng.mobile.pr.client.instance.list.ProcessInstancesListPresenter.ProcessInstancesListView;
+import org.jbpm.console.ng.mobile.pr.client.variable.list.ProcessVariableListPresenter;
+import org.jbpm.console.ng.mobile.pr.client.variable.list.ProcessVariableListPresenter.ProcessVariableListView;
+import org.jbpm.console.ng.mobile.pr.client.variable.list.ProcessVariableListViewImpl;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -74,6 +77,8 @@ public class MobileWorkBenchPresenter {
     private ProcessInstancesListView processInstancesListView;
     
     private ProcessInstanceDetailsView processInstanceDetailsView;
+    
+    private ProcessVariableListView processVariableListView;
     
     private TaskListView taskListView;
     
@@ -114,6 +119,9 @@ public class MobileWorkBenchPresenter {
     
     @Inject
     private DeploymentUnitsListPresenter deploymentUnitsListPresenter;
+    
+    @Inject
+    private ProcessVariableListPresenter processVariableListPresenter;
     
     private VerticalPanel widgets;
     
@@ -199,6 +207,10 @@ public class MobileWorkBenchPresenter {
         deploymentUnitsListView = deploymentUnitsListPresenter.getView();
         placeManager.addScreen("Deployment List", deploymentUnitsListView);
         deploymentUnitsListView.init(deploymentUnitsListPresenter);
+        
+        processVariableListView = processVariableListPresenter.getView();
+        placeManager.addScreen("Process Variable List", processVariableListView);
+        processVariableListView.init(processVariableListPresenter);
 
         placeManager.goTo("Home", Animations.SLIDE);
     }
