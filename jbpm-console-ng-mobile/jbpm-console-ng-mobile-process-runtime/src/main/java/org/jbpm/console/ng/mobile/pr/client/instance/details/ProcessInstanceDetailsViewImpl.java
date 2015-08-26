@@ -27,6 +27,9 @@ import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
 import com.googlecode.mgwt.ui.client.widget.input.MTextArea;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
+import com.googlecode.mgwt.ui.client.widget.tabbar.HistoryTabBarButton;
+import com.googlecode.mgwt.ui.client.widget.tabbar.TabBarButton;
+import com.googlecode.mgwt.ui.client.widget.tabbar.TabPanel;
 
 import java.util.Map;
 
@@ -64,7 +67,11 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
 
     public ProcessInstanceDetailsViewImpl() {
         title.setText("Instance Details");
-
+        
+//        TabPanel tabPanel = new TabPanel();
+//        rootFlexPanel.add(tabPanel);
+      
+        //Details
         ScrollPanel scrollPanel = new ScrollPanel();
         FlowPanel flowPanel = new FlowPanel();
 
@@ -92,10 +99,17 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         abortButton = new Button("Abort");
         abortButton.setImportant(true);
         flowPanel.add(abortButton);
-
         scrollPanel.setWidget(flowPanel);
         scrollPanel.setScrollingEnabledX(false);
         scrollPanel.setUsePos(MGWT.getOsDetection().isAndroid());
+//        
+//        TabBarButton detailsTabButton = new HistoryTabBarButton();
+//        detailsTabButton.setText("Instance Details");
+//        
+//        tabPanel.add(detailsTabButton, scrollPanel);
+        
+        //Process Variables
+        
         rootFlexPanel.add(scrollPanel);
     }
 

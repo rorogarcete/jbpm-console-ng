@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.HasText;
 import com.googlecode.mgwt.ui.client.widget.button.Button;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -27,14 +28,12 @@ import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
-
 import org.jbpm.console.ng.bd.service.DataServiceEntryPoint;
 import org.jbpm.console.ng.bd.service.KieSessionEntryPoint;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 import org.jbpm.console.ng.pr.model.NodeInstanceSummary;
 import org.jbpm.console.ng.pr.model.ProcessInstanceSummary;
 import org.jbpm.console.ng.pr.model.ProcessSummary;
-
 import org.kie.api.runtime.process.ProcessInstance;
 
 /**
@@ -144,8 +143,6 @@ public class ProcessInstanceDetailsPresenter {
                 return true;
             }
         }).getProcessDesc(String.valueOf(instanceId), definitionId);
-        //getItem(new ProcessDefinitionKey(Long.parseLong(instanceId), definitionId);
-        //.getProcessDesc(definitionId);
 
         // Current Activities
         dataServices.call(new RemoteCallback<List<NodeInstanceSummary>>() {
@@ -205,6 +202,27 @@ public class ProcessInstanceDetailsPresenter {
                 return true;
             }
         }).getProcessInstanceHistory(instanceId);
+        
+        //Process Variable
+//        dataServices.call(new RemoteCallback<Map<String, String>>() {
+//            @Override
+//            public void callback(Map<String, String> processVariables) {
+//                //view.setDefinitionIdText(String.valueOf(process.getId()));
+//                //view.setDefinitionNameText(process.getName());
+//                //view.setDefinitionVersionText(process.getVersion());
+//            	GWT.log("Process Variables: "+ processVariables.toString());
+//            	
+//            }
+//        }, new ErrorCallback<Message>() {
+//            @Override
+//            public boolean error(Message message, Throwable throwable) {
+//                view.displayNotification("Unexpected error encountered", throwable.getMessage());
+//                GWT.log("Error definition id, name, version details: "+ message.toString());
+//                GWT.log("Error definition id, name, version details Throwable: "+ throwable.toString());
+//                return true;
+//            }
+//        }).getRequiredInputData(String.valueOf(instanceId), definitionId);
+        //getProcessDesc(String.valueOf(instanceId), definitionId);
     }
     
     public void abortProcessInstance(long instanceId) {

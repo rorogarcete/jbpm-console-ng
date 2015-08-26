@@ -78,7 +78,6 @@ public class ProcessVariableListPresenter {
             @Override
             public void callback(Long instanceId) {
                 view.displayNotification("Success", "New process instance with id = " + instanceId + " was started!");
-                //refresh(deploymentId, processId);
             }
         }, new ErrorCallback<Message>() {
             @Override

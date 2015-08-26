@@ -40,7 +40,6 @@ import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
 
 /**
- *
  * @author rorogarcete
  */
 public class ProcessVariableListViewImpl extends AbstractView implements 
@@ -53,15 +52,15 @@ public class ProcessVariableListViewImpl extends AbstractView implements
     
     private String deploymentId;
     private String processId;
-    private int count;
+    private int count=0;
     
     private Map<String, Object> params;
     private Map<String, String> processVariables;
-    private List<MTextBox> listInputs;
+    private List<MTextBox> inputTextBoxs;
     
     private Form form;
     private FlowPanel flowPanel;
-    private MTextBox values;
+    private MTextBox inputTextBox;
     private final Button startProcessInstance;
     
     public ProcessVariableListViewImpl() {
@@ -75,7 +74,6 @@ public class ProcessVariableListViewImpl extends AbstractView implements
         
         startProcessInstance = new Button("Start"); 
         startProcessInstance.setConfirm(true);
-        flowPanel.add(startProcessInstance);
         
         scrollPanel.setWidget(flowPanel);
         scrollPanel.setScrollingEnabledX(false);
@@ -86,30 +84,24 @@ public class ProcessVariableListViewImpl extends AbstractView implements
     @Override
     public void init(final ProcessVariableListPresenter p) {
         this.presenter = p;
-
-        count = 0;
-        listInputs = null;
-        processVariables = null;
-        params = null;
         
         startProcessInstance.addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
-            	GWT.log("Paso aqui 1");
-            	llenarCampos();
+            	setParams();
                 presenter.startProcess(deploymentId, processId, params);
-                GWT.log("VALORES " + deploymentId + " : " + processId + " : " + params.toString());
-                //placeManager.goTo("Process Instances List", Animations.SLIDE_REVERSE);
+            	reset();
             }
         });
-        
         getBackButton().addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
+            	reset();
                 placeManager.goTo("Home", Animations.SLIDE_REVERSE);
             }
-        }); 
+        });
         
+        reset();
         refresh();
     }
 
@@ -124,47 +116,50 @@ public class ProcessVariableListViewImpl extends AbstractView implements
     	processId = (String) params.get("processId");  
     }
     
-    private Map<String, Object> llenarCampos(){
-    	if (params == null) {
-			params = new HashMap<String, Object>();
-			
-			for (Iterator<Entry<String, String>> it = processVariables.entrySet().iterator(); it.hasNext();) {
-				Entry<String, String> entry = it.next();
-				GWT.log("ENTRO EN LLENAR CAMPOS");
-			
-				for (int i = 0; i < listInputs.size(); i++) {
-					params.put(entry.getKey(), listInputs.get(i).getText());
-					GWT.log("clave: " + entry.getKey() + " valor: " + listInputs.get(count).getText());
-				}
-			}
-		}
-    	GWT.log("Retorna el Map cargado..");
-    	processVariables.clear();
-    	listInputs.clear();
+    private void reset(){
+    	inputTextBoxs = null;
+        processVariables = null;
+        params = null;
+        inputTextBox = null;
+        count = 0;
     	form.clear();
+    }
+    
+    private Map<String, Object> setParams(){
+		params = new HashMap<String, Object>();
+		
+		int i = 0;
+		for (Iterator<Entry<String, String>> it = processVariables.entrySet().iterator(); it.hasNext();) {
+			Entry<String, String> entry = it.next();
+
+			if (i <= count) {
+				params.put(entry.getKey(), inputTextBoxs.get(i).getText());
+				GWT.log("clave: " + entry.getKey() + " - Indice: " + i + " valor: " + inputTextBoxs.get(i).getText());
+				i++;
+			}
+			
+		}
+
     	return params;	
     }
 
 	@Override
 	public void render(Map<String, String> pv) {
 		this.processVariables = pv;
-		listInputs = new ArrayList<MTextBox>();
+		inputTextBoxs = new ArrayList<MTextBox>();
 		
 		for (Iterator<Entry<String, String>> it = processVariables.entrySet().iterator(); it.hasNext();) {
 			Entry<String, String> entry = it.next();
-			GWT.log("Paso aqui 2");
-			values = new MTextBox();
-			form.add(new FormEntry(entry.getKey(), values));
-			listInputs.add(count, values);
+			inputTextBox = new MTextBox();
+			form.add(new FormEntry(entry.getKey(), inputTextBox));
+			inputTextBoxs.add(count, inputTextBox);
 			count++;
-			GWT.log("Paso en el render  :" + count);
-			//testes
-			String numero = entry.getKey();
-			String cadena = entry.getValue();
-			GWT.log("clave: " + numero + " valor: " + cadena);
+
+			GWT.log("clave: " + entry.getKey() + " valor: " + entry.getValue());
 		}
 		
 		flowPanel.add(form);
+		flowPanel.add(startProcessInstance);
 	}
 
 }
