@@ -29,6 +29,7 @@
   <inherits name="org.uberfire.UberfireClientAll"/>
   
   <inherits name="org.jbpm.console.ng.ht.JbpmConsoleNGHumanTasksAPI"/>
+  <inherits name="org.jbpm.console.ng.pr.JbpmConsoleNGProcessRuntimeAPI" />
 
   <!-- Specify the paths for translatable code -->
   <source path='client'/>
