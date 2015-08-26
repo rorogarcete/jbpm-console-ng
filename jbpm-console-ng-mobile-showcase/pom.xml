@@ -24,11 +24,11 @@
     <artifactId>jbpm-console-ng</artifactId>
     <version>6.4.0-SNAPSHOT</version>
   </parent>
-  <artifactId>jbpm-console-ng-showcase</artifactId>
+  <artifactId>jbpm-console-ng-mobile-showcase</artifactId>
   <packaging>war</packaging>
 
-  <name>jBPM Console NG - Showcase</name>
-  <description>jBPM Console NG - Showcase</description>
+  <name>jBPM Console NG - Mobile Showcase</name>
+  <description>jBPM Console NG - Mobile Showcase</description>
 
   <properties>
     <errai.version>${version.org.jboss.errai}</errai.version>
@@ -153,9 +153,7 @@
       <artifactId>jbpm-services-cdi</artifactId>
     </dependency>
 
-
     <!-- jBPM Console Panels -->
-
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-console-ng-bpm-home-client</artifactId>
@@ -214,7 +212,6 @@
       <artifactId>jbpm-console-ng-process-runtime-admin-backend</artifactId>
     </dependency>
 
-
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-console-ng-human-tasks-admin-client</artifactId>
@@ -256,7 +253,6 @@
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-console-ng-business-domain-backend</artifactId>
     </dependency>
-
 
     <dependency>
       <groupId>org.jbpm</groupId>
@@ -346,17 +342,17 @@
     <!-- jBPM Mobile -->
 	<dependency>
        	<groupId>org.jbpm</groupId>
-       	<artifactId>jbpm-console-ng-mobile-core</artifactId>
+       	<artifactId>jbpm-console-ng-mobile-core-client</artifactId>
        	<scope>provided</scope>
 	</dependency>
     <dependency>
      	<groupId>org.jbpm</groupId>
-        <artifactId>jbpm-console-ng-mobile-human-tasks</artifactId>
+        <artifactId>jbpm-console-ng-mobile-human-tasks-client</artifactId>
         <scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>org.jbpm</groupId>
-    	<artifactId>jbpm-console-ng-mobile-process-runtime</artifactId>
+    	<artifactId>jbpm-console-ng-mobile-process-runtime-client</artifactId>
     	<scope>provided</scope>
     </dependency>
     <dependency>
@@ -588,20 +584,22 @@
     </dependency>
 
     <!-- Guvnor -->
-  
     <dependency>
       <groupId>org.guvnor</groupId>
       <artifactId>guvnor-asset-mgmt-client</artifactId>
       <scope>provided</scope>
     </dependency>
+    
     <dependency>
       <groupId>org.guvnor</groupId>
       <artifactId>guvnor-asset-mgmt-backend</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.guvnor</groupId>
       <artifactId>guvnor-services-api</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.guvnor</groupId>
       <artifactId>guvnor-m2repo-editor-api</artifactId>
@@ -652,14 +650,12 @@
       <scope>provided</scope>
     </dependency>
  
-
     <!-- Kie Workbench -->
     <dependency>
       <groupId>org.kie.workbench.screens</groupId>
       <artifactId>kie-wb-common-project-explorer-backend</artifactId>
     </dependency>
    
-
     <dependency>
       <groupId>org.kie.workbench.screens</groupId>
       <artifactId>kie-wb-common-project-explorer-client</artifactId>
@@ -715,7 +711,6 @@
         <scope>provided</scope>
     </dependency>
     
-
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-console-ng-dashboard-backend</artifactId>
@@ -799,8 +794,6 @@
       <scope>provided</scope>
     </dependency>
     
-
-
     <dependency>
       <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-server-all</artifactId>
@@ -922,7 +915,6 @@
             <compileSourcesArtifact>org.guvnor:guvnor-message-console-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.guvnor:guvnor-message-console-client</compileSourcesArtifact>
         
-
             <!-- Common dependencies -->
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-project-editor-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-project-editor-client</compileSourcesArtifact>
@@ -961,7 +953,6 @@
             <compileSourcesArtifact>org.uberfire:uberfire-widgets-properties-editor-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-widgets-properties-editor-client</compileSourcesArtifact>
             
-
             <!-- UberFire -->
             <compileSourcesArtifact>org.uberfire:uberfire-commons</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-nio2-model</compileSourcesArtifact>
@@ -1018,17 +1009,15 @@
             
             <compileSourcesArtifact>org.dashbuilder:dashbuilder-renderer-default</compileSourcesArtifact>
 
-
-
             <!-- jBPM Designer -->
             <compileSourcesArtifact>org.jbpm:jbpm-designer-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.jbpm:jbpm-designer-client</compileSourcesArtifact>
             
             
             <!-- jBPM Mobile --> 
-            <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-core</compileSourcesArtifact>
-            <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-human-tasks</compileSourcesArtifact>
-            <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-process-runtime</compileSourcesArtifact>
+            <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-core-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-human-tasks-client</compileSourcesArtifact>
+            <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-process-runtime-client</compileSourcesArtifact>
 
             <!-- jBPM Dashboard integration-->
             <compileSourcesArtifact>org.jbpm:jbpm-console-ng-dashboard-api</compileSourcesArtifact>
