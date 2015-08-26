@@ -76,6 +76,11 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
     private final Button delegateButton;
 
     private TaskDetailsPresenter presenter;
+    
+    private Long instanceId;
+    private String definitionId; 
+    private String deploymentId;
+    private String taskName;
 
     @Inject
     private MGWTPlaceManager placeManager;
@@ -228,7 +233,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
         completeButton.addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
-                presenter.completeTask(taskId);
+            	completeTaks();
             }
         });
 
@@ -250,6 +255,19 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
                 presenter.delegateTask(taskId, delegateTextBox.getText());
             }
         });
+    }
+    
+    public void completeTaks(){
+    	if (instanceId != -1 && deploymentId != null) {
+    		Map<String, Object> params = new HashMap<String, Object>();
+            params.put("processId", definitionId);
+            params.put("deploymentId", deploymentId);
+            params.put("taskName", taskName);
+            params.put("taskId", taskId);
+            placeManager.goTo("Task Input Mapping List", Animations.SLIDE_REVERSE, params);
+		}else {
+			presenter.completeTask(taskId);
+		}
     }
 
     @Override
@@ -286,6 +304,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
                 completeButton.setVisible(false);
         }
 
+        taskName = task.getName();
         descriptionTextArea.setText(task.getDescription());
         statusTextBox.setText(task.getStatus());
         //dueOnDateBox.setText(new DateRenderer().render(task.getExpirationTime()));
@@ -304,8 +323,9 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
             updateButton.setVisible(true);
         }
 
-        final Long instanceId = task.getProcessInstanceId();
-        final String definitionId = task.getProcessId();
+        instanceId = task.getProcessInstanceId();
+        definitionId = task.getProcessId();
+        deploymentId = task.getDeploymentId();
         if (instanceId != -1 && definitionId != null) {
             processInstanceIdTextBox.setText(Long.toString(instanceId));
             processDefinitionIdTextBox.setText(definitionId);
@@ -358,7 +378,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
     @Override
     public void setParameters(Map<String, Object> params) {
         taskId = (Long) params.get("taskId");
-        GWT.log("Tas kId setParamters : " + params.get("taskId"));
+        GWT.log("TaskId setParamters : " + params.get("taskId"));
     }
 
 }
