@@ -16,7 +16,6 @@
 package org.jbpm.console.ng.mobile.pr.client.definition.details;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasText;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.MGWT;
@@ -117,7 +116,11 @@ public class ProcessDefinitionDetailsViewImpl extends AbstractView implements
         newInstanceButton.addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
-                presenter.startProcess(deploymentId, processId);
+                //presenter.startProcess(deploymentId, processId);
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("deploymentId", deploymentId);
+                params.put("processId", processId);
+                placeManager.goTo("Process Variable List", Animations.SLIDE_REVERSE, params);
             }
         });
 
