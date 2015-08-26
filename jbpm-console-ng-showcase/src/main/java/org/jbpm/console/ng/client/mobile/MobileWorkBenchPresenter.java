@@ -36,6 +36,8 @@ import org.jbpm.console.ng.mobile.ht.client.newtask.NewTaskPresenter;
 import org.jbpm.console.ng.mobile.ht.client.newtask.NewTaskPresenter.NewTaskView;
 import org.jbpm.console.ng.mobile.ht.client.taskdetails.TaskDetailsPresenter;
 import org.jbpm.console.ng.mobile.ht.client.taskdetails.TaskDetailsPresenter.TaskDetailsView;
+import org.jbpm.console.ng.mobile.ht.client.taskinputmappings.TaskInputMappingListPresenter;
+import org.jbpm.console.ng.mobile.ht.client.taskinputmappings.TaskInputMappingListPresenter.TaskInputMappingListView;
 import org.jbpm.console.ng.mobile.ht.client.tasklist.TaskListPresenter;
 import org.jbpm.console.ng.mobile.ht.client.tasklist.TaskListPresenter.TaskListView;
 import org.jbpm.console.ng.mobile.pr.client.definition.details.ProcessDefinitionDetailsPresenter;
@@ -52,7 +54,6 @@ import org.jbpm.console.ng.mobile.pr.client.instance.list.ProcessInstancesListPr
 import org.jbpm.console.ng.mobile.pr.client.instance.list.ProcessInstancesListPresenter.ProcessInstancesListView;
 import org.jbpm.console.ng.mobile.pr.client.variable.list.ProcessVariableListPresenter;
 import org.jbpm.console.ng.mobile.pr.client.variable.list.ProcessVariableListPresenter.ProcessVariableListView;
-import org.jbpm.console.ng.mobile.pr.client.variable.list.ProcessVariableListViewImpl;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -86,6 +87,8 @@ public class MobileWorkBenchPresenter {
     
     private TaskDetailsView taskDetailsView;
     
+    private TaskInputMappingListView taskInputMappingListView;
+    
     private NewDeploymentView newDeploymentView;
     
     private DeploymentUnitsListView deploymentUnitsListView;
@@ -110,6 +113,9 @@ public class MobileWorkBenchPresenter {
     
     @Inject
     private TaskDetailsPresenter taskDetailsPresenter;
+    
+    @Inject
+    private TaskInputMappingListPresenter taskInputMappingListPresenter;
     
     @Inject
     private NewTaskPresenter newTaskPresenter;
@@ -211,6 +217,10 @@ public class MobileWorkBenchPresenter {
         processVariableListView = processVariableListPresenter.getView();
         placeManager.addScreen("Process Variable List", processVariableListView);
         processVariableListView.init(processVariableListPresenter);
+        
+        taskInputMappingListView = taskInputMappingListPresenter.getView();
+        placeManager.addScreen("Task Input Mapping List", taskInputMappingListView);
+        taskInputMappingListView.init(taskInputMappingListPresenter);
 
         placeManager.goTo("Home", Animations.SLIDE);
     }
