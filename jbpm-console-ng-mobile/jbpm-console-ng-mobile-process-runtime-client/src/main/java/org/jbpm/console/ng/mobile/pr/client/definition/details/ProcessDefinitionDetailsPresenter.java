@@ -16,7 +16,6 @@
 package org.jbpm.console.ng.mobile.pr.client.definition.details;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.HasText;
 
 import java.util.Collection;
 import java.util.List;
@@ -72,8 +71,8 @@ public class ProcessDefinitionDetailsPresenter {
     @Inject
     private Caller<ProcessDefinitionService> processDefService;
 
-    @Inject
-    private Caller<KieSessionEntryPoint> sessionServices;
+//    @Inject
+//    private Caller<KieSessionEntryPoint> sessionServices;
 
     @Inject
     private ProcessDefinitionDetailsView view;
@@ -241,22 +240,22 @@ public class ProcessDefinitionDetailsPresenter {
         }).getServiceTasks(deploymentId, processId);
     }
 
-    public void startProcess(final String deploymentId, final String processId) {
-        sessionServices.call(new RemoteCallback<Long>() {
-            @Override
-            public void callback(Long instanceId) {
-                view.displayNotification("Success", "New process instance with id = " + instanceId + " was started!");
-                refresh(deploymentId, processId);
-            }
-        }, new ErrorCallback<Message>() {
-            @Override
-            public boolean error(Message message, Throwable throwable) {
-                view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error start process: "+ message.toString());
-                GWT.log("Error start process Throwable: "+ throwable.toString());
-                return true;
-            }
-        }).startProcess(deploymentId, processId);
-    }
+//    public void startProcess(final String deploymentId, final String processId) {
+//        sessionServices.call(new RemoteCallback<Long>() {
+//            @Override
+//            public void callback(Long instanceId) {
+//                view.displayNotification("Success", "New process instance with id = " + instanceId + " was started!");
+//                refresh(deploymentId, processId);
+//            }
+//        }, new ErrorCallback<Message>() {
+//            @Override
+//            public boolean error(Message message, Throwable throwable) {
+//                view.displayNotification("Unexpected error encountered", throwable.getMessage());
+//                GWT.log("Error start process: "+ message.toString());
+//                GWT.log("Error start process Throwable: "+ throwable.toString());
+//                return true;
+//            }
+//        }).startProcess(deploymentId, processId);
+//    }
 
 }

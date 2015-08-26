@@ -5,18 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jbpm</groupId>
-        <artifactId>jbpm-console-ng-mobile</artifactId>
+        <artifactId>jbpm-console-ng-mobile-client</artifactId>
         <version>6.4.0-SNAPSHOT</version>
     </parent>
   
     <groupId>org.jbpm</groupId>
-    <artifactId>jbpm-console-ng-mobile-process-runtime</artifactId>
+    <artifactId>jbpm-console-ng-mobile-process-runtime-client</artifactId>
     <name>jBPM Console NG - Mobile UI :: Process Runtime</name>
   
     <dependencies>
         <dependency>
             <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-console-ng-mobile-core</artifactId>
+            <artifactId>jbpm-console-ng-mobile-core-client</artifactId>
             <type>jar</type>
         </dependency>
         <!-- Errai UI -->
