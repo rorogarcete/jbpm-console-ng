@@ -24,7 +24,7 @@
     <version>6.4.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>jbpm-console-ng-mobile</artifactId>
+  <artifactId>jbpm-console-ng-mobile-client</artifactId>
   <packaging>pom</packaging>
 
   <name>jBPM Console NG - Mobile UI</name>
@@ -32,8 +32,8 @@
           <mgwt.version>2.0.0</mgwt.version>
   </properties>
   <modules>
-    <module>jbpm-console-ng-mobile-core</module>
-    <module>jbpm-console-ng-mobile-human-tasks</module>
-    <module>jbpm-console-ng-mobile-process-runtime</module>
+    <module>jbpm-console-ng-mobile-core-client</module>
+    <module>jbpm-console-ng-mobile-human-tasks-client</module>
+    <module>jbpm-console-ng-mobile-process-runtime-client</module>
   </modules>
 </project>
