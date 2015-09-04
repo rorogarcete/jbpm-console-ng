@@ -15,89 +15,70 @@
  */
 package org.jbpm.console.ng.client;
 
-import java.util.List;
 import javax.inject.Inject;
 
 import com.google.gwt.animation.client.Animation;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
-import java.util.Map;
-import org.guvnor.common.services.shared.config.AppConfigService;
-import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.RemoteCallback;
+
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
-import org.jboss.errai.security.shared.api.identity.User;
-import org.jbpm.console.ng.client.i18n.Constants;
-import org.guvnor.common.services.shared.security.KieWorkbenchACL;
-import org.guvnor.common.services.shared.security.KieWorkbenchPolicy;
-import org.kie.workbench.common.services.shared.preferences.ApplicationPreferences;
-import org.guvnor.common.services.shared.security.KieWorkbenchSecurityService;
-import org.jbpm.console.ng.ga.forms.service.PlaceManagerActivityService;
-import org.uberfire.client.mvp.ActivityBeansCache;
+
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.workbench.widgets.menu.WorkbenchMenuBarPresenter;
 
 @EntryPoint
 public class ShowcaseEntryPoint {
 
-    private Constants constants = GWT.create( Constants.class );
-
     @Inject
     private PlaceManager placeManager;
 
-    @Inject
-    private WorkbenchMenuBarPresenter menubar;
+//    @Inject
+//    private WorkbenchMenuBarPresenter menubar;
 
-    @Inject
-    private SyncBeanManager iocManager;
+//    @Inject
+//    private SyncBeanManager iocManager;
 
-    @Inject
-    public User identity;
+//    @Inject
+//    public User identity;
 
-    @Inject
-    private KieWorkbenchACL kieACL;
+//    @Inject
+//    private KieWorkbenchACL kieACL;
 
-    @Inject
-    private Caller<KieWorkbenchSecurityService> kieSecurityService;
+//    @Inject
+//    private Caller<KieWorkbenchSecurityService> kieSecurityService;
+//
+//    
 
-    
+//    @Inject
+//    private ActivityBeansCache activityBeansCache;
 
-    @Inject
-    private ActivityBeansCache activityBeansCache;
-
-    @Inject
-    private Caller<AppConfigService> appConfigService;
+//    @Inject
+//    private Caller<AppConfigService> appConfigService;
 
     @AfterInitialization
     public void startApp() {
-        kieSecurityService.call( new RemoteCallback<String>() {
-            public void callback( final String str ) {
-                KieWorkbenchPolicy policy = new KieWorkbenchPolicy( str );
-                kieACL.activatePolicy( policy );
-                loadPreferences();
-                hideLoadingPopup();
-            }
-        } ).loadPolicy();
-
+//        kieSecurityService.call( new RemoteCallback<String>() {
+//            public void callback( final String str ) {
+//                KieWorkbenchPolicy policy = new KieWorkbenchPolicy( str );
+//                kieACL.activatePolicy( policy );
+//                loadPreferences();
+//                hideLoadingPopup();
+//            }
+//        } ).loadPolicy();
+        
+        hideLoadingPopup();
      
     }
 
-    private void loadPreferences() {
-        appConfigService.call( new RemoteCallback<Map<String, String>>() {
-            @Override
-            public void callback( final Map<String, String> response ) {
-                ApplicationPreferences.setUp( response );
-            }
-        } ).loadPreferences();
-    }
-
-    
-
-    
+//    private void loadPreferences() {
+//        appConfigService.call( new RemoteCallback<Map<String, String>>() {
+//            @Override
+//            public void callback( final Map<String, String> response ) {
+//                ApplicationPreferences.setUp( response );
+//            }
+//        } ).loadPreferences();
+//    }
 
     // Fade out the "Loading application" pop-up
 

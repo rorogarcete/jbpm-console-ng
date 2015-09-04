@@ -27,6 +27,7 @@ import org.guvnor.structure.server.config.ConfigGroup;
 import org.guvnor.structure.server.config.ConfigType;
 import org.guvnor.structure.server.config.ConfigurationFactory;
 import org.guvnor.structure.server.config.ConfigurationService;
+
 import org.jbpm.console.ng.bd.service.AdministrationService;
 
 import org.uberfire.commons.services.cdi.ApplicationStarted;

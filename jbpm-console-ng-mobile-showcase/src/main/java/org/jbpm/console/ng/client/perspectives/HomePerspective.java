@@ -21,7 +21,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
+
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
+
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
@@ -32,24 +34,12 @@ import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 @ApplicationScoped
 @WorkbenchPerspective(identifier = "Home Perspective", isDefault = true)
 public class HomePerspective extends FlowPanel {
-
-//    @Inject
-//    @WorkbenchPanel(parts = "Home Screen")
-//    FlowPanel homeScreen;
-//
-//    @PostConstruct
-//    private void init() {
-//        Layouts.setToFillParent( homeScreen );
-//        add( homeScreen );
-//    }
     
     @Perspective
     public PerspectiveDefinition getPerspective() {
-//        final PerspectiveDefinition p = new PerspectiveDefinitionImpl(PanelType.ROOT_STATIC);
         final PerspectiveDefinition p = new PerspectiveDefinitionImpl();
         p.setName("Home Perspective");
         p.getRoot().addPart(new PartDefinitionImpl(new DefaultPlaceRequest("MobilePresenter")));
-        //p.setTransient(true);
         return p;
     }
 }

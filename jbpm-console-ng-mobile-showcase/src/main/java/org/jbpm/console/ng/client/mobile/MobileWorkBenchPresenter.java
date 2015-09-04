@@ -54,6 +54,7 @@ import org.jbpm.console.ng.mobile.pr.client.instance.list.ProcessInstancesListPr
 import org.jbpm.console.ng.mobile.pr.client.instance.list.ProcessInstancesListPresenter.ProcessInstancesListView;
 import org.jbpm.console.ng.mobile.pr.client.variable.list.ProcessVariableListPresenter;
 import org.jbpm.console.ng.mobile.pr.client.variable.list.ProcessVariableListPresenter.ProcessVariableListView;
+
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
