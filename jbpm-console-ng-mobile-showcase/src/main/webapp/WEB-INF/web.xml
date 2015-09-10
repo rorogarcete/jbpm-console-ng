@@ -397,10 +397,10 @@ profile in pom.xml to use that. -->
 <!--     </init-param> -->
 <!--   </servlet> -->
 
-<!--   <servlet-mapping> -->
-<!--     <servlet-name>Controller</servlet-name> -->
-<!--     <url-pattern>/org.jbpm.console.ng.jBPMShowcase/Controller</url-pattern> -->
-<!--   </servlet-mapping> -->
+  <servlet-mapping>
+    <servlet-name>Controller</servlet-name>
+    <url-pattern>/org.jbpm.console.ng.jBPMShowcase/Controller</url-pattern>
+  </servlet-mapping>
   <!-- end form-modeler component -->
 
   <!-- the number within the session-timout element must be expressed in

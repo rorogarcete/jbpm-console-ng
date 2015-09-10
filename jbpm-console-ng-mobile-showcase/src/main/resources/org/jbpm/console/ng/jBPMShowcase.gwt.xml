@@ -7,7 +7,7 @@
 <!--   <inherits name="org.jboss.errai.ui.UI"/> -->
 
   <!-- Uberfire dependencies -->
-<!--   <inherits name="org.uberfire.UberfireClientAll"/> -->
+  <inherits name="org.uberfire.UberfireClientAll"/>
 <!--   <inherits name="org.uberfire.client.views.Bootstrap2"/> -->
 
   <!-- Uberfire Extensions - Core Widgets -->
@@ -17,7 +17,7 @@
 <!--   <inherits name="org.drools.workbench.models.datamodel.DroolsWorkbenchDataModelAPI"/> -->
 
   <!-- Guvnor dependencies -->
-<!--  <inherits name="org.guvnor.structure.GuvnorStructureClient"/> -->
+  <inherits name="org.guvnor.structure.GuvnorStructureClient"/>
 <!--   <inherits name="org.guvnor.m2repo.GuvnorM2RepoEditorClient"/> -->
 <!--   <inherits name='org.guvnor.common.services.GuvnorServicesAPI'/> -->
 <!--   <inherits name="org.guvnor.common.services.project.GuvnorProjectAPI"/> -->
