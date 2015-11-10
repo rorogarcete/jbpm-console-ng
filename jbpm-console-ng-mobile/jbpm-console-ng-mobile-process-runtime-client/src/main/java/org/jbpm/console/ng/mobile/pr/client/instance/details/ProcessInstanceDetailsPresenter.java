@@ -16,11 +16,9 @@
 package org.jbpm.console.ng.mobile.pr.client.instance.details;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.HasText;
 import com.googlecode.mgwt.ui.client.widget.button.Button;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -37,8 +35,8 @@ import org.jbpm.console.ng.pr.model.ProcessSummary;
 import org.kie.api.runtime.process.ProcessInstance;
 
 /**
- *
  * @author livthomas
+ * @author rorogarcete
  */
 public class ProcessInstanceDetailsPresenter {
     
@@ -81,7 +79,7 @@ public class ProcessInstanceDetailsPresenter {
         return view;
     }
     
-    public void refresh(long instanceId, String definitionId) {
+    public void refresh(long instanceId, String definitionId, String deploymentId	) {
         // Instance ID, Deployment, Instance State
         dataServices.call(new RemoteCallback<ProcessInstanceSummary>() {
             @Override
@@ -120,8 +118,8 @@ public class ProcessInstanceDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error refresh process instance details: "+ message.toString());
-                GWT.log("Error refresh process instance details Throwable: "+ throwable.toString());
+                GWT.log("Error getProcessInstanceById :" + message.toString());
+                GWT.log("Error getProcessInstanceById Throwable :" + throwable.toString());
                 return true;
             }
         }).getProcessInstanceById(instanceId);
@@ -130,19 +128,19 @@ public class ProcessInstanceDetailsPresenter {
         dataServices.call(new RemoteCallback<ProcessSummary>() {
             @Override
             public void callback(ProcessSummary process) {
-                view.setDefinitionIdText(String.valueOf(process.getId()));
-                view.setDefinitionNameText(process.getName());
+            	view.setDefinitionIdText(process.getProcessDefId());
+                view.setDefinitionNameText(process.getProcessDefName());
                 view.setDefinitionVersionText(process.getVersion());
             }
         }, new ErrorCallback<Message>() {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error definition id, name, version details: "+ message.toString());
-                GWT.log("Error definition id, name, version details Throwable: "+ throwable.toString());
+                GWT.log("Error getProcessDesc :" + message.toString());
+                GWT.log("Error getProcessDesc Throwable :" + throwable.toString());
                 return true;
             }
-        }).getProcessDesc(String.valueOf(instanceId), definitionId);
+        }).getProcessDesc(deploymentId, definitionId);
 
         // Current Activities
         dataServices.call(new RemoteCallback<List<NodeInstanceSummary>>() {
@@ -165,8 +163,8 @@ public class ProcessInstanceDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error current activity: "+ message.toString());
-                GWT.log("Error current activity Throwable: "+ throwable.toString());
+                GWT.log("Error current activity :" + message.toString());
+                GWT.log("Error current activity Throwable :" + throwable.toString());
                 return true;
             }
         }).getProcessInstanceActiveNodes(instanceId);
@@ -197,32 +195,12 @@ public class ProcessInstanceDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error instance log: "+ message.toString());
-                GWT.log("Error instance log Throwable: "+ throwable.toString());
+                GWT.log("Error instance log :" + message.toString());
+                GWT.log("Error instance log Throwable :" + throwable.toString());
                 return true;
             }
         }).getProcessInstanceHistory(instanceId);
-        
-        //Process Variable
-//        dataServices.call(new RemoteCallback<Map<String, String>>() {
-//            @Override
-//            public void callback(Map<String, String> processVariables) {
-//                //view.setDefinitionIdText(String.valueOf(process.getId()));
-//                //view.setDefinitionNameText(process.getName());
-//                //view.setDefinitionVersionText(process.getVersion());
-//            	GWT.log("Process Variables: "+ processVariables.toString());
-//            	
-//            }
-//        }, new ErrorCallback<Message>() {
-//            @Override
-//            public boolean error(Message message, Throwable throwable) {
-//                view.displayNotification("Unexpected error encountered", throwable.getMessage());
-//                GWT.log("Error definition id, name, version details: "+ message.toString());
-//                GWT.log("Error definition id, name, version details Throwable: "+ throwable.toString());
-//                return true;
-//            }
-//        }).getRequiredInputData(String.valueOf(instanceId), definitionId);
-        //getProcessDesc(String.valueOf(instanceId), definitionId);
+       
     }
     
     public void abortProcessInstance(long instanceId) {
@@ -235,8 +213,8 @@ public class ProcessInstanceDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error abort process instance: "+ message.toString());
-                GWT.log("Error abort process instance: "+ throwable.toString());
+                GWT.log("Error abort process instance :" + message.toString());
+                GWT.log("Error abort process instance :" + throwable.toString());
                 return true;
             }
         }).abortProcessInstance(instanceId);

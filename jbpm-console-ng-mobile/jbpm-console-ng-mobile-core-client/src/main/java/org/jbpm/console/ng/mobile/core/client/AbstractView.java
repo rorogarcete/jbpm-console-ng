@@ -22,7 +22,6 @@ import com.googlecode.mgwt.dom.client.event.tap.HasTapHandlers;
 import com.googlecode.mgwt.ui.client.widget.button.image.PreviousitemImageButton;
 import com.googlecode.mgwt.ui.client.widget.dialog.Dialogs;
 import com.googlecode.mgwt.ui.client.widget.header.HeaderPanel;
-import com.googlecode.mgwt.ui.client.widget.header.HeaderTitle;
 import com.googlecode.mgwt.ui.client.widget.panel.flex.FixedSpacer;
 import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexSpacer;
 import com.googlecode.mgwt.ui.client.widget.panel.flex.RootFlexPanel;
@@ -30,6 +29,7 @@ import com.googlecode.mgwt.ui.client.widget.panel.flex.RootFlexPanel;
 /**
  *
  * @author livthomas
+ * @author rorogarcete
  */
 public abstract class AbstractView implements IsWidget {
 

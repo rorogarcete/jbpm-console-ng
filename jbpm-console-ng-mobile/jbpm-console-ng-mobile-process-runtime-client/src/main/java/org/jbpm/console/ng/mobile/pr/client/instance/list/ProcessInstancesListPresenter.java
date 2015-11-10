@@ -35,6 +35,7 @@ import com.google.gwt.core.client.GWT;
 /**
  *
  * @author livthomas
+ * @author rorogarcete
  */
 public class ProcessInstancesListPresenter {
     
@@ -63,8 +64,8 @@ public class ProcessInstancesListPresenter {
         }, new ErrorCallback<Message>() {
             @Override
             public boolean error(Message message, Throwable throwable) {
-                GWT.log("Error refresh instance list: "+ message.toString());
-                GWT.log("Error refresh instance list Throwable: "+ throwable.toString());
+                GWT.log("Error refresh instance list : " + message.toString());
+                GWT.log("Error refresh instance list Throwable : " + throwable.toString());
                 return true;
             }
         }).getProcessInstances();
@@ -79,8 +80,8 @@ public class ProcessInstancesListPresenter {
         }, new ErrorCallback<Message>() {
             @Override
             public boolean error(Message message, Throwable throwable) {
-                GWT.log("Error refresh instance list Process instance: "+ message.toString());
-                GWT.log("Error refresh instance list Process instance Throwable: "+ throwable.toString());
+                GWT.log("Error refresh instance list Process instance : "+ message.toString());
+                GWT.log("Error refresh instance list Process instance Throwable : "+ throwable.toString());
                 return true;
             }
         }).getProcessInstancesByProcessDefinition(definitionId);

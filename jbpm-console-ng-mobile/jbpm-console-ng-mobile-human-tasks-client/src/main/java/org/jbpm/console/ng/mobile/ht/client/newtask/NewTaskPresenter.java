@@ -34,6 +34,7 @@ import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
  *
  * @author livthomas
  * @author salaboy
+ * @author rorogarcete
  */
 @Dependent
 public class NewTaskPresenter {
@@ -41,7 +42,6 @@ public class NewTaskPresenter {
     public interface NewTaskView extends MGWTUberView<NewTaskPresenter> {
 
         void goBackToTaskList();
-
     }
 
     @Inject

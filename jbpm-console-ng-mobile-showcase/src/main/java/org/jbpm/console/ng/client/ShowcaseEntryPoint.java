@@ -24,7 +24,10 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.EntryPoint;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
+import org.jboss.errai.security.shared.api.identity.User;
 
+import org.uberfire.client.mvp.ActivityBeansCache;
 import org.uberfire.client.mvp.PlaceManager;
 
 @EntryPoint
@@ -36,22 +39,20 @@ public class ShowcaseEntryPoint {
 //    @Inject
 //    private WorkbenchMenuBarPresenter menubar;
 
-//    @Inject
-//    private SyncBeanManager iocManager;
+    @Inject
+    private SyncBeanManager iocManager;
 
-//    @Inject
-//    public User identity;
+    @Inject
+    public User identity;
 
 //    @Inject
 //    private KieWorkbenchACL kieACL;
 
 //    @Inject
 //    private Caller<KieWorkbenchSecurityService> kieSecurityService;
-//
-//    
 
-//    @Inject
-//    private ActivityBeansCache activityBeansCache;
+    @Inject
+    private ActivityBeansCache activityBeansCache;
 
 //    @Inject
 //    private Caller<AppConfigService> appConfigService;

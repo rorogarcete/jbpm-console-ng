@@ -65,8 +65,8 @@ public class ProcessVariableListPresenter {
         }, new ErrorCallback<Message>() {
             @Override
             public boolean error(Message message, Throwable throwable) {
-                GWT.log("Error process variables list Process : "+ message.toString());
-                GWT.log("Error process variables list Process Throwable: "+ throwable.toString());
+                GWT.log("Error process variables list Process : " + message.toString());
+                GWT.log("Error process variables list Process Throwable : " + throwable.toString());
                 return true;
             }
         }).getRequiredInputData(deploymentId, processId);
@@ -82,12 +82,12 @@ public class ProcessVariableListPresenter {
         }, new ErrorCallback<Message>() {
             @Override
             public boolean error(Message message, Throwable throwable) {
-                //view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error start process: "+ message.toString());
-                GWT.log("Error start process Throwable: "+ throwable.toString());
+                view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                GWT.log("Error start process: " + message.toString());
+                GWT.log("Error start process Throwable: " + throwable.toString());
                 return true;
             }
-        }).startProcess(deploymentId, processId, params);  //.startProcess(deploymentId, processId);
+        }).startProcess(deploymentId, processId, params);
     }
 
 }

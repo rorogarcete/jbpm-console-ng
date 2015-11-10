@@ -68,8 +68,8 @@ public class TaskInputMappingListPresenter {
         }, new ErrorCallback<Message>() {
             @Override
             public boolean error(Message message, Throwable throwable) {
-                GWT.log("Error render Inputs Mapping Task : "+ message.toString());
-                GWT.log("Error render Inputs Mapping Task Throwable: "+ throwable.toString());
+                GWT.log("Error render Inputs Mapping Task : " + message.toString());
+                GWT.log("Error render Inputs Mapping Task Throwable: " + throwable.toString());
                 return true;
             }
         }).getTaskInputMappings(deploymentId, processId, taskName);
@@ -85,8 +85,8 @@ public class TaskInputMappingListPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error completeTask: "+ message.toString());
-                GWT.log("Error completeTask Throwable: "+ throwable.toString());
+                GWT.log("Error completeTask: " + message.toString());
+                GWT.log("Error completeTask Throwable: " + throwable.toString());
                 return true;
             }
         }).complete(taskId, identity.getIdentifier(), params);

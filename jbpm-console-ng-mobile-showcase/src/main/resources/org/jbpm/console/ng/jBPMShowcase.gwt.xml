@@ -4,11 +4,11 @@
 <module>
   <inherits name="com.google.gwt.xml.XML"/>
 
-<!--   <inherits name="org.jboss.errai.ui.UI"/> -->
+  <inherits name="org.jboss.errai.ui.UI"/>
 
   <!-- Uberfire dependencies -->
   <inherits name="org.uberfire.UberfireClientAll"/>
-<!--   <inherits name="org.uberfire.client.views.Bootstrap2"/> -->
+  <inherits name="org.uberfire.client.views.Bootstrap2"/>
 
   <!-- Uberfire Extensions - Core Widgets -->
   <inherits name="org.uberfire.ext.widgets.core.UberfireWidgetsCore"/>
@@ -68,6 +68,5 @@
 <!--   <extend-property name="locale" values="ja"/> -->
 <!--   <extend-property name="locale" values="pt_BR"/> -->
 <!--   <extend-property name="locale" values="zh_CN"/> -->
-
 
 </module>

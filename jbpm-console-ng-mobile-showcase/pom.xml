@@ -38,7 +38,12 @@
   </properties>
 
   <dependencies>
-	<dependency>
+
+    <dependency>
+      <groupId>com.github.gwtbootstrap</groupId>
+      <artifactId>gwt-bootstrap</artifactId>
+    </dependency>
+      <dependency>
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-core</artifactId>
     </dependency>
@@ -120,12 +125,6 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-all</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-workbench-client-views-bs2</artifactId>
-      <scope>provided</scope>
-    </dependency>
     
     <!-- UberFire Security Extension -->
     <dependency>
@@ -195,6 +194,33 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-metadata-backend-lucene</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-widgets-service-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jbpm</groupId>
+      <artifactId>jbpm-workitems</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-databinding-jaxb</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-transports-http</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Errai AS -->
@@ -286,20 +312,27 @@
             <!-- KIE UberFire extensions -->
             <compileSourcesArtifact>org.kie.uberfire:kie-uberfire-social-activities-api</compileSourcesArtifact>
 
+	    	<!-- UberFire Extensions -->
+            <compileSourcesArtifact>org.uberfire:uberfire-widgets-service-api</compileSourcesArtifact>
+
             <!-- UberFire -->
             <compileSourcesArtifact>org.uberfire:uberfire-commons</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-nio2-model</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-api</compileSourcesArtifact>
+	    	<compileSourcesArtifact>org.uberfire:uberfire-js</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-security-api</compileSourcesArtifact>
+            <compileSourcesArtifact>org.uberfire:uberfire-security-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-client-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-workbench-client</compileSourcesArtifact>
+	 	    <compileSourcesArtifact>org.uberfire:uberfire-workbench-client-backend</compileSourcesArtifact>
+		    <compileSourcesArtifact>org.uberfire:uberfire-backend-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-workbench-client-views-bs2</compileSourcesArtifact>
 
             <!-- jBPM Console -->
             <compileSourcesArtifact>org.jbpm:jbpm-console-ng-human-tasks-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.jbpm:jbpm-console-ng-process-runtime-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.jbpm:jbpm-console-ng-business-domain-api</compileSourcesArtifact>          
-			<compileSourcesArtifact>org.jbpm:jbpm-console-ng-generic-api</compileSourcesArtifact>
+	    	<compileSourcesArtifact>org.jbpm:jbpm-console-ng-generic-api</compileSourcesArtifact>
 
             <!-- jBPM Mobile --> 
             <compileSourcesArtifact>org.jbpm:jbpm-console-ng-mobile-core-client</compileSourcesArtifact>
@@ -352,7 +385,6 @@
               <directory>${basedir}</directory>
               <includes>
                 <include>src/main/webapp/org.jbpm.console.ng.jBPMShowcase/</include>
-<!--                 <include>src/main/webapp/formModeler/</include> -->
                 <include>src/main/webapp/WEB-INF/deploy/</include>
                 <include>src/main/webapp/WEB-INF/classes/</include>
                 <include>src/main/webapp/WEB-INF/lib/</include>
@@ -389,49 +421,6 @@
               </artifactItems>
             </configuration>
           </execution>
-<!--           <execution> -->
-<!--             <id>copy-files-to-webapp-directory</id> -->
-<!--             <phase>process-resources</phase> -->
-<!--             <goals> -->
-<!--               <goal>unpack</goal> -->
-<!--             </goals> -->
-<!--             <configuration> -->
-<!--               <artifactItems> -->
-<!--                 <artifactItem> -->
-<!--                   <groupId>org.jbpm</groupId> -->
-<!--                   <artifactId>jbpm-form-modeler-request-dispatcher</artifactId> -->
-<!--                   <type>jar</type> -->
-<!--                   <overWrite>true</overWrite> -->
-<!--                   <outputDirectory>src/main/webapp</outputDirectory> -->
-<!--                   <includes>**/*.tld, **/*.gif, **/*.jpg, **/*.js, **/*.jsp, **/*.css, **/*.png</includes> -->
-<!--                 </artifactItem> -->
-<!--                 <artifactItem> -->
-<!--                   <groupId>org.jbpm</groupId> -->
-<!--                   <artifactId>jbpm-form-modeler-form-editor</artifactId> -->
-<!--                   <type>jar</type> -->
-<!--                   <overWrite>true</overWrite> -->
-<!--                   <outputDirectory>src/main/webapp</outputDirectory> -->
-<!--                   <includes>**/*.tld, **/*.gif, **/*.jpg, **/*.js, **/*.jsp, **/*.css, **/*.png</includes> -->
-<!--                 </artifactItem> -->
-<!--                 <artifactItem> -->
-<!--                   <groupId>org.jbpm</groupId> -->
-<!--                   <artifactId>jbpm-form-modeler-static-resources</artifactId> -->
-<!--                   <type>jar</type> -->
-<!--                   <overWrite>true</overWrite> -->
-<!--                   <outputDirectory>src/main/webapp</outputDirectory> -->
-<!--                   <includes>**/*.tld, **/*.gif, **/*.jpg, **/*.js, **/*.jsp, **/*.css, **/*.png</includes> -->
-<!--                 </artifactItem> -->
-<!--                 <artifactItem> -->
-<!--                   <groupId>org.jbpm</groupId> -->
-<!--                   <artifactId>jbpm-form-modeler-ui</artifactId> -->
-<!--                   <type>jar</type> -->
-<!--                   <overWrite>true</overWrite> -->
-<!--                   <outputDirectory>src/main/webapp</outputDirectory> -->
-<!--                   <includes>**/*.tld, **/*.gif, **/*.jpg, **/*.js, **/*.jsp, **/*.css, **/*.png</includes> -->
-<!--                 </artifactItem> -->
-<!--               </artifactItems> -->
-<!--             </configuration> -->
-<!--           </execution> -->
         </executions>
       </plugin>
     </plugins>

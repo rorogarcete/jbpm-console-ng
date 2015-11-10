@@ -16,7 +16,6 @@
 package org.jbpm.console.ng.mobile.pr.client.instance.details;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasText;
 import com.googlecode.mgwt.dom.client.event.tap.TapEvent;
 import com.googlecode.mgwt.dom.client.event.tap.TapHandler;
 import com.googlecode.mgwt.ui.client.MGWT;
@@ -27,9 +26,6 @@ import com.googlecode.mgwt.ui.client.widget.form.FormEntry;
 import com.googlecode.mgwt.ui.client.widget.input.MTextArea;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
-import com.googlecode.mgwt.ui.client.widget.tabbar.HistoryTabBarButton;
-import com.googlecode.mgwt.ui.client.widget.tabbar.TabBarButton;
-import com.googlecode.mgwt.ui.client.widget.tabbar.TabPanel;
 
 import java.util.Map;
 
@@ -39,8 +35,8 @@ import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
 
 /**
- *
  * @author livthomas
+ * @author rorogarcete
  */
 public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         ProcessInstanceDetailsPresenter.ProcessInstanceDetailsView {
@@ -53,6 +49,7 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
 
     private Long instanceId;
     private String definitionId;
+    private String deploymentId;
 
     private final MTextBox instanceIdText = new MTextBox();
     private final MTextBox definitionIdText = new MTextBox();
@@ -67,9 +64,6 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
 
     public ProcessInstanceDetailsViewImpl() {
         title.setText("Instance Details");
-        
-//        TabPanel tabPanel = new TabPanel();
-//        rootFlexPanel.add(tabPanel);
       
         //Details
         ScrollPanel scrollPanel = new ScrollPanel();
@@ -102,13 +96,6 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
         scrollPanel.setWidget(flowPanel);
         scrollPanel.setScrollingEnabledX(false);
         scrollPanel.setUsePos(MGWT.getOsDetection().isAndroid());
-//        
-//        TabBarButton detailsTabButton = new HistoryTabBarButton();
-//        detailsTabButton.setText("Instance Details");
-//        
-//        tabPanel.add(detailsTabButton, scrollPanel);
-        
-        //Process Variables
         
         rootFlexPanel.add(scrollPanel);
     }
@@ -134,7 +121,7 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
 
     @Override
     public void refresh() {
-        presenter.refresh(instanceId, definitionId);
+        presenter.refresh(instanceId, definitionId, deploymentId);
     }
 
     @Override
@@ -144,6 +131,12 @@ public class ProcessInstanceDetailsViewImpl extends AbstractView implements
 
     @Override
     public void setParameters(Map<String, Object> params) {
+    	if (params == null || !params.containsKey("deploymentId")) {
+    		deploymentId = null;
+        } else {
+        	deploymentId = (String) params.get("deploymentId");
+        }
+    	
         instanceId = (Long) params.get("instanceId");
         definitionId = (String) params.get("definitionId");
     }

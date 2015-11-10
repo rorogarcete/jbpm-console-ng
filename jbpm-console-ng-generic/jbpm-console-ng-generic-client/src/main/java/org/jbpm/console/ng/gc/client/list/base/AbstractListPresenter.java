@@ -45,6 +45,8 @@ public abstract class AbstractListPresenter<T> {
 
     protected QueryFilter currentFilter;
 
+    protected String textSearchStr="";
+
     private Constants constants = GWT.create(Constants.class);
 
     protected Timer refreshTimer = null;
@@ -74,6 +76,8 @@ public abstract class AbstractListPresenter<T> {
     }
 
     public abstract void getData(Range visibleRange);
+
+    public void onGridPreferencesStoreLoaded(){};
 
     protected void initDataProvider(){
 
@@ -114,11 +118,15 @@ public abstract class AbstractListPresenter<T> {
 
     protected void onSearchEvent( @Observes SearchEvent searchEvent ) {
         String filterString = searchEvent.getFilter();
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put( "textSearch", filterString.toLowerCase() );
-        if ( currentFilter != null ) {
-            currentFilter.setParams( params );
+        if(filterString!=null && filterString.trim().length()>0){
+            textSearchStr=filterString.toLowerCase();
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put( "textSearch", textSearchStr );
+            if ( currentFilter != null ) {
+                currentFilter.setParams( params );
+            }
         }
+
         HasData<T> next = dataProvider.getDataDisplays().iterator().next();
         if ( filterString.equals( "" ) ) {
             next.setVisibleRangeAndClearData( next.getVisibleRange(), true );
@@ -145,7 +153,7 @@ public abstract class AbstractListPresenter<T> {
  */
     protected void updateRefreshInterval(boolean enableAutoRefresh, int newInterval){
         this.autoRefreshEnabled = enableAutoRefresh;
-        setAutoRefreshSeconds( newInterval);
+        setAutoRefreshSeconds( newInterval );
         updateRefreshTimer();
     }
 

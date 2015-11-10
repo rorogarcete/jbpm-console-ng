@@ -63,8 +63,8 @@ public class NewDeploymentPresenter {
         }, new ErrorCallback<Message>() {
             @Override
             public boolean error( Message message, Throwable throwable ) {
-                GWT.log("Error deploy : "+ message.toString());
-                GWT.log("Error deploy throwable : "+ throwable.toString());
+                GWT.log("Error deploy :" + message.toString());
+                GWT.log("Error deploy throwable :" + throwable.toString());
                 return true;
             }
         }).deploy(new KModuleDeploymentUnitSummary( group + ":" + artifact + ":" + version, group, artifact, version, null, null, null, null ));

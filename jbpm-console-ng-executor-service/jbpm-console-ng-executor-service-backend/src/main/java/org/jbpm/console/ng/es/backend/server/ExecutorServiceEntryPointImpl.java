@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -48,6 +49,8 @@ import org.uberfire.paging.PageResponse;
 @Service
 @ApplicationScoped
 public class ExecutorServiceEntryPointImpl implements ExecutorServiceEntryPoint ,GenericServiceEntryPoint<RequestKey, RequestSummary> {
+
+    private boolean executorDisabled = "true".equalsIgnoreCase(System.getProperty("org.kie.executor.disabled"));
 
     @Inject
     ExecutorService executor;
@@ -159,8 +162,8 @@ public class ExecutorServiceEntryPointImpl implements ExecutorServiceEntryPoint 
 
     @Override
     public Boolean startStopService(int waitTime, int nroOfThreads) {
-        executor.setInterval(waitTime);
-        executor.setThreadPoolSize(nroOfThreads);
+        setInterval(waitTime);
+        setThreadPoolSize(nroOfThreads);
         if (executor.isActive()) {
             executor.destroy();
         } else {
@@ -171,12 +174,16 @@ public class ExecutorServiceEntryPointImpl implements ExecutorServiceEntryPoint 
 
     @Override
     public int getInterval() {
-        return executor.getInterval();
+
+        Long interval = TimeUnit.SECONDS.convert(executor.getInterval(), executor.getTimeunit());
+        return interval.intValue();
     }
 
     @Override
     public void setInterval(int waitTime) {
-        executor.setInterval(waitTime);
+        Long interval = executor.getTimeunit().convert(waitTime, TimeUnit.SECONDS);
+
+        executor.setInterval(interval.intValue());
     }
 
     @Override
@@ -283,6 +290,11 @@ public class ExecutorServiceEntryPointImpl implements ExecutorServiceEntryPoint 
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean isExecutorDisabled() {
+        return executorDisabled;
     }
 
     @Override

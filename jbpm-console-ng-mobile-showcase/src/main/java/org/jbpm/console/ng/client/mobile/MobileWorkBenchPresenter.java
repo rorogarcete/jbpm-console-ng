@@ -62,6 +62,7 @@ import org.uberfire.client.annotations.WorkbenchScreen;
 /**
  *
  * @author salaboy
+ * @author rorogarcete
  */
 @Dependent
 @WorkbenchScreen(identifier = "MobilePresenter")

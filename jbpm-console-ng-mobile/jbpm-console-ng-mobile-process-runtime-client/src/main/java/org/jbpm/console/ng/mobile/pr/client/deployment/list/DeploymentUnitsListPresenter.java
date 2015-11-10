@@ -79,8 +79,8 @@ public class DeploymentUnitsListPresenter {
     	}, new ErrorCallback<Message>() {
             @Override
             public boolean error(Message message, Throwable throwable) {
-                GWT.log("Error deploy list: "+ message.toString());
-                GWT.log("Error deploy list Throwable: "+ throwable.toString());
+                GWT.log("Error deployment list :" + message.toString());
+                GWT.log("Error deployment list Throwable :" + throwable.toString());
                 return true;
             }
        }).getAll(currentFilter);

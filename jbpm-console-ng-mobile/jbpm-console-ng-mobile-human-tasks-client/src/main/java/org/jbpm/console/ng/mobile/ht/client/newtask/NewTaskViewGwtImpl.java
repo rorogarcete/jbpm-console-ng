@@ -42,13 +42,13 @@ import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
  *
  * @author livthomas
  * @author salaboy
+ * @author rorogarcete
  */
 @Dependent
 public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter.NewTaskView {
 
     private final MTextBox taskNameTextBox = new MTextBox();
     private final MCheckBox assignToMeCheckBox = new MCheckBox();
-  //  private final MDateBox dueOnDateBox = new MDateBox();
     private final MListBox priorityListBox = new MListBox();
     private final MTextBox userTextBox = new MTextBox();
     private final Button addTaskButton;
@@ -78,7 +78,6 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
         newTaskForm.setRound(true); 
         newTaskForm.add(new FormEntry("Task Name", taskNameTextBox));
         newTaskForm.add(new FormEntry("Auto Assign To Me", assignToMeCheckBox));
-        //newTaskForm.add(new FormListEntry("Due On", dueOnDateBox));
         newTaskForm.add(new FormEntry("Priority", priorityListBox));
         newTaskForm.add(new FormEntry("User", userTextBox));
         newTaskPanel.add(newTaskForm);
@@ -93,7 +92,6 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
     public void init(final NewTaskPresenter presenter) {
         this.presenter = presenter;
         assignToMeCheckBox.setValue(false);
-      //  dueOnDateBox.setText(new DateRenderer().render(new Date()));
         userTextBox.setText(identity.getIdentifier());
 
         addTaskButton.addTapHandler(new TapHandler() {
@@ -105,7 +103,6 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
                     String taskName = taskNameTextBox.getText();
                     int priority = priorityListBox.getSelectedIndex();
                     boolean assignToMe = assignToMeCheckBox.getValue();
-               //     long date = new DateParser().parse(dueOnDateBox.getText()).getTime();
                     long time = 0;
 
                     presenter.addTask(users, groups, taskName, priority, assignToMe, time, time);
@@ -113,7 +110,6 @@ public class NewTaskViewGwtImpl extends AbstractView implements NewTaskPresenter
                     taskNameTextBox.setText("");
                     priorityListBox.setSelectedIndex(0);
                     assignToMeCheckBox.setValue(false);
-                 //   dueOnDateBox.setText(new DateRenderer().render(new Date()));
 
                     placeManager.goTo("Tasks List", Animations.SLIDE);
             }

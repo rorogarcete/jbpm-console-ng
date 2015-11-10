@@ -136,10 +136,8 @@ public class ProcessVariableListViewImpl extends AbstractView implements
 				params.put(entry.getKey(), inputTextBoxs.get(i).getText());
 				GWT.log("clave: " + entry.getKey() + " - Indice: " + i + " valor: " + inputTextBoxs.get(i).getText());
 				i++;
-			}
-			
+			}	
 		}
-
     	return params;	
     }
 

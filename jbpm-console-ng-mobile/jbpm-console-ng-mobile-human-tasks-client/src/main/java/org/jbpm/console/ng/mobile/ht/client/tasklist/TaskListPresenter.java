@@ -39,6 +39,7 @@ import com.google.gwt.core.client.GWT;
  *
  * @author livthomas
  * @author salaboy
+ * @author rorogarcete
  */
 @Dependent
 public class TaskListPresenter {

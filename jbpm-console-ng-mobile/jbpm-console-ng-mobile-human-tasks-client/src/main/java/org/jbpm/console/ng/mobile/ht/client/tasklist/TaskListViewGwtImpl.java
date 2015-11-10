@@ -45,6 +45,7 @@ import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
  *
  * @author livthomas
  * @author salaboy
+ * @author rorogarcete
  */
 @Dependent
 public class TaskListViewGwtImpl extends AbstractView implements TaskListPresenter.TaskListView {

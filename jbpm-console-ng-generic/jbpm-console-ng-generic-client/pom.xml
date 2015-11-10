@@ -33,8 +33,12 @@
   <dependencies>
 
     <dependency>
-      <groupId>com.github.gwtbootstrap</groupId>
-      <artifactId>gwt-bootstrap</artifactId>
+      <groupId>org.gwtbootstrap3</groupId>
+      <artifactId>gwtbootstrap3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.gwtbootstrap3</groupId>
+      <artifactId>gwtbootstrap3-extras</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -83,7 +87,10 @@
       <artifactId>kie-wb-common-ui</artifactId>
     </dependency>
 
-
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-workbench-client-views-patternfly</artifactId>
+    </dependency>
 
     <!-- Errai UI -->
     <dependency>

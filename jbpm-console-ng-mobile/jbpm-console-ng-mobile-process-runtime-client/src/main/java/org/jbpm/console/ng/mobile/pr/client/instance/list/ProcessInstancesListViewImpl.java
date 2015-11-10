@@ -41,6 +41,7 @@ import org.jbpm.console.ng.pr.model.ProcessInstanceSummary;
 /**
  *
  * @author livthomas
+ * @author rorogarcete
  */
 public class ProcessInstancesListViewImpl extends AbstractView implements 
         ProcessInstancesListPresenter.ProcessInstancesListView {
@@ -122,6 +123,7 @@ public class ProcessInstancesListViewImpl extends AbstractView implements
                 ProcessInstanceSummary instance = instancesList.get(event.getIndex());
                 params.put("instanceId", instance.getId());
                 params.put("definitionId", instance.getProcessId());
+                params.put("deploymentId", instance.getDeploymentId());
                 placeManager.goTo("Process Instance Details", Animations.SLIDE, params);
             }
         });

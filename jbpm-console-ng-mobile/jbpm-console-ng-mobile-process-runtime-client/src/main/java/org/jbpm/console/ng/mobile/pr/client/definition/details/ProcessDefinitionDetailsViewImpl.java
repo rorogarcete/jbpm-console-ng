@@ -36,8 +36,8 @@ import org.jbpm.console.ng.mobile.core.client.AbstractView;
 import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
 
 /**
- *
  * @author livthomas
+ * @author rorogarcete
  */
 public class ProcessDefinitionDetailsViewImpl extends AbstractView implements
         ProcessDefinitionDetailsPresenter.ProcessDefinitionDetailsView {
@@ -116,7 +116,6 @@ public class ProcessDefinitionDetailsViewImpl extends AbstractView implements
         newInstanceButton.addTapHandler(new TapHandler() {
             @Override
             public void onTap(TapEvent event) {
-                //presenter.startProcess(deploymentId, processId);
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("deploymentId", deploymentId);
                 params.put("processId", processId);

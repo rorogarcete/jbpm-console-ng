@@ -29,6 +29,7 @@ import com.googlecode.mgwt.ui.client.widget.input.MDateBox;
 import com.googlecode.mgwt.ui.client.widget.input.MTextArea;
 import com.googlecode.mgwt.ui.client.widget.input.MTextBox;
 import com.googlecode.mgwt.ui.client.widget.input.listbox.MListBox;
+import com.googlecode.mgwt.ui.client.widget.panel.flex.FlexPanel;
 import com.googlecode.mgwt.ui.client.widget.panel.scroll.ScrollPanel;
 import com.googlecode.mgwt.ui.client.widget.tabbar.ContactsTabBarButton;
 import com.googlecode.mgwt.ui.client.widget.tabbar.HistoryTabBarButton;
@@ -49,8 +50,8 @@ import org.jbpm.console.ng.mobile.core.client.MGWTPlaceManager;
 import org.jbpm.console.ng.mobile.ht.client.utils.TaskStatus;
 
 /**
- *
  * @author livthomas
+ * @author rorogarcete
  */
 @Dependent
 public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsPresenter.TaskDetailsView {
@@ -93,30 +94,32 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
 
         // Work tab
         ScrollPanel workScrollPanel = new ScrollPanel();
-        FlowPanel workFlowPanel = new FlowPanel();
+        FlexPanel workFlexPanel = new FlexPanel();
 
         saveButton = new Button("Save");
-        workFlowPanel.add(saveButton);
+        saveButton.setImportant(true);
+        workFlexPanel.add(saveButton);
 
         releaseButton = new Button("Release");
-        workFlowPanel.add(releaseButton);
+        releaseButton.setImportant(true);
+        workFlexPanel.add(releaseButton);
 
         claimButton = new Button("Claim");
-        claimButton.setConfirm(true);
-        workFlowPanel.add(claimButton);
+        claimButton.setImportant(true);
+        workFlexPanel.add(claimButton);
 
         startButton = new Button("Start");
         startButton.setConfirm(true);
-        workFlowPanel.add(startButton);
+        workFlexPanel.add(startButton);
 
         completeButton = new Button("Complete");
         completeButton.setConfirm(true);
-        workFlowPanel.add(completeButton);
+        workFlexPanel.add(completeButton);
 
         TabBarButton workTabButton = new HistoryTabBarButton();
         workTabButton.setText("Work");
 
-        workScrollPanel.setWidget(workFlowPanel);
+        workScrollPanel.setWidget(workFlexPanel);
         workScrollPanel.setScrollingEnabledX(false);
         workScrollPanel.setUsePos(MGWT.getOsDetection().isAndroid());
 
@@ -153,7 +156,7 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
         detailsFlowPanel.add(processContextForm);
 
         updateButton = new Button("Update");
-        updateButton.setConfirm(true);
+        updateButton.setImportant(true);
         detailsFlowPanel.add(updateButton);
 
         TabBarButton detailsTabButton = new MostViewedTabBarButton();
@@ -307,7 +310,6 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
         taskName = task.getName();
         descriptionTextArea.setText(task.getDescription());
         statusTextBox.setText(task.getStatus());
-        //dueOnDateBox.setText(new DateRenderer().render(task.getExpirationTime()));
         priorityListBox.setSelectedIndex(task.getPriority());
         userTextBox.setText(task.getActualOwner());
 
@@ -346,7 +348,6 @@ public class TaskDetailsViewGwtImpl extends AbstractView implements TaskDetailsP
             }
         });
 
-//        potentialOwnersLabel.setText(task.getPotentialOwners().toString());
         if (owned && !status.equals(TaskStatus.Completed)) {
             delegateTextBox.setReadOnly(false);
             delegateButton.setVisible(true);

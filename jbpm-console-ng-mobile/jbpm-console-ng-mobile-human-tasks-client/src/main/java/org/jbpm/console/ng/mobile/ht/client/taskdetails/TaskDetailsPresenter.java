@@ -31,14 +31,15 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
+import org.jbpm.console.ng.ht.model.TaskAssignmentSummary;
 import org.jbpm.console.ng.ht.model.TaskSummary;
 import org.jbpm.console.ng.ht.service.TaskLifeCycleService;
 import org.jbpm.console.ng.ht.service.TaskOperationsService;
 import org.jbpm.console.ng.mobile.core.client.MGWTUberView;
 
 /**
- *
  * @author livthomas
+ * @author rorogarcete
  */
 @Dependent
 public class TaskDetailsPresenter {
@@ -66,8 +67,6 @@ public class TaskDetailsPresenter {
     
     @Inject
     private Caller<TaskLifeCycleService> taskLifeCycleService;
-    
-    //private Caller<TaskQueryService> taskQueryService;
 
     public TaskDetailsView getView() {
         return view;
@@ -84,34 +83,38 @@ public class TaskDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error refresh: "+ message.toString());
-                GWT.log("Error refresh Throwable: "+ throwable.toString());
-                return true;
-            }
-        }).getTaskDetails(taskId); //getItem(new TaskKey(taskId));
-    }
-
-    public void refreshPotentialOwners(final long taskId) {
-        List<Long> taskIds = new ArrayList<Long>(1);
-        taskIds.add(taskId);
-        taskOperationService.call(new RemoteCallback<Map<Long, List<String>>>() {
-            @Override
-            public void callback(Map<Long, List<String>> ids) {
-                if (ids.isEmpty()) {
-                    view.setPotentialOwnersText("No potential owners");
-                } else {
-                    view.setPotentialOwnersText(ids.get(taskId).toString());
-                }
-            }
-        }, new ErrorCallback<Message>() {
-            @Override
-            public boolean error(Message message, Throwable throwable) {
-                //view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error refreshPotentialOwners: "+ message.toString());
-                GWT.log("Error refreshPotentialOwners Throwable: "+ throwable.toString());
+                GWT.log("Unexpected error encountered " + message.toString());
+                GWT.log("Unexpected error encountered " + throwable.toString());
                 return true;
             }
         }).getTaskDetails(taskId);
+    }
+
+    public void refreshPotentialOwners(final long taskId) {
+    	if( taskId != 0){
+    		taskOperationService.call(new RemoteCallback<TaskAssignmentSummary>() {
+                @Override
+                public void callback(TaskAssignmentSummary ts) {
+                    if (ts == null) {
+                    	return;
+					}
+                    
+                    if ( ts.getPotOwnersString() != null && ts.getPotOwnersString().size() == 0 ) {
+                        view.setPotentialOwnersText("No potential owners");
+                    } else {
+                    	view.setPotentialOwnersText(" " + ts.getPotOwnersString().toString());
+                    }
+                }
+            }, new ErrorCallback<Message>() {
+                @Override
+                public boolean error(Message message, Throwable throwable) {
+                    view.displayNotification("Unexpected error encountered", throwable.getMessage());
+                    GWT.log("Error refreshPotentialOwners :" + message.toString());
+                    GWT.log("Error refreshPotentialOwners Throwable :" + throwable.toString());
+                    return true;
+                }
+            }).getTaskAssignmentDetails(taskId);
+    	}
     }
 
     public void saveTask(final long taskId) {
@@ -129,8 +132,8 @@ public class TaskDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error releaseTask: "+ message.toString());
-                GWT.log("Error releaseTask Throwable: "+ throwable.toString());
+                GWT.log("Error releaseTask :" + message.toString());
+                GWT.log("Error releaseTask Throwable :" + throwable.toString());
                 return true;
             }
         }).release(taskId, identity.getIdentifier());
@@ -147,8 +150,8 @@ public class TaskDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error claimTask: "+ message.toString());
-                GWT.log("Error claimTask Throwable: "+ throwable.toString());
+                GWT.log("Error claimTask :" + message.toString());
+                GWT.log("Error claimTask Throwable :" + throwable.toString());
                 return true;
             }
         }).claim(taskId, identity.getIdentifier(), "");
@@ -165,8 +168,8 @@ public class TaskDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error startTask: "+ message.toString());
-                GWT.log("Error startTask Throwable: "+ throwable.toString());
+                GWT.log("Error startTask :" + message.toString());
+                GWT.log("Error startTask Throwable :" + throwable.toString());
                 return true;
             }
         }).start(taskId, identity.getIdentifier());
@@ -184,8 +187,8 @@ public class TaskDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error completeTask: "+ message.toString());
-                GWT.log("Error completeTask Throwable: "+ throwable.toString());
+                GWT.log("Error completeTask :" + message.toString());
+                GWT.log("Error completeTask Throwable :" + throwable.toString());
                 return true;
             }
         }).complete(taskId, identity.getIdentifier(), params);
@@ -209,8 +212,8 @@ public class TaskDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error updateTask: "+ message.toString());
-                GWT.log("Error updateTask Throwable: "+ throwable.toString());
+                GWT.log("Error updateTask :" + message.toString());
+                GWT.log("Error updateTask Throwable :" + throwable.toString());
                 return true;
             }
         }).updateTask(taskId, priority, descriptions, dueDate);
@@ -228,8 +231,8 @@ public class TaskDetailsPresenter {
             @Override
             public boolean error(Message message, Throwable throwable) {
                 view.displayNotification("Unexpected error encountered", throwable.getMessage());
-                GWT.log("Error delegateTask: "+ message.toString());
-                GWT.log("Error delegateTask Throwable: "+ throwable.toString());
+                GWT.log("Error delegateTask :" + message.toString());
+                GWT.log("Error delegateTask Throwable :" + throwable.toString());
                 return true;
             }
         }).delegate(taskId, identity.getIdentifier(), entity);

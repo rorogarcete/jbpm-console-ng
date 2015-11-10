@@ -231,7 +231,13 @@ public interface Constants extends Messages {
     String Task_Form_Name();
     String Task_Form_DeploymentId();
 
-    String New_TaskList();
+    String New_FilteredList();
 
     String Administrators();
+    
+    String Minutes();
+    String Minute();
+    String Disable_autorefresh();
+    String Autorefresh_Disabled();
+    
 }

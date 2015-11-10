@@ -35,13 +35,13 @@ import com.google.gwt.core.client.GWT;
 /**
  *
  * @author livthomas
+ * @author rorogarcete
  */
 public class ProcessDefinitionsListPresenter {
 
     public interface ProcessDefinitionsListView extends MGWTUberView<ProcessDefinitionsListPresenter> {
 
         void render(List<ProcessSummary> definitions);
-
     }
 
     @Inject
@@ -63,13 +63,6 @@ public class ProcessDefinitionsListPresenter {
     	if (currentFilter == null) {
 			currentFilter = new PortableQueryFilter(0, 100, false, "", "", true);
 		}
-    	
-//    	if(currentFilter.getParams() != null) {
-//    		currentFilter.getParams().put("userId", identity.getIdentifier());
-//    		currentFilter.setFilterParams("");
-//    		currentFilter.getParams().put("filter", "");
-//    		currentFilter.getParams().put("taskRole", "");
-//    	}
    
     	processDefinitionService.call(new RemoteCallback<List<ProcessSummary>>() {
            @Override
@@ -79,8 +72,8 @@ public class ProcessDefinitionsListPresenter {
     	}, new ErrorCallback<Message>() {
             @Override
             public boolean error(Message message, Throwable throwable) {
-                GWT.log("Error definition list: "+ message.toString());
-                GWT.log("Error definition list Throwable: "+ throwable.toString());
+                GWT.log("Error definition list :" + message.toString());
+                GWT.log("Error definition list Throwable :" + throwable.toString());
                 return true;
             }
        }).getAll(currentFilter);
